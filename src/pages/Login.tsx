@@ -9,26 +9,51 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      toast({
-        title: "Login Failed",
-        description: error.message,
-        variant: "destructive",
+    if (isSignUp) {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/prescription`,
+        },
       });
+
+      if (error) {
+        toast({
+          title: "Signup Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success!",
+          description: "Account created. You can now log in.",
+        });
+        setIsSignUp(false);
+      }
     } else {
-      navigate("/prescription");
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: "Login Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        navigate("/prescription");
+      }
     }
     setLoading(false);
   };
@@ -54,9 +79,13 @@ const Login = () => {
         textAlign: "center",
         minWidth: "400px",
       }}>
-        <h2 style={{ marginTop: 0, color: "#333" }}>Doctor's Login</h2>
-        <p style={{ color: "#666" }}>Please enter credentials to edit.</p>
-        <form onSubmit={handleLogin} style={{ marginTop: "20px" }}>
+        <h2 style={{ marginTop: 0, color: "#333" }}>
+          {isSignUp ? "Create Account" : "Doctor's Login"}
+        </h2>
+        <p style={{ color: "#666" }}>
+          {isSignUp ? "Sign up to get started" : "Please enter credentials to edit."}
+        </p>
+        <form onSubmit={handleAuth} style={{ marginTop: "20px" }}>
           <Input
             type="email"
             placeholder="Email"
@@ -80,11 +109,24 @@ const Login = () => {
               width: "100%",
               padding: "10px",
               backgroundColor: "#0056b3",
+              marginBottom: "10px",
             }}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? (isSignUp ? "Creating..." : "Logging in...") : (isSignUp ? "Sign Up" : "Login")}
           </Button>
         </form>
+        <button
+          onClick={() => setIsSignUp(!isSignUp)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#0056b3",
+            cursor: "pointer",
+            textDecoration: "underline",
+          }}
+        >
+          {isSignUp ? "Already have an account? Login" : "Need an account? Sign up"}
+        </button>
       </div>
     </div>
   );
