@@ -1,93 +1,125 @@
-import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState, useEffect } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
+
+interface DosageForm {
+  id: number;
+  name: string;
+}
 
 interface DoseSelectorProps {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (dose: string) => void;
 }
 
 const commonDoses = [
-  "1+0+0 (7 days)",
-  "1+0+1 (7 days)",
-  "1+1+1 (7 days)",
-  "0+0+1 (7 days)",
-  "1+0+0 (14 days)",
-  "1+0+1 (14 days)",
-  "1+1+1 (14 days)",
-  "2+0+0 (7 days)",
-  "0+1+0 (7 days)",
-  "1+0+0 (30 days)",
-  "1+0+1 (30 days)",
-  "1+1+1 (30 days)",
-  "2+2+2 (7 days)",
-  "1/2+0+1/2 (7 days)",
-  "As needed",
-  "Before meals",
-  "After meals",
-  "At bedtime",
-  "Morning only",
-  "Evening only",
+  "১+০+১ (খাবারের পরে)",
+  "১+১+১ (খাবারের পরে)",
+  "০+০+১ (খাবারের পরে)",
+  "১+০+০ (খাবারের পরে)",
+  "০+১+০ (খাবারের পরে)",
+  "১+১+০ (খাবারের পরে)",
+  "১+০+১ (খাবারের আগে)",
+  "১+১+১ (খাবারের আগে)",
+  "দিনে ২ বার (সকাল ও রাত)",
+  "দিনে ১ বার (রাতে)",
+  "দিনে ১ বার (সকালে)",
+  "প্রয়োজন অনুযায়ী",
 ];
 
 const DoseSelector = ({ value, onChange }: DoseSelectorProps) => {
-  const [customMode, setCustomMode] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [dosageForms, setDosageForms] = useState<DosageForm[]>([]);
+
+  useEffect(() => {
+    const fetchDosageForms = async () => {
+      const { data } = await supabase
+        .from("dosage_forms")
+        .select("id, name")
+        .order("name")
+        .limit(20);
+      
+      if (data) setDosageForms(data);
+    };
+    
+    fetchDosageForms();
+  }, []);
 
   return (
-    <div style={{ paddingLeft: "15px", marginTop: "5px" }}>
-      {customMode ? (
-        <div>
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="Enter custom dose..."
-            style={{
-              width: "100%",
-              padding: "8px",
-              fontSize: "13px",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              fontFamily: "'Kalpurush', 'SolaimanLipi', 'Arial', sans-serif",
-            }}
-            onBlur={() => {
-              if (!value) setCustomMode(false);
-            }}
-          />
-        </div>
-      ) : (
-        <Select value={value} onValueChange={(val) => {
-          if (val === "__custom__") {
-            setCustomMode(true);
-            onChange("");
-          } else {
-            onChange(val);
-          }
-        }}>
-          <SelectTrigger 
-            className="w-full h-auto py-2"
-            style={{
-              fontSize: "13px",
-              fontWeight: value ? 600 : 400,
-              color: value ? "#000" : "#999",
-              fontStyle: value ? "normal" : "italic",
-              border: "1px solid #ddd",
-            }}
-          >
-            <SelectValue placeholder="→ ডোজ: Select dose..." />
-          </SelectTrigger>
-          <SelectContent className="bg-background max-h-[300px]">
-            {commonDoses.map((dose, idx) => (
-              <SelectItem key={idx} value={dose} className="cursor-pointer">
-                {dose}
-              </SelectItem>
-            ))}
-            <SelectItem value="__custom__" className="font-semibold text-primary cursor-pointer">
-              ✏️ Custom dose...
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      )}
-    </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between font-normal text-left h-auto py-2 px-3"
+          style={{ 
+            fontSize: "14px",
+            fontWeight: value ? 600 : 400,
+            fontStyle: value ? "normal" : "italic",
+            color: value ? "#000" : "#999",
+            paddingLeft: "15px"
+          }}
+        >
+          {value || "→ ডোজ: Select dose..."}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[350px] p-0 bg-background z-50" align="start">
+        <Command>
+          <CommandInput placeholder="Search dose..." />
+          <CommandList>
+            <CommandEmpty>No dose found</CommandEmpty>
+            <CommandGroup heading="Common Doses">
+              {commonDoses.map((dose) => (
+                <CommandItem
+                  key={dose}
+                  value={dose}
+                  onSelect={() => {
+                    onChange(`→ ডোজ: ${dose}`);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value.includes(dose) ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {dose}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+            {dosageForms.length > 0 && (
+              <CommandGroup heading="Dosage Forms">
+                {dosageForms.map((form) => (
+                  <CommandItem
+                    key={form.id}
+                    value={form.name}
+                    onSelect={() => {
+                      onChange(`→ ${form.name}`);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value.includes(form.name) ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {form.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 };
 
