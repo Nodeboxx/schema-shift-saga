@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import MedicineAutocomplete from "./MedicineAutocomplete";
+import DoseSelector from "./DoseSelector";
 
 interface Medicine {
   id: string;
@@ -132,41 +134,33 @@ const RightColumn = ({ width }: RightColumnProps) => {
               />
             ) : (
               <>
-                <div
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => updateMedicine(med.id, "name", e.currentTarget.innerHTML)}
-                  dangerouslySetInnerHTML={{ __html: med.name || "Medicine Name (e.g., Ivermectin 6mg)" }}
-                  style={{
-                    fontSize: "15px",
-                    color: med.name ? "#000" : "#999",
-                    fontWeight: 700,
-                    fontStyle: med.name ? "normal" : "italic",
-                  }}
-                />
+                <div style={{ marginBottom: "8px" }}>
+                  <MedicineAutocomplete
+                    value={med.name || ""}
+                    onSelect={(medicine) => {
+                      updateMedicine(med.id, "name", medicine.brand_name);
+                      if (medicine.strength) {
+                        updateMedicine(med.id, "details", `${medicine.generic_name || ""} - ${medicine.strength}`);
+                      }
+                    }}
+                  />
+                </div>
                 <div
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={(e) => updateMedicine(med.id, "details", e.currentTarget.innerHTML)}
-                  dangerouslySetInnerHTML={{ __html: med.details || "Brand, Group..." }}
+                  dangerouslySetInnerHTML={{ __html: med.details || "Brand, Generic, Strength..." }}
                   style={{
                     fontSize: "12px",
                     color: med.details ? "#555" : "#999",
                     paddingLeft: "15px",
                     fontStyle: med.details ? "normal" : "italic",
+                    marginBottom: "8px",
                   }}
                 />
-                <div
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => updateMedicine(med.id, "dose", e.currentTarget.innerHTML)}
-                  dangerouslySetInnerHTML={{ __html: med.dose || "Dose (e.g., → ডোজ: ...)" }}
-                  style={{
-                    paddingLeft: "15px",
-                    fontWeight: 600,
-                    color: med.dose ? "#000" : "#999",
-                    fontStyle: med.dose ? "normal" : "italic",
-                  }}
+                <DoseSelector
+                  value={med.dose || ""}
+                  onChange={(dose) => updateMedicine(med.id, "dose", dose)}
                 />
               </>
             )}
