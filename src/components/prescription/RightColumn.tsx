@@ -140,7 +140,8 @@ const RightColumn = ({ width }: RightColumnProps) => {
                     onSelect={(medicine) => {
                       updateMedicine(med.id, "name", medicine.brand_name);
                       if (medicine.strength) {
-                        updateMedicine(med.id, "details", `${medicine.generic_name || ""} - ${medicine.strength}`);
+                        const genericName = medicine.generics?.name || "";
+                        updateMedicine(med.id, "details", `${genericName} - ${medicine.strength}`);
                       }
                     }}
                   />
