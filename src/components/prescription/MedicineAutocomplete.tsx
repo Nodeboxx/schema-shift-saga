@@ -10,7 +10,9 @@ interface Medicine {
   id: number;
   brand_name: string;
   strength: string;
-  generic_name?: string;
+  generics?: {
+    name: string;
+  } | null;
 }
 
 interface MedicineAutocompleteProps {
@@ -26,7 +28,7 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
 
   useEffect(() => {
     const searchMedicines = async () => {
-      if (search.length < 1) {
+      if (search.length < 2) {
         setMedicines([]);
         return;
       }
@@ -35,8 +37,15 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
       try {
         const { data, error } = await supabase
           .from("medicines")
-          .select("id, brand_name, strength")
-          .ilike("brand_name", `${search}%`)
+          .select(`
+            id,
+            brand_name,
+            strength,
+            generics (
+              name
+            )
+          `)
+          .ilike("brand_name", `%${search}%`)
           .order("brand_name")
           .limit(50);
 
@@ -82,7 +91,7 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
           />
           <CommandList>
             <CommandEmpty>
-              {loading ? "Searching..." : search.length < 1 ? "Type to search" : "No medicine found"}
+              {loading ? "Searching..." : search.length < 2 ? "Type at least 2 characters" : "No medicine found"}
             </CommandEmpty>
             <CommandGroup>
               {medicines.map((medicine) => (
@@ -100,9 +109,10 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
                       value === medicine.brand_name ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  <div>
+                  <div className="flex flex-col">
                     <div className="font-semibold">{medicine.brand_name}</div>
                     {medicine.strength && <div className="text-xs text-muted-foreground">{medicine.strength}</div>}
+                    {medicine.generics?.name && <div className="text-xs text-primary">{medicine.generics.name}</div>}
                   </div>
                 </CommandItem>
               ))}

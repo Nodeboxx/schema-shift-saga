@@ -1,65 +1,72 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { Progress } from "@/components/ui/progress";
+import {
+  importDosageForms,
+  importDrugClasses,
+  importManufacturers,
+  importGenerics,
+  importMedicines
+} from "@/utils/importMedicineData";
 
 const DataImport = () => {
   const [importing, setImporting] = useState(false);
-  const [progress, setProgress] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [statusMessage, setStatusMessage] = useState("");
   const { toast } = useToast();
-
-  const importData = async (dataType: string, csvData: string) => {
-    const { data, error } = await supabase.functions.invoke('import-medicine-data', {
-      body: { dataType, csvData }
-    });
-
-    if (error) throw error;
-    return data;
-  };
 
   const handleImport = async () => {
     setImporting(true);
+    setProgress(0);
+    
     try {
       // Import dosage forms
-      setProgress("Importing dosage forms...");
-      const dosageResponse = await fetch('/user-uploads://dosage_form-2.csv');
-      const dosageData = await dosageResponse.text();
-      await importData('dosage_forms', dosageData);
+      setStatusMessage("Importing dosage forms...");
+      setProgress(10);
+      const dosageFormCSV = await fetch('/dosage_form-2.csv').then(r => r.text());
+      const dosageCount = await importDosageForms(dosageFormCSV);
+      console.log(`Imported ${dosageCount} dosage forms`);
 
       // Import drug classes
-      setProgress("Importing drug classes...");
-      const drugClassResponse = await fetch('/user-uploads://drug_class-2.csv');
-      const drugClassData = await drugClassResponse.text();
-      await importData('drug_classes', drugClassData);
+      setStatusMessage("Importing drug classes...");
+      setProgress(25);
+      const drugClassCSV = await fetch('/drug_class-2.csv').then(r => r.text());
+      const drugClassCount = await importDrugClasses(drugClassCSV);
+      console.log(`Imported ${drugClassCount} drug classes`);
 
       // Import manufacturers
-      setProgress("Importing manufacturers...");
-      const manufacturerResponse = await fetch('/user-uploads://manufacturer-2.csv');
-      const manufacturerData = await manufacturerResponse.text();
-      await importData('manufacturers', manufacturerData);
+      setStatusMessage("Importing manufacturers...");
+      setProgress(40);
+      const manufacturerCSV = await fetch('/manufacturer-2.csv').then(r => r.text());
+      const manufacturerCount = await importManufacturers(manufacturerCSV);
+      console.log(`Imported ${manufacturerCount} manufacturers`);
 
       // Import generics
-      setProgress("Importing generics...");
-      const genericResponse = await fetch('/user-uploads://generic-2.csv');
-      const genericData = await genericResponse.text();
-      await importData('generics', genericData);
+      setStatusMessage("Importing generics...");
+      setProgress(60);
+      const genericCSV = await fetch('/generic-2.csv').then(r => r.text());
+      const genericCount = await importGenerics(genericCSV);
+      console.log(`Imported ${genericCount} generics`);
 
       // Import medicines
-      setProgress("Importing medicines...");
-      const medicineResponse = await fetch('/user-uploads://medicine-2.csv');
-      const medicineData = await medicineResponse.text();
-      await importData('medicines', medicineData);
+      setStatusMessage("Importing medicines...");
+      setProgress(75);
+      const medicineCSV = await fetch('/medicine-2.csv').then(r => r.text());
+      const medicineCount = await importMedicines(medicineCSV);
+      console.log(`Imported ${medicineCount} medicines`);
 
-      setProgress("Import completed!");
+      setProgress(100);
+      setStatusMessage("Import completed!");
       toast({
         title: "Success",
-        description: "All data imported successfully"
+        description: `Imported all data: ${dosageCount} dosage forms, ${drugClassCount} drug classes, ${manufacturerCount} manufacturers, ${genericCount} generics, ${medicineCount} medicines`
       });
     } catch (error) {
       console.error("Import error:", error);
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Import failed",
         variant: "destructive"
       });
     } finally {
@@ -68,18 +75,39 @@ const DataImport = () => {
   };
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto p-8 max-w-2xl">
       <h1 className="text-2xl font-bold mb-6">Import Medicine Data</h1>
-      <div className="space-y-4">
-        <p>Click the button below to import all medicine data from CSV files.</p>
+      <div className="space-y-6">
+        <p className="text-muted-foreground">
+          Click the button below to import all medicine data from CSV files. This will import:
+        </p>
+        <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+          <li>Dosage Forms</li>
+          <li>Drug Classes</li>
+          <li>Manufacturers</li>
+          <li>Generic Medicines</li>
+          <li>Brand Medicines</li>
+        </ul>
+        
         <Button 
           onClick={handleImport} 
           disabled={importing}
           size="lg"
+          className="w-full"
         >
           {importing ? "Importing..." : "Start Import"}
         </Button>
-        {progress && <p className="text-sm text-muted-foreground">{progress}</p>}
+        
+        {importing && (
+          <div className="space-y-2">
+            <Progress value={progress} />
+            <p className="text-sm text-center text-muted-foreground">{statusMessage}</p>
+          </div>
+        )}
+        
+        {progress === 100 && !importing && (
+          <p className="text-sm text-center text-green-600 font-medium">{statusMessage}</p>
+        )}
       </div>
     </div>
   );
