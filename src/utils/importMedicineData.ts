@@ -102,15 +102,22 @@ export async function importManufacturers(csvText: string) {
 
 export async function importGenerics(csvText: string) {
   const rows = parseCSV(csvText);
+  
+  // Get drug classes to map names to IDs
+  const { data: drugClasses } = await supabase.from('drug_classes').select('id, name');
+  const drugClassMap = new Map(drugClasses?.map(d => [d.name.toLowerCase(), d.id]) || []);
+  
   const generics = rows
     .map(row => {
       const id = parseInt(row['generic id']);
-      const drugClassId = row['drug class'] ? parseInt(row['drug class']) : null;
+      const drugClassName = row['drug class']?.toLowerCase() || '';
+      const drugClassId = drugClassName ? drugClassMap.get(drugClassName) : null;
+      
       return {
         id,
         name: row['generic name'],
         slug: row['slug'],
-        drug_class_id: isNaN(drugClassId as number) ? null : drugClassId,
+        drug_class_id: drugClassId || null,
         indication: row['indication'] || null
       };
     })
