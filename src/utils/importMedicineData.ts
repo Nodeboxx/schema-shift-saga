@@ -102,16 +102,19 @@ export async function importManufacturers(csvText: string) {
 
 export async function importGenerics(csvText: string) {
   const rows = parseCSV(csvText);
-  const generics = rows.map(row => {
-    const drugClassId = row['drug class'] ? parseInt(row['drug class']) : null;
-    return {
-      id: parseInt(row['generic id']),
-      name: row['generic name'],
-      slug: row['slug'],
-      drug_class_id: isNaN(drugClassId as number) ? null : drugClassId,
-      indication: row['indication'] || null
-    };
-  });
+  const generics = rows
+    .map(row => {
+      const id = parseInt(row['generic id']);
+      const drugClassId = row['drug class'] ? parseInt(row['drug class']) : null;
+      return {
+        id,
+        name: row['generic name'],
+        slug: row['slug'],
+        drug_class_id: isNaN(drugClassId as number) ? null : drugClassId,
+        indication: row['indication'] || null
+      };
+    })
+    .filter(item => !isNaN(item.id) && item.name && item.slug); // Filter out invalid rows
   
   for (let i = 0; i < generics.length; i += 100) {
     const batch = generics.slice(i, i + 100);
@@ -136,22 +139,24 @@ export async function importMedicines(csvText: string) {
   const dosageMap = new Map(dosageForms?.map(d => [d.name.toLowerCase(), d.id]) || []);
   const manufacturerMap = new Map(manufacturers?.map(m => [m.name.toLowerCase(), m.id]) || []);
   
-  const medicines = rows.map(row => {
-    const genericName = row['generic']?.toLowerCase() || '';
-    const dosageFormName = row['dosage form']?.toLowerCase() || '';
-    const manufacturerName = row['manufacturer']?.toLowerCase() || '';
-    
-    return {
-      id: parseInt(row['brand id']),
-      brand_name: row['brand name'],
-      slug: row['slug'],
-      strength: row['strength'] || null,
-      package_info: row['package container'] || null,
-      generic_id: genericMap.get(genericName) || null,
-      dosage_form_id: dosageMap.get(dosageFormName) || null,
-      manufacturer_id: manufacturerMap.get(manufacturerName) || null
-    };
-  });
+  const medicines = rows
+    .map(row => {
+      const genericName = row['generic']?.toLowerCase() || '';
+      const dosageFormName = row['dosage form']?.toLowerCase() || '';
+      const manufacturerName = row['manufacturer']?.toLowerCase() || '';
+      
+      return {
+        id: parseInt(row['brand id']),
+        brand_name: row['brand name'],
+        slug: row['slug'],
+        strength: row['strength'] || null,
+        package_info: row['package container'] || null,
+        generic_id: genericMap.get(genericName) || null,
+        dosage_form_id: dosageMap.get(dosageFormName) || null,
+        manufacturer_id: manufacturerMap.get(manufacturerName) || null
+      };
+    })
+    .filter(item => !isNaN(item.id) && item.brand_name && item.slug); // Filter out invalid rows
   
   for (let i = 0; i < medicines.length; i += 100) {
     const batch = medicines.slice(i, i + 100);
