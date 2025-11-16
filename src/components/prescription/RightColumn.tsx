@@ -138,11 +138,17 @@ const RightColumn = ({ width }: RightColumnProps) => {
                   <MedicineAutocomplete
                     value={med.name || ""}
                     onSelect={(medicine) => {
+                      const genericName = medicine.generics?.name || "";
+                      const strength = medicine.strength || "";
+                      
+                      // Update brand name
                       updateMedicine(med.id, "name", medicine.brand_name);
-                      if (medicine.strength) {
-                        const genericName = medicine.generics?.name || "";
-                        updateMedicine(med.id, "details", `${genericName} - ${medicine.strength}`);
-                      }
+                      
+                      // Always show generic name, add strength if available
+                      const details = strength 
+                        ? `${genericName} - ${strength}` 
+                        : genericName;
+                      updateMedicine(med.id, "details", details);
                     }}
                   />
                 </div>
