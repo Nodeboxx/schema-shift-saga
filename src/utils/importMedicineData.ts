@@ -136,6 +136,7 @@ export async function importGenerics(csvText: string) {
 
 export async function importMedicines(csvText: string) {
   const rows = parseCSV(csvText);
+  console.log(`Parsed ${rows.length} medicine rows from CSV`);
   
   // First, get all generic names, dosage forms, and manufacturers to create ID maps
   const { data: generics } = await supabase.from('generics').select('id, name');
@@ -146,11 +147,24 @@ export async function importMedicines(csvText: string) {
   const dosageMap = new Map(dosageForms?.map(d => [d.name.toLowerCase(), d.id]) || []);
   const manufacturerMap = new Map(manufacturers?.map(m => [m.name.toLowerCase(), m.id]) || []);
   
+  console.log(`Loaded ${genericMap.size} generics, ${dosageMap.size} dosage forms, ${manufacturerMap.size} manufacturers`);
+  
+  let skippedCount = 0;
   const medicines = rows
     .map(row => {
-      const genericName = row['generic']?.toLowerCase() || '';
-      const dosageFormName = row['dosage form']?.toLowerCase() || '';
-      const manufacturerName = row['manufacturer']?.toLowerCase() || '';
+      const genericName = row['generic']?.toLowerCase().trim() || '';
+      const dosageFormName = row['dosage form']?.toLowerCase().trim() || '';
+      const manufacturerName = row['manufacturer']?.toLowerCase().trim() || '';
+      
+      const genericId = genericMap.get(genericName);
+      
+      // Log if generic not found
+      if (!genericId && genericName) {
+        if (skippedCount < 5) { // Only log first 5 to avoid spam
+          console.warn(`Generic not found for medicine "${row['brand name']}": "${genericName}"`);
+        }
+        skippedCount++;
+      }
       
       return {
         id: parseInt(row['brand id']),
@@ -158,17 +172,24 @@ export async function importMedicines(csvText: string) {
         slug: row['slug'],
         strength: row['strength'] || null,
         package_info: row['package container'] || null,
-        generic_id: genericMap.get(genericName) || null,
+        generic_id: genericId || null,
         dosage_form_id: dosageMap.get(dosageFormName) || null,
         manufacturer_id: manufacturerMap.get(manufacturerName) || null
       };
     })
-    .filter(item => 
-      !isNaN(item.id) && 
-      item.brand_name && 
-      item.slug && 
-      item.generic_id !== null // CRITICAL: Only import medicines with a valid generic_id
-    );
+    .filter(item => {
+      const isValid = !isNaN(item.id) && 
+        item.brand_name && 
+        item.slug && 
+        item.generic_id !== null; // CRITICAL: Only import medicines with a valid generic_id
+      return isValid;
+    });
+  
+  console.log(`Filtered to ${medicines.length} valid medicines (skipped ${skippedCount} without valid generic)`);
+  
+  if (medicines.length === 0) {
+    throw new Error(`No valid medicines to import. All ${rows.length} medicines were skipped because they lack valid generic names in the database.`);
+  }
   
   for (let i = 0; i < medicines.length; i += 100) {
     const batch = medicines.slice(i, i + 100);
