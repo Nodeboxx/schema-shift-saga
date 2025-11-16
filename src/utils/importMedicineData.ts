@@ -195,11 +195,15 @@ export async function importMedicines(csvText: string) {
     const batch = medicines.slice(i, i + 100);
     const { error } = await supabase
       .from('medicines')
-      .upsert(batch, { onConflict: 'id' });
+      .upsert(batch, { 
+        onConflict: 'slug',  // Use slug as the conflict resolution key
+        ignoreDuplicates: false  // Update existing records instead of failing
+      });
     if (error) {
       console.error(`Error at batch ${i}:`, error);
       throw error;
     }
+    console.log(`Imported batch ${i / 100 + 1}: ${batch.length} medicines`);
   }
   
   return medicines.length;
