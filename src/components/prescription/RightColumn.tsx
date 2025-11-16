@@ -53,6 +53,12 @@ const RightColumn = ({ width }: RightColumnProps) => {
     );
   };
 
+  const updateMedicineMultiple = (id: string, updates: Partial<Medicine>) => {
+    setMedicines(
+      medicines.map((m) => (m.id === id ? { ...m, ...updates } : m))
+    );
+  };
+
   return (
     <div style={{
       flexBasis: `${width}%`,
@@ -141,14 +147,16 @@ const RightColumn = ({ width }: RightColumnProps) => {
                       const genericName = medicine.generics?.name || "";
                       const strength = medicine.strength || "";
                       
-                      // Update brand name
-                      updateMedicine(med.id, "name", medicine.brand_name);
-                      
                       // Always show generic name, add strength if available
                       const details = strength 
                         ? `${genericName} - ${strength}` 
                         : genericName;
-                      updateMedicine(med.id, "details", details);
+                      
+                      // Update both brand name and details in a single state update
+                      updateMedicineMultiple(med.id, {
+                        name: medicine.brand_name,
+                        details: details
+                      });
                     }}
                   />
                 </div>
