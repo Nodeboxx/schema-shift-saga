@@ -163,7 +163,12 @@ export async function importMedicines(csvText: string) {
         manufacturer_id: manufacturerMap.get(manufacturerName) || null
       };
     })
-    .filter(item => !isNaN(item.id) && item.brand_name && item.slug); // Filter out invalid rows
+    .filter(item => 
+      !isNaN(item.id) && 
+      item.brand_name && 
+      item.slug && 
+      item.generic_id !== null // CRITICAL: Only import medicines with a valid generic_id
+    );
   
   for (let i = 0; i < medicines.length; i += 100) {
     const batch = medicines.slice(i, i + 100);
