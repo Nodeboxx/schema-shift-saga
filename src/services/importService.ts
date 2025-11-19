@@ -152,30 +152,25 @@ export class ImportService {
       const manufacturerLookup = new Map(manufacturers?.map(m => [m.slug, m.id]));
       const genericLookup = new Map(generics?.map(g => [g.slug, g.id]));
 
-      // Import medicines
+      // Prepare medicines in batches
       let medicinesImported = 0;
       let medicinesFailed = 0;
       
-      for (const row of rows) {
-        const brandName = row['Brand Name'];
-        const strength = row['Quantity'] || '';
-        const manufacturer = row['Company Name'];
-        const generic = row['Generic Name'];
-        const dosageFormName = row['image'] ? row['image'].split('/').pop()?.replace('.png', '').replace(/-/g, ' ') : '';
-        
-        if (!brandName || !generic) {
-          medicinesFailed++;
-          continue;
-        }
+      const medicinesToImport = rows
+        .filter(row => row['Brand Name'] && row['Generic Name'])
+        .map(row => {
+          const brandName = row['Brand Name'];
+          const strength = row['Quantity'] || '';
+          const manufacturer = row['Company Name'];
+          const generic = row['Generic Name'];
+          const dosageFormName = row['image'] ? row['image'].split('/').pop()?.replace('.png', '').replace(/-/g, ' ') : '';
 
-        const dosageFormSlug = this.createSlug(dosageFormName || '');
-        const manufacturerSlug = this.createSlug(manufacturer || '');
-        const genericSlug = this.createSlug(generic);
-        const medicineSlug = this.createSlug(brandName);
+          const dosageFormSlug = this.createSlug(dosageFormName || '');
+          const manufacturerSlug = this.createSlug(manufacturer || '');
+          const genericSlug = this.createSlug(generic);
+          const medicineSlug = this.createSlug(brandName);
 
-        const { error } = await supabase
-          .from('medicines')
-          .upsert({
+          return {
             brand_name: brandName,
             strength,
             slug: medicineSlug,
@@ -183,14 +178,30 @@ export class ImportService {
             manufacturer_id: manufacturerLookup.get(manufacturerSlug),
             dosage_form_id: dosageFormLookup.get(dosageFormSlug),
             icon_url: row['image'] || null
-          }, { onConflict: 'slug' });
+          };
+        });
+
+      // Import in large batches of 1000
+      for (let i = 0; i < medicinesToImport.length; i += 1000) {
+        const batch = medicinesToImport.slice(i, i + 1000);
+        const { error, count } = await supabase
+          .from('medicines')
+          .upsert(batch, { onConflict: 'slug', count: 'exact' });
 
         if (error) {
-          medicinesFailed++;
+          errors.push({
+            row: i,
+            field: 'batch',
+            value: `batch ${i / 1000 + 1}`,
+            reason: error.message
+          });
+          medicinesFailed += batch.length;
         } else {
-          medicinesImported++;
+          medicinesImported += count || batch.length;
         }
       }
+
+      medicinesFailed = medicinesToImport.length - medicinesImported;
 
       const duration = Date.now() - startTime;
 
