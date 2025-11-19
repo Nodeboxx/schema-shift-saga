@@ -103,3 +103,27 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Print-specific styles */
+@media print {
+  /* Hide voice input buttons */
+  button[class*="VoiceInputButton"],
+  button:has(svg[class*="lucide-mic"]) {
+    display: none !important;
+  }
+  
+  /* Remove page margins */
+  @page {
+    margin: 0;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Hide any interactive elements in print */
+  .print\\:hidden {
+    display: none !important;
+  }
+}
