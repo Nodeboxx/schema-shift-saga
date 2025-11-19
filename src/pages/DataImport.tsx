@@ -45,7 +45,15 @@ const DataImport = () => {
         drugClasses: { success: true, message: 'Skipped', imported: 0, updated: 0, skipped: 0, failed: 0, errors: [] },
         manufacturers: { success: true, message: 'Included in Excel', imported: 0, updated: 0, skipped: 0, failed: 0, errors: [] },
         generics: { success: true, message: 'Included in Excel', imported: 0, updated: 0, skipped: 0, failed: 0, errors: [] },
-        medicines: { success: true, message: 'Included in Excel', imported: 0, updated: 0, skipped: 0, failed: 0, errors: [] },
+        medicines: { 
+          success: result.success, 
+          message: result.message, 
+          imported: result.imported, 
+          updated: result.updated, 
+          skipped: result.skipped, 
+          failed: result.failed, 
+          errors: result.errors 
+        },
         totalDuration
       };
 
