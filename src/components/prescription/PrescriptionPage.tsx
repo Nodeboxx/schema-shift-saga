@@ -85,6 +85,17 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
     }
 
     try {
+      // Convert dd/mm/yyyy to yyyy-mm-dd for database
+      const convertDateForDB = (dateStr: string) => {
+        if (!dateStr) return null;
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+          const [day, month, year] = parts;
+          return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        }
+        return null;
+      };
+
       // Save or update prescription
       const prescriptionPayload = {
         user_id: userId,
@@ -92,7 +103,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         patient_age: patientInfo.patientAge,
         patient_sex: patientInfo.patientSex,
         patient_weight: patientInfo.patientWeight,
-        prescription_date: patientInfo.patientDate,
+        prescription_date: convertDateForDB(patientInfo.patientDate),
         cc_text: bodyData.ccText,
         dx_text: bodyData.dxText,
         adv_text: bodyData.advText,
