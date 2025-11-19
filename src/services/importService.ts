@@ -318,8 +318,11 @@ export class ImportService {
             console.log(`Sample medicine ${index + 1}:`, {
               brandName,
               generic,
+              genericNormalized,
               genericSlug,
-              genericId: medicine.generic_id,
+              genericIdFromSlug,
+              genericIdFromName: genericNameLookup.get(genericNormalized),
+              finalGenericId: medicine.generic_id,
               dosageFormSlug,
               dosageFormId: medicine.dosage_form_id,
               manufacturerSlug,
