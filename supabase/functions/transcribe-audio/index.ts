@@ -50,10 +50,6 @@ serve(async (req) => {
 
     console.log('Processing audio transcription with Gemini, language:', language)
 
-    // Process audio in chunks
-    const binaryAudio = processBase64Chunks(audio)
-    const base64Audio = btoa(String.fromCharCode(...binaryAudio))
-
     // Prepare prompt based on language
     const languagePrompt = language === 'bn-BD' 
       ? 'Transcribe this audio in Bengali language.' 
@@ -74,7 +70,7 @@ serve(async (req) => {
               {
                 inline_data: {
                   mime_type: 'audio/webm',
-                  data: base64Audio
+                  data: audio
                 }
               }
             ]
