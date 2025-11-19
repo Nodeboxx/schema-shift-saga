@@ -59,7 +59,7 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
         <SelectTrigger className="w-[140px] h-8 text-xs">
           <SelectValue placeholder="Font" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="z-[9999] bg-background">
           <SelectItem value="Arial">Arial</SelectItem>
           <SelectItem value="Times New Roman">Times New Roman</SelectItem>
           <SelectItem value="Georgia">Georgia</SelectItem>
@@ -73,7 +73,7 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
         <SelectTrigger className="w-[80px] h-8 text-xs">
           <SelectValue placeholder="Size" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="z-[9999] bg-background">
           <SelectItem value="10px">10px</SelectItem>
           <SelectItem value="12px">12px</SelectItem>
           <SelectItem value="13px">13px</SelectItem>
@@ -125,7 +125,7 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
             <Type className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-2">
+        <PopoverContent className="w-auto p-2 z-[9999] bg-background">
           <div className="grid grid-cols-6 gap-2">
             {["#000000", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#808080", "#800000", "#008000", "#000080", "#808000"].map((color) => (
               <button
@@ -145,7 +145,7 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
             <Highlighter className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-2">
+        <PopoverContent className="w-auto p-2 z-[9999] bg-background">
           <div className="grid grid-cols-6 gap-2">
             {["#FFFF00", "#FF6B6B", "#4ECDC4", "#95E1D3", "#F38181", "#FFA07A", "#FFD93D", "#6BCF7F", "#C7CEEA", "#FFDAB9", "#E0BBE4", "#FFFFFF"].map((color) => (
               <button

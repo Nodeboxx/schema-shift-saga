@@ -13,6 +13,7 @@ interface Medicine {
   strength?: string;
   manufacturer_name?: string;
   dosage_form_icon?: string;
+  dosage_form_name?: string;
 }
 
 interface RightColumnProps {
@@ -184,19 +185,54 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                           strength: medicine.strength || "",
                           manufacturer_name: medicine.manufacturers?.name,
                           dosage_form_icon: medicine.icon_url || medicine.dosage_forms?.icon_url || "",
+                          dosage_form_name: medicine.dosage_forms?.name || "",
                         });
                       }}
                     />
                   </div>
 
                   <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
-                    {med.dosage_form_icon && (
-                      <img
-                        src={med.dosage_form_icon}
-                        alt="Dosage form"
-                        style={{ width: "20px", height: "20px", marginTop: "2px" }}
-                        className="dosage-icon"
-                      />
+                    {(med.dosage_form_icon || med.dosage_form_name) && (
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: "28px" }}>
+                        {med.dosage_form_icon ? (
+                          <img
+                            src={med.dosage_form_icon}
+                            alt={med.dosage_form_name || "Dosage form"}
+                            style={{ width: "20px", height: "20px", marginTop: "2px" }}
+                            className="dosage-icon"
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              width: "20px",
+                              height: "20px",
+                              marginTop: "2px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              background: "#e0e0e0",
+                              borderRadius: "2px",
+                              fontSize: "8px",
+                              fontWeight: 700,
+                            }}
+                          >
+                            {med.dosage_form_name?.substring(0, 3).toUpperCase() || "MED"}
+                          </div>
+                        )}
+                        {med.dosage_form_name && (
+                          <span
+                            style={{
+                              marginTop: "4px",
+                              fontSize: "10px",
+                              fontWeight: 700,
+                              letterSpacing: "0.08em",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {med.dosage_form_name}
+                          </span>
+                        )}
+                      </div>
                     )}
                     <div style={{ flex: 1 }}>
                       <div
