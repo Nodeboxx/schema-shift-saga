@@ -69,7 +69,14 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           anemia: prescriptionData.oe_anemia || "",
           jaundice: prescriptionData.oe_jaundice || "",
         },
-        medicines: prescriptionData.prescription_items || [],
+        medicines: (prescriptionData.prescription_items || []).map((item: any) => ({
+          id: item.id,
+          type: item.item_type, // Map item_type from DB to type for UI
+          name: item.name,
+          details: item.details,
+          dose: item.dose,
+          categoryContent: item.category_content,
+        })),
       });
     }
   }, [prescriptionData]);
@@ -152,11 +159,11 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         // Insert new items
         const items = bodyData.medicines.map((med: any, index: number) => ({
           prescription_id: prescriptionId,
-          item_type: med.type,
-          name: med.name,
-          details: med.details,
-          dose: med.dose,
-          category_content: med.categoryContent,
+          item_type: med.type || med.item_type || "medicine", // Handle both field names with fallback
+          name: med.name || "",
+          details: med.details || "",
+          dose: med.dose || "",
+          category_content: med.categoryContent || "",
           sort_order: index,
         }));
 
