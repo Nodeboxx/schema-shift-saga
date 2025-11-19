@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { ImportResult, ImportError, ValidationResult } from "@/types/import";
+import * as XLSX from 'xlsx';
 
 interface CSVRow {
   [key: string]: string;
@@ -64,6 +65,155 @@ export class ImportService {
     }
 
     return { unique, duplicates };
+  }
+
+  private async parseExcelFile(file: File | ArrayBuffer): Promise<any[]> {
+    const data = file instanceof File ? await file.arrayBuffer() : file;
+    const workbook = XLSX.read(data, { type: 'array' });
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    return XLSX.utils.sheet_to_json(firstSheet);
+  }
+
+  private createSlug(name: string): string {
+    return name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  async importFromExcel(file: File): Promise<ImportResult> {
+    const startTime = Date.now();
+    const errors: ImportError[] = [];
+    
+    try {
+      const rows = await this.parseExcelFile(file);
+      
+      // Extract unique dosage forms with icons
+      const dosageFormsMap = new Map<string, { name: string; iconUrl: string }>();
+      const manufacturersMap = new Map<string, string>();
+      const genericsMap = new Map<string, string>();
+      
+      rows.forEach((row: any) => {
+        const dosageForm = row['image'] ? row['image'].split('/').pop()?.replace('.png', '').replace(/-/g, ' ') : '';
+        const manufacturer = row['Company Name'];
+        const generic = row['Generic Name'];
+        
+        if (dosageForm && !dosageFormsMap.has(dosageForm)) {
+          dosageFormsMap.set(dosageForm, {
+            name: dosageForm.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+            iconUrl: row['image'] || ''
+          });
+        }
+        if (manufacturer) manufacturersMap.set(manufacturer, manufacturer);
+        if (generic) genericsMap.set(generic, generic);
+      });
+
+      // Import dosage forms with icons
+      let dosageFormsImported = 0;
+      for (const [key, { name, iconUrl }] of dosageFormsMap) {
+        const slug = this.createSlug(name);
+        const { error } = await supabase
+          .from('dosage_forms')
+          .upsert({ name, slug, icon_url: iconUrl }, { onConflict: 'slug' });
+        
+        if (!error) dosageFormsImported++;
+      }
+
+      // Import manufacturers
+      let manufacturersImported = 0;
+      for (const name of manufacturersMap.values()) {
+        const slug = this.createSlug(name);
+        const { error } = await supabase
+          .from('manufacturers')
+          .upsert({ name, slug }, { onConflict: 'slug' });
+        
+        if (!error) manufacturersImported++;
+      }
+
+      // Import generics (without drug class for now)
+      let genericsImported = 0;
+      for (const name of genericsMap.values()) {
+        const slug = this.createSlug(name);
+        const { error } = await supabase
+          .from('generics')
+          .upsert({ name, slug }, { onConflict: 'slug' });
+        
+        if (!error) genericsImported++;
+      }
+
+      // Fetch IDs for medicines
+      const { data: dosageForms } = await supabase.from('dosage_forms').select('id, name, slug');
+      const { data: manufacturers } = await supabase.from('manufacturers').select('id, name, slug');
+      const { data: generics } = await supabase.from('generics').select('id, name, slug');
+
+      const dosageFormLookup = new Map(dosageForms?.map(d => [d.slug, d.id]));
+      const manufacturerLookup = new Map(manufacturers?.map(m => [m.slug, m.id]));
+      const genericLookup = new Map(generics?.map(g => [g.slug, g.id]));
+
+      // Import medicines
+      let medicinesImported = 0;
+      let medicinesFailed = 0;
+      
+      for (const row of rows) {
+        const brandName = row['Brand Name'];
+        const strength = row['Quantity'] || '';
+        const manufacturer = row['Company Name'];
+        const generic = row['Generic Name'];
+        const dosageFormName = row['image'] ? row['image'].split('/').pop()?.replace('.png', '').replace(/-/g, ' ') : '';
+        
+        if (!brandName || !generic) {
+          medicinesFailed++;
+          continue;
+        }
+
+        const dosageFormSlug = this.createSlug(dosageFormName || '');
+        const manufacturerSlug = this.createSlug(manufacturer || '');
+        const genericSlug = this.createSlug(generic);
+        const medicineSlug = this.createSlug(brandName);
+
+        const { error } = await supabase
+          .from('medicines')
+          .upsert({
+            brand_name: brandName,
+            strength,
+            slug: medicineSlug,
+            generic_id: genericLookup.get(genericSlug),
+            manufacturer_id: manufacturerLookup.get(manufacturerSlug),
+            dosage_form_id: dosageFormLookup.get(dosageFormSlug)
+          }, { onConflict: 'slug' });
+
+        if (error) {
+          medicinesFailed++;
+        } else {
+          medicinesImported++;
+        }
+      }
+
+      const duration = Date.now() - startTime;
+
+      return {
+        success: true,
+        message: `Excel import completed in ${(duration / 1000).toFixed(2)}s`,
+        imported: dosageFormsImported + manufacturersImported + genericsImported + medicinesImported,
+        updated: 0,
+        skipped: 0,
+        failed: medicinesFailed,
+        errors
+      };
+
+    } catch (error: any) {
+      return {
+        success: false,
+        message: `Excel import failed: ${error.message}`,
+        imported: 0,
+        updated: 0,
+        skipped: 0,
+        failed: 0,
+        errors: [{ row: 0, field: 'file', value: '', reason: error.message }]
+      };
+    }
   }
 
   async importDosageForms(csvText: string): Promise<ImportResult> {

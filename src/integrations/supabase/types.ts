@@ -17,18 +17,21 @@ export type Database = {
       dosage_forms: {
         Row: {
           created_at: string | null
+          icon_url: string | null
           id: number
           name: string
           slug: string
         }
         Insert: {
           created_at?: string | null
+          icon_url?: string | null
           id?: number
           name: string
           slug: string
         }
         Update: {
           created_at?: string | null
+          icon_url?: string | null
           id?: number
           name?: string
           slug?: string

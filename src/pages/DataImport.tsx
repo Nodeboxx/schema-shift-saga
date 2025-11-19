@@ -13,7 +13,61 @@ const DataImport = () => {
   const [progress, setProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState("");
   const [summary, setSummary] = useState<ImportSummary | null>(null);
+  const [excelFile, setExcelFile] = useState<File | null>(null);
   const { toast } = useToast();
+
+  const handleExcelImport = async () => {
+    if (!excelFile) {
+      toast({
+        title: "No file selected",
+        description: "Please select an Excel file to import",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setImporting(true);
+    setProgress(0);
+    setSummary(null);
+    const startTime = Date.now();
+
+    try {
+      setStatusMessage("Importing from Excel file...");
+      setProgress(50);
+      
+      const result = await importService.importFromExcel(excelFile);
+      
+      setProgress(100);
+      const totalDuration = Date.now() - startTime;
+
+      const importSummary: ImportSummary = {
+        dosageForms: result,
+        drugClasses: { success: true, message: 'Skipped', imported: 0, updated: 0, skipped: 0, failed: 0, errors: [] },
+        manufacturers: { success: true, message: 'Included in Excel', imported: 0, updated: 0, skipped: 0, failed: 0, errors: [] },
+        generics: { success: true, message: 'Included in Excel', imported: 0, updated: 0, skipped: 0, failed: 0, errors: [] },
+        medicines: { success: true, message: 'Included in Excel', imported: 0, updated: 0, skipped: 0, failed: 0, errors: [] },
+        totalDuration
+      };
+
+      setSummary(importSummary);
+      setStatusMessage("Excel import completed!");
+
+      toast({
+        title: result.success ? "Import successful" : "Import completed with errors",
+        description: result.message,
+        variant: result.success ? "default" : "destructive"
+      });
+    } catch (error: any) {
+      console.error('Import error:', error);
+      toast({
+        title: "Import failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setImporting(false);
+    }
+  };
 
   const handleImport = async () => {
     setImporting(true);
@@ -22,40 +76,30 @@ const DataImport = () => {
     const startTime = Date.now();
     
     try {
-      // Import dosage forms
       setStatusMessage("Importing dosage forms...");
       setProgress(10);
       const dosageFormCSV = await fetch('/dosage_form-2.csv').then(r => r.text());
       const dosageResult = await importService.importDosageForms(dosageFormCSV);
-      console.log('Dosage forms result:', dosageResult);
 
-      // Import drug classes
       setStatusMessage("Importing drug classes...");
       setProgress(25);
       const drugClassCSV = await fetch('/drug_class-2.csv').then(r => r.text());
       const drugClassResult = await importService.importDrugClasses(drugClassCSV);
-      console.log('Drug classes result:', drugClassResult);
 
-      // Import manufacturers
       setStatusMessage("Importing manufacturers...");
       setProgress(40);
       const manufacturerCSV = await fetch('/manufacturer-2.csv').then(r => r.text());
       const manufacturerResult = await importService.importManufacturers(manufacturerCSV);
-      console.log('Manufacturers result:', manufacturerResult);
 
-      // Import generics
       setStatusMessage("Importing generics...");
       setProgress(60);
       const genericCSV = await fetch('/generic-2.csv').then(r => r.text());
       const genericResult = await importService.importGenerics(genericCSV);
-      console.log('Generics result:', genericResult);
 
-      // Import medicines
       setStatusMessage("Importing medicines...");
       setProgress(75);
       const medicineCSV = await fetch('/medicine-2.csv').then(r => r.text());
       const medicineResult = await importService.importMedicines(medicineCSV);
-      console.log('Medicines result:', medicineResult);
 
       setProgress(100);
       const totalDuration = Date.now() - startTime;
@@ -78,75 +122,64 @@ const DataImport = () => {
       if (hasErrors) {
         toast({
           title: "Import completed with warnings",
-          description: "Some records were skipped. Check the summary below for details.",
-          variant: "destructive"
+          description: "Some records failed to import. Check the summary below.",
+          variant: "default"
         });
       } else {
         toast({
-          title: "Success",
-          description: `All data imported successfully in ${(totalDuration / 1000).toFixed(1)}s`
+          title: "Import successful",
+          description: `Successfully imported all data in ${(totalDuration / 1000).toFixed(1)}s`,
         });
       }
-    } catch (error) {
-      console.error("Import error:", error);
+    } catch (error: any) {
+      console.error('Import error:', error);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Import failed",
+        title: "Import failed",
+        description: error.message,
         variant: "destructive"
       });
-      setStatusMessage("Import failed");
+      setStatusMessage("Import failed!");
     } finally {
       setImporting(false);
     }
   };
 
-  const ResultCard = ({ title, result }: { title: string, result: ImportResult }) => (
+  const ResultCard = ({ title, result }: { title: string; result: ImportResult }) => (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium flex items-center gap-2">
+        <div className="flex items-start justify-between">
+          <CardTitle className="text-base">{title}</CardTitle>
           {result.success ? (
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
           ) : (
-            <XCircle className="h-4 w-4 text-red-600" />
+            <XCircle className="h-4 w-4 text-destructive shrink-0" />
           )}
-          {title}
-        </CardTitle>
+        </div>
         <CardDescription className="text-xs">{result.message}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-1 text-xs">
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Imported:</span>
-          <span className="font-medium text-green-600">{result.imported}</span>
+      <CardContent className="space-y-2 text-sm">
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div>Imported: <span className="font-semibold text-green-600">{result.imported}</span></div>
+          <div>Skipped: <span className="font-semibold text-yellow-600">{result.skipped}</span></div>
+          <div>Failed: <span className="font-semibold text-destructive">{result.failed}</span></div>
+          <div>Updated: <span className="font-semibold text-blue-600">{result.updated}</span></div>
         </div>
-        {result.skipped > 0 && (
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Skipped:</span>
-            <span className="font-medium text-yellow-600">{result.skipped}</span>
-          </div>
-        )}
-        {result.failed > 0 && (
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Failed:</span>
-            <span className="font-medium text-red-600">{result.failed}</span>
-          </div>
-        )}
-        {result.errors.length > 0 && result.errors.length <= 3 && (
-          <div className="mt-2 space-y-1">
-            {result.errors.map((error, idx) => (
-              <Alert key={idx} variant="destructive" className="py-2">
-                <AlertCircle className="h-3 w-3" />
-                <AlertDescription className="text-xs">
-                  Row {error.row}: {error.reason}
-                </AlertDescription>
-              </Alert>
-            ))}
-          </div>
-        )}
-        {result.errors.length > 3 && (
+        
+        {result.errors.length > 0 && (
           <Alert variant="destructive" className="py-2 mt-2">
             <AlertCircle className="h-3 w-3" />
             <AlertDescription className="text-xs">
-              {result.errors.length} errors occurred. Check console for details.
+              {result.errors.length <= 3 ? (
+                <ul className="list-disc list-inside space-y-1 mt-1">
+                  {result.errors.map((err, idx) => (
+                    <li key={idx}>
+                      Row {err.row}, {err.field}: {err.reason}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                `${result.errors.length} errors occurred. First few: ${result.errors.slice(0, 3).map(e => `Row ${e.row}`).join(', ')}`
+              )}
             </AlertDescription>
           </Alert>
         )}
@@ -160,9 +193,54 @@ const DataImport = () => {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Data Import</CardTitle>
+            <CardTitle>Excel Import (Recommended)</CardTitle>
             <CardDescription>
-              Import all medicine data from CSV files. This will import:
+              Import complete medicine database from Excel file including company names, generic names, brand names, strengths, and dosage form icons.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label htmlFor="excel-file" className="block text-sm font-medium mb-2">
+                Select Excel File (.xlsx)
+              </label>
+              <input
+                id="excel-file"
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={(e) => setExcelFile(e.target.files?.[0] || null)}
+                className="block w-full text-sm text-muted-foreground
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-primary file:text-primary-foreground
+                  hover:file:bg-primary/90
+                  cursor-pointer border border-input rounded-md p-2"
+              />
+            </div>
+
+            <Button
+              onClick={handleExcelImport}
+              disabled={importing || !excelFile}
+              size="lg"
+              className="w-full"
+            >
+              {importing ? "Importing..." : "Import from Excel"}
+            </Button>
+
+            {importing && (
+              <div className="space-y-2">
+                <Progress value={progress} />
+                <p className="text-sm text-center text-muted-foreground">{statusMessage}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>CSV Import (Legacy)</CardTitle>
+            <CardDescription>
+              Import all medicine data from separate CSV files.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -178,17 +256,11 @@ const DataImport = () => {
               onClick={handleImport} 
               disabled={importing}
               size="lg"
+              variant="outline"
               className="w-full"
             >
-              {importing ? "Importing..." : "Start Import"}
+              {importing ? "Importing..." : "Import from CSV Files"}
             </Button>
-            
-            {importing && (
-              <div className="space-y-2">
-                <Progress value={progress} />
-                <p className="text-sm text-center text-muted-foreground">{statusMessage}</p>
-              </div>
-            )}
           </CardContent>
         </Card>
 

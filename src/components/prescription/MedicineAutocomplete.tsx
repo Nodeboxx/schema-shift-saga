@@ -13,6 +13,13 @@ interface Medicine {
   generics?: {
     name: string;
   } | null;
+  manufacturers?: {
+    name: string;
+  } | null;
+  dosage_forms?: {
+    name: string;
+    icon_url: string;
+  } | null;
 }
 
 interface MedicineAutocompleteProps {
@@ -43,6 +50,13 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
             strength,
             generics (
               name
+            ),
+            manufacturers (
+              name
+            ),
+            dosage_forms (
+              name,
+              icon_url
             )
           `)
           .ilike("brand_name", `%${search}%`)
@@ -82,7 +96,7 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[400px] p-0 bg-background z-50" align="start">
+      <PopoverContent className="w-[500px] p-0 bg-background z-50" align="start">
         <Command>
           <CommandInput 
             placeholder="Type to search medicines..." 
@@ -102,17 +116,35 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
                     onSelect(medicine);
                     setOpen(false);
                   }}
+                  className="flex items-start gap-3 py-3"
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      "h-4 w-4 shrink-0 mt-1",
                       value === medicine.brand_name ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  <div className="flex flex-col">
-                    <div className="font-semibold">{medicine.brand_name}</div>
-                    {medicine.strength && <div className="text-xs text-muted-foreground">{medicine.strength}</div>}
-                    {medicine.generics?.name && <div className="text-xs text-primary">{medicine.generics.name}</div>}
+                  {medicine.dosage_forms?.icon_url && (
+                    <img 
+                      src={medicine.dosage_forms.icon_url} 
+                      alt={medicine.dosage_forms.name}
+                      className="w-6 h-6 shrink-0 object-contain"
+                    />
+                  )}
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <div className="font-bold text-sm">{medicine.brand_name}</div>
+                    {medicine.generics?.name && (
+                      <div className="text-xs text-primary font-medium">{medicine.generics.name}</div>
+                    )}
+                    <div className="flex gap-2 items-center text-xs text-muted-foreground flex-wrap">
+                      {medicine.strength && <span>{medicine.strength}</span>}
+                      {medicine.manufacturers?.name && (
+                        <>
+                          {medicine.strength && <span>•</span>}
+                          <span>{medicine.manufacturers.name}</span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </CommandItem>
               ))}
