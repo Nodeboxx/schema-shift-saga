@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import RichTextToolbar from "../RichTextToolbar";
 
 interface LeftColumnProps {
   width: number;
@@ -33,16 +32,6 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
     }
   };
 
-  const handleCommand = (ref: React.RefObject<HTMLDivElement>) => (command: string, value?: string) => {
-    if (ref.current) {
-      ref.current.focus();
-      if (value) {
-        document.execCommand(command, false, value);
-      } else {
-        document.execCommand(command, false);
-      }
-    }
-  };
 
   const handleContentChange = (field: string, value: string) => {
     if (setData) {
@@ -74,7 +63,6 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
       }}>
         Presenting Complains:
       </h4>
-      <RichTextToolbar onCommand={handleCommand(ccRef)} className="no-print mb-2" />
       <div
         ref={ccRef}
         contentEditable
@@ -203,7 +191,6 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
       }}>
         Diagnosis:
       </h4>
-      <RichTextToolbar onCommand={handleCommand(dxRef)} className="no-print mb-2" />
       <div
         ref={dxRef}
         contentEditable
@@ -234,7 +221,6 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
       }}>
         Advice:
       </h4>
-      <RichTextToolbar onCommand={handleCommand(advRef)} className="no-print mb-2" />
       <div
         ref={advRef}
         contentEditable
@@ -265,7 +251,6 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
       }}>
         Instructions:
       </h4>
-      <RichTextToolbar onCommand={handleCommand(instructionsRef)} className="no-print mb-2" />
       <div
         ref={instructionsRef}
         contentEditable
@@ -296,7 +281,6 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
       }}>
         Follow Up:
       </h4>
-      <RichTextToolbar onCommand={handleCommand(followUpRef)} className="no-print mb-2" />
       <div
         ref={followUpRef}
         contentEditable
