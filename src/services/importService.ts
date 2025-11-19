@@ -252,11 +252,27 @@ export class ImportService {
 
       console.log(`Fetched ${dosageForms?.length || 0} dosage forms, ${manufacturers?.length || 0} manufacturers, ${generics?.length || 0} generics`);
 
+      const normalizeGenericName = (name: string) =>
+        name
+          .toLowerCase()
+          .replace(/\u00A0/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
       const dosageFormLookup = new Map(dosageForms?.map(d => [d.slug, d.id]));
       const manufacturerLookup = new Map(manufacturers?.map(m => [m.slug, m.id]));
       const genericLookup = new Map(generics?.map(g => [g.slug, g.id]));
+
+      const genericNameLookup = new Map<string, number>();
+      generics?.forEach(g => {
+        const key = normalizeGenericName(g.name);
+        if (!genericNameLookup.has(key)) {
+          genericNameLookup.set(key, g.id);
+        }
+      });
       
       console.log('Sample generics in lookup:', Array.from(genericLookup.entries()).slice(0, 5));
+      console.log('Sample generics by name:', Array.from(genericNameLookup.entries()).slice(0, 5));
 
       // Prepare medicines in batches
       let medicinesImported = 0;
@@ -280,14 +296,18 @@ export class ImportService {
           const dosageFormSlug = this.createSlug(dosageFormName || '');
           const manufacturerSlug = this.createSlug(manufacturer || '');
           const genericSlug = this.createSlug(generic);
+          const genericNormalized = normalizeGenericName(generic);
           // Make slug unique by combining brand name and strength
           const medicineSlug = this.createSlug(`${brandName}-${strength}`);
+
+          const genericIdFromSlug = genericLookup.get(genericSlug) || null;
+          const genericId = genericIdFromSlug || (genericNormalized ? genericNameLookup.get(genericNormalized) || null : null);
 
           const medicine = {
             brand_name: brandName,
             strength,
             slug: medicineSlug,
-            generic_id: genericLookup.get(genericSlug) || null,
+            generic_id: genericId,
             manufacturer_id: manufacturerLookup.get(manufacturerSlug) || null,
             dosage_form_id: dosageFormLookup.get(dosageFormSlug) || null,
             icon_url: imageUrl || null,
