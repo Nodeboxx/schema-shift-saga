@@ -8,7 +8,7 @@ interface PrescriptionBodyProps {
 }
 
 const PrescriptionBody = ({ data, setData }: PrescriptionBodyProps) => {
-  const [leftWidth, setLeftWidth] = useState(40);
+  const [leftWidth, setLeftWidth] = useState(30);
   const [isDragging, setIsDragging] = useState(false);
 
   const handleMouseDown = () => {

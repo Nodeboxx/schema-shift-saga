@@ -43,9 +43,9 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
     <div style={{
       flexBasis: `${width}%`,
       background: "#fafafa",
-      padding: "10px",
+      padding: "8px",
       borderRight: "1px solid #ccc",
-      fontSize: "13px",
+      fontSize: "11px",
       minWidth: "200px",
       position: "relative",
       display: "flex",
@@ -53,13 +53,13 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
       overflow: "visible",
     }}>
       <h4 style={{
-        fontSize: "14px",
+        fontSize: "12px",
         fontWeight: 700,
         color: "#0056b3",
         borderBottom: "1px solid #aaa",
         paddingBottom: "2px",
-        marginTop: "10px",
-        marginBottom: "5px",
+        marginTop: "8px",
+        marginBottom: "4px",
       }}>
         Presenting Complains:
       </h4>
@@ -70,44 +70,44 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         onBlur={(e) => handleContentChange("ccText", e.currentTarget.innerHTML)}
         dangerouslySetInnerHTML={{ __html: data?.ccText || "" }}
         style={{
-          fontSize: "13px",
-          lineHeight: "1.6",
+          fontSize: "11px",
+          lineHeight: "1.5",
           display: "block",
           overflow: "visible",
           height: "auto",
-          minHeight: "20px",
-          marginBottom: "15px",
-          padding: "4px",
+          minHeight: "18px",
+          marginBottom: "10px",
+          padding: "3px",
           border: "1px solid transparent",
         }}
       />
 
       <h4 style={{
-        fontSize: "14px",
+        fontSize: "12px",
         fontWeight: 700,
         color: "#0056b3",
         borderBottom: "1px solid #aaa",
         paddingBottom: "2px",
-        marginTop: "10px",
-        marginBottom: "5px",
+        marginTop: "8px",
+        marginBottom: "4px",
       }}>
         On Examination:
       </h4>
       <div style={{
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
-        gap: "2px 8px",
-        marginTop: "5px",
-        marginBottom: "15px",
+        gap: "2px 6px",
+        marginTop: "4px",
+        marginBottom: "10px",
       }}>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label style={{ fontSize: "10px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>BP (S/D)</label>
+          <label style={{ fontSize: "9px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>BP (S/D)</label>
           <span style={{ display: "flex", alignItems: "center" }}>
             <div
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleVitalEdit("bp_s", e.currentTarget.textContent || "")}
-              style={{ fontSize: "13px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "18px", height: "20px", overflow: "hidden", width: "40px" }}
+              style={{ fontSize: "11px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "16px", height: "18px", overflow: "hidden", width: "35px" }}
             >
               {vitals.bp_s}
             </div>
@@ -116,7 +116,7 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleVitalEdit("bp_d", e.currentTarget.textContent || "")}
-              style={{ fontSize: "13px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "18px", height: "20px", overflow: "hidden", width: "40px" }}
+              style={{ fontSize: "11px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "16px", height: "18px", overflow: "hidden", width: "35px" }}
             >
               {vitals.bp_d}
             </div>
@@ -124,56 +124,56 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
           </span>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label style={{ fontSize: "10px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Pulse</label>
+          <label style={{ fontSize: "9px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Pulse</label>
           <div
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => handleVitalEdit("pulse", e.currentTarget.textContent || "")}
-            style={{ fontSize: "13px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "18px", height: "20px", overflow: "hidden" }}
+            style={{ fontSize: "11px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "16px", height: "18px", overflow: "hidden" }}
           >
             {vitals.pulse}
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label style={{ fontSize: "10px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Temp</label>
+          <label style={{ fontSize: "9px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Temp</label>
           <div
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => handleVitalEdit("temp", e.currentTarget.textContent || "")}
-            style={{ fontSize: "13px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "18px", height: "20px", overflow: "hidden" }}
+            style={{ fontSize: "11px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "16px", height: "18px", overflow: "hidden" }}
           >
             {vitals.temp}
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label style={{ fontSize: "10px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>SpO2</label>
+          <label style={{ fontSize: "9px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>SpO2</label>
           <div
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => handleVitalEdit("spo2", e.currentTarget.textContent || "")}
-            style={{ fontSize: "13px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "18px", height: "20px", overflow: "hidden" }}
+            style={{ fontSize: "11px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "16px", height: "18px", overflow: "hidden" }}
           >
             {vitals.spo2}
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label style={{ fontSize: "10px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Anemia</label>
+          <label style={{ fontSize: "9px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Anemia</label>
           <div
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => handleVitalEdit("anemia", e.currentTarget.textContent || "")}
-            style={{ fontSize: "13px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "18px", height: "20px", overflow: "hidden" }}
+            style={{ fontSize: "11px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "16px", height: "18px", overflow: "hidden" }}
           >
             {vitals.anemia}
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <label style={{ fontSize: "10px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Jaundice</label>
+          <label style={{ fontSize: "9px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Jaundice</label>
           <div
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => handleVitalEdit("jaundice", e.currentTarget.textContent || "")}
-            style={{ fontSize: "13px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "18px", height: "20px", overflow: "hidden" }}
+            style={{ fontSize: "11px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "16px", height: "18px", overflow: "hidden" }}
           >
             {vitals.jaundice}
           </div>
@@ -181,13 +181,13 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
       </div>
 
       <h4 style={{
-        fontSize: "14px",
+        fontSize: "12px",
         fontWeight: 700,
         color: "#0056b3",
         borderBottom: "1px solid #aaa",
         paddingBottom: "2px",
-        marginTop: "10px",
-        marginBottom: "5px",
+        marginTop: "8px",
+        marginBottom: "4px",
       }}>
         Diagnosis:
       </h4>
@@ -198,26 +198,26 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         onBlur={(e) => handleContentChange("dxText", e.currentTarget.innerHTML)}
         dangerouslySetInnerHTML={{ __html: data?.dxText || "" }}
         style={{
-          fontSize: "13px",
-          lineHeight: "1.6",
+          fontSize: "11px",
+          lineHeight: "1.5",
           display: "block",
           overflow: "visible",
           height: "auto",
-          minHeight: "20px",
-          marginBottom: "15px",
-          padding: "4px",
+          minHeight: "18px",
+          marginBottom: "10px",
+          padding: "3px",
           border: "1px solid transparent",
         }}
       />
 
       <h4 style={{
-        fontSize: "14px",
+        fontSize: "12px",
         fontWeight: 700,
         color: "#0056b3",
         borderBottom: "1px solid #aaa",
         paddingBottom: "2px",
-        marginTop: "10px",
-        marginBottom: "5px",
+        marginTop: "8px",
+        marginBottom: "4px",
       }}>
         Advice:
       </h4>
@@ -228,26 +228,26 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         onBlur={(e) => handleContentChange("advText", e.currentTarget.innerHTML)}
         dangerouslySetInnerHTML={{ __html: data?.advText || "" }}
         style={{
-          fontSize: "13px",
-          lineHeight: "1.6",
+          fontSize: "11px",
+          lineHeight: "1.5",
           display: "block",
           overflow: "visible",
           height: "auto",
-          minHeight: "20px",
-          marginBottom: "15px",
-          padding: "4px",
+          minHeight: "18px",
+          marginBottom: "10px",
+          padding: "3px",
           border: "1px solid transparent",
         }}
       />
 
       <h4 style={{
-        fontSize: "14px",
+        fontSize: "12px",
         fontWeight: 700,
         color: "#0056b3",
         borderBottom: "1px solid #aaa",
         paddingBottom: "2px",
-        marginTop: "10px",
-        marginBottom: "5px",
+        marginTop: "8px",
+        marginBottom: "4px",
       }}>
         Instructions:
       </h4>
@@ -258,26 +258,26 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         onBlur={(e) => handleContentChange("instructionsText", e.currentTarget.innerHTML)}
         dangerouslySetInnerHTML={{ __html: data?.instructionsText || "" }}
         style={{
-          fontSize: "13px",
-          lineHeight: "1.6",
+          fontSize: "11px",
+          lineHeight: "1.5",
           display: "block",
           overflow: "visible",
           height: "auto",
-          minHeight: "20px",
-          marginBottom: "15px",
-          padding: "4px",
+          minHeight: "18px",
+          marginBottom: "10px",
+          padding: "3px",
           border: "1px solid transparent",
         }}
       />
 
       <h4 style={{
-        fontSize: "14px",
+        fontSize: "12px",
         fontWeight: 700,
         color: "#0056b3",
         borderBottom: "1px solid #aaa",
         paddingBottom: "2px",
-        marginTop: "10px",
-        marginBottom: "5px",
+        marginTop: "8px",
+        marginBottom: "4px",
       }}>
         Follow Up:
       </h4>
@@ -288,14 +288,14 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         onBlur={(e) => handleContentChange("followUpText", e.currentTarget.innerHTML)}
         dangerouslySetInnerHTML={{ __html: data?.followUpText || "" }}
         style={{
-          fontSize: "13px",
-          lineHeight: "1.6",
+          fontSize: "11px",
+          lineHeight: "1.5",
           display: "block",
           overflow: "visible",
           height: "auto",
-          minHeight: "20px",
-          marginBottom: "15px",
-          padding: "4px",
+          minHeight: "18px",
+          marginBottom: "10px",
+          padding: "3px",
           border: "1px solid transparent",
         }}
       />
