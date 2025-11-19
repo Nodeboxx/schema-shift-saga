@@ -10,6 +10,7 @@ interface Medicine {
   id: number;
   brand_name: string;
   strength: string;
+  icon_url?: string;
   generics?: {
     name: string;
   } | null;
@@ -48,6 +49,7 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
             id,
             brand_name,
             strength,
+            icon_url,
             generics (
               name
             ),
@@ -124,10 +126,10 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
                       value === medicine.brand_name ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {medicine.dosage_forms?.icon_url && (
+                  {(medicine.icon_url || medicine.dosage_forms?.icon_url) && (
                     <img 
-                      src={medicine.dosage_forms.icon_url} 
-                      alt={medicine.dosage_forms.name}
+                      src={medicine.icon_url || medicine.dosage_forms?.icon_url} 
+                      alt={medicine.dosage_forms?.name || "medicine"}
                       className="w-6 h-6 shrink-0 object-contain"
                     />
                   )}
