@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Home } from "lucide-react";
+import { Home, LogOut } from "lucide-react";
 import RichTextToolbar from "../RichTextToolbar";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PrescriptionControlsProps {
   prescriptionId?: string;
@@ -18,6 +19,11 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: Pre
 
   const handleGoHome = () => {
     navigate("/dashboard");
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
   };
 
   const handleCommand = (command: string, value?: string) => {
@@ -105,6 +111,19 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: Pre
             }}
           >
             Print Prescription
+          </Button>
+          <Button
+            onClick={handleLogout}
+            style={{
+              padding: "10px 15px",
+              margin: "0 5px",
+              backgroundColor: "#dc3545",
+              color: "white",
+              fontWeight: 600,
+            }}
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Logout
           </Button>
         </div>
         <div style={{ marginTop: "10px", padding: "10px", background: "#f5f5f5", borderTop: "1px solid #ccc" }}>

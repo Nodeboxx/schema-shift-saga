@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, FileText, Plus } from "lucide-react";
+import { Search, FileText, Plus, LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SavedPrescription {
@@ -88,6 +88,11 @@ const Dashboard = () => {
     navigate(`/prescription/${id}`);
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -101,10 +106,16 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-foreground">Prescription Dashboard</h1>
-          <Button onClick={handleCreateNew} size="lg" className="gap-2">
-            <Plus className="w-5 h-5" />
-            Create New Prescription
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleCreateNew} size="lg" className="gap-2">
+              <Plus className="w-5 h-5" />
+              Create New Prescription
+            </Button>
+            <Button onClick={handleLogout} size="lg" variant="outline" className="gap-2">
+              <LogOut className="w-5 h-5" />
+              Logout
+            </Button>
+          </div>
         </div>
 
         <div className="bg-card rounded-lg shadow-lg p-6">
