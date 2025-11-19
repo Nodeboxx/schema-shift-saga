@@ -85,9 +85,6 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
           </PopoverContent>
         </Popover>
       </span>
-      <span style={{ display: "flex", gap: "5px", alignItems: "center" }} className="print-only">
-        Date: ({patientInfo.patientDate})
-      </span>
       <span style={{ display: "flex", gap: "5px", alignItems: "center" }}>
         Name:{" "}
         <div
