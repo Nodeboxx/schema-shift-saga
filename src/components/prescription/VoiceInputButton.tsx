@@ -21,7 +21,7 @@ export const VoiceInputButton = ({ isListening, isProcessing, onToggle, classNam
         <Button
           variant="ghost"
           size="sm"
-          className={className}
+          className={`print:hidden ${className || ''}`}
           disabled={isProcessing}
           style={{
             padding: '4px 8px',
