@@ -288,7 +288,7 @@ export class ImportService {
             generic_id: genericLookup.get(genericSlug) || null,
             manufacturer_id: manufacturerLookup.get(manufacturerSlug) || null,
             dosage_form_id: dosageFormLookup.get(dosageFormSlug) || null,
-            icon_url: iconCache.get(imageUrl) || imageUrl || null
+            icon_url: imageUrl || null
           };
 
           // Log first few for debugging
