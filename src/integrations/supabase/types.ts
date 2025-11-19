@@ -121,6 +121,7 @@ export type Database = {
           created_at: string | null
           dosage_form_id: number | null
           generic_id: number | null
+          icon_url: string | null
           id: number
           manufacturer_id: number | null
           package_info: string | null
@@ -132,6 +133,7 @@ export type Database = {
           created_at?: string | null
           dosage_form_id?: number | null
           generic_id?: number | null
+          icon_url?: string | null
           id?: number
           manufacturer_id?: number | null
           package_info?: string | null
@@ -143,6 +145,7 @@ export type Database = {
           created_at?: string | null
           dosage_form_id?: number | null
           generic_id?: number | null
+          icon_url?: string | null
           id?: number
           manufacturer_id?: number | null
           package_info?: string | null

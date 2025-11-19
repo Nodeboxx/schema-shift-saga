@@ -56,6 +56,10 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: Pre
           }
           .dosage-icon {
             display: inline-block !important;
+            width: 20px !important;
+            height: 20px !important;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
           }
           button[style*="position: absolute"] {
             display: none !important;

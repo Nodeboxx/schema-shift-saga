@@ -183,7 +183,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                           generic_name: medicine.generics?.name,
                           strength: medicine.strength || "",
                           manufacturer_name: medicine.manufacturers?.name,
-                          dosage_form_icon: medicine.dosage_forms?.icon_url || "",
+                          dosage_form_icon: medicine.icon_url || medicine.dosage_forms?.icon_url || "",
                         });
                       }}
                     />

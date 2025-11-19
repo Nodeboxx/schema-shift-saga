@@ -181,7 +181,8 @@ export class ImportService {
             slug: medicineSlug,
             generic_id: genericLookup.get(genericSlug),
             manufacturer_id: manufacturerLookup.get(manufacturerSlug),
-            dosage_form_id: dosageFormLookup.get(dosageFormSlug)
+            dosage_form_id: dosageFormLookup.get(dosageFormSlug),
+            icon_url: row['image'] || null
           }, { onConflict: 'slug' });
 
         if (error) {
