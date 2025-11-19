@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
 interface PrescriptionHeaderProps {
   doctorInfo: {
     bismillah: string;
@@ -10,6 +13,39 @@ interface PrescriptionHeaderProps {
 }
 
 const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderProps) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single();
+
+      if (error) {
+        console.error("Error loading profile:", error);
+        setLoading(false);
+        return;
+      }
+
+      if (data) {
+        setDoctorInfo({
+          bismillah: "بسم الله الرحمن الرحيم",
+          docNameEN: data.full_name || "Dr. [Your Name]",
+          docDegreeEN: data.degree_en || "MBBS<br/>Experienced Physician",
+          docNameBN: data.name_bn || "ডাঃ [আপনার নাম]",
+          docDegreeBN: data.degree_bn || "এম.বি.বি.এস<br/>অভিজ্ঞ চিকিৎসক",
+        });
+      }
+      setLoading(false);
+    };
+
+    loadProfile();
+  }, [setDoctorInfo]);
   const handleEdit = (field: string, value: string) => {
     setDoctorInfo({ ...doctorInfo, [field]: value });
   };

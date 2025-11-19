@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, FileText, Plus, LogOut } from "lucide-react";
+import { Search, FileText, Plus, LogOut, Trash2, Settings as SettingsIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ConfirmDialog } from "@/components/ui/alert-dialog-custom";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SavedPrescription {
   id: string;
@@ -21,6 +23,10 @@ const Dashboard = () => {
   const [filteredPrescriptions, setFilteredPrescriptions] = useState<SavedPrescription[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPrescription, setSelectedPrescription] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [prescriptionToDelete, setPrescriptionToDelete] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -93,10 +99,63 @@ const Dashboard = () => {
     navigate("/login");
   };
 
+  const handleDeleteClick = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPrescriptionToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!prescriptionToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("prescriptions")
+        .delete()
+        .eq("id", prescriptionToDelete);
+
+      if (error) throw error;
+
+      setPrescriptions(prescriptions.filter((p) => p.id !== prescriptionToDelete));
+      setFilteredPrescriptions(filteredPrescriptions.filter((p) => p.id !== prescriptionToDelete));
+      
+      toast({
+        title: "Success",
+        description: "Prescription deleted successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete prescription",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setPrescriptionToDelete(null);
+    }
+  };
+
+  const paginatedPrescriptions = filteredPrescriptions.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredPrescriptions.length / itemsPerPage);
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-7xl mx-auto">
+          <Skeleton className="h-12 w-64 mb-8" />
+          <div className="bg-card rounded-lg shadow-lg p-6">
+            <Skeleton className="h-10 w-full mb-6" />
+            <div className="space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Skeleton key={i} className="h-20 w-full" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -109,7 +168,11 @@ const Dashboard = () => {
           <div className="flex gap-2">
             <Button onClick={handleCreateNew} size="lg" className="gap-2">
               <Plus className="w-5 h-5" />
-              Create New Prescription
+              Create New
+            </Button>
+            <Button onClick={() => navigate("/settings")} size="lg" variant="outline" className="gap-2">
+              <SettingsIcon className="w-5 h-5" />
+              Settings
             </Button>
             <Button onClick={handleLogout} size="lg" variant="outline" className="gap-2">
               <LogOut className="w-5 h-5" />
@@ -131,39 +194,98 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {filteredPrescriptions.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                {searchTerm ? "No prescriptions found" : "No saved prescriptions yet"}
+                <FileText className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                <p className="text-lg">
+                  {searchTerm ? "No prescriptions found" : "No prescriptions yet"}
+                </p>
+                {!searchTerm && (
+                  <Button onClick={handleCreateNew} className="mt-4" size="lg">
+                    Create Your First Prescription
+                  </Button>
+                )}
               </div>
             ) : (
-              filteredPrescriptions.map((prescription) => (
-                <div
-                  key={prescription.id}
-                  onClick={() => handleOpenPrescription(prescription.id)}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <FileText className="w-8 h-8 text-primary" />
-                    <div>
-                      <h3 className="font-semibold text-lg">{prescription.patient_name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Age: {prescription.patient_age || "N/A"} | Date:{" "}
-                        {prescription.prescription_date
-                          ? new Date(prescription.prescription_date).toLocaleDateString()
-                          : new Date(prescription.created_at).toLocaleDateString()}
-                      </p>
+              <>
+                {paginatedPrescriptions.map((prescription) => (
+                  <div
+                    key={prescription.id}
+                    onClick={() => handleOpenPrescription(prescription.id)}
+                    className="bg-background border border-border rounded-lg p-4 hover:border-primary transition-colors cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <FileText className="w-10 h-10 text-primary flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-lg text-foreground truncate">
+                          {prescription.patient_name}
+                        </h3>
+                        <div className="flex gap-4 text-sm text-muted-foreground mt-1">
+                          {prescription.patient_age && (
+                            <span>Age: {prescription.patient_age}</span>
+                          )}
+                          {prescription.prescription_date && (
+                            <span>
+                              Date: {new Date(prescription.prescription_date).toLocaleDateString()}
+                            </span>
+                          )}
+                          <span>
+                            Created: {new Date(prescription.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={(e) => handleDeleteClick(prescription.id, e)}
+                        variant="ghost"
+                        size="icon"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    {new Date(prescription.created_at).toLocaleDateString()}
+                ))}
+
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-6 pt-6 border-t">
+                    <Button
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-sm text-muted-foreground">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Next
+                    </Button>
                   </div>
-                </div>
-              ))
+                )}
+              </>
             )}
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete Prescription"
+        description="Are you sure you want to delete this prescription? This action cannot be undone."
+        onConfirm={handleDeleteConfirm}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 };
