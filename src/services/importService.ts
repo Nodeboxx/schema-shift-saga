@@ -138,14 +138,16 @@ export class ImportService {
       console.log(`Processing ${rows.length} rows from Excel...`);
       
       rows.forEach((row: any) => {
-        const dosageForm = row['image'] ? row['image'].split('/').pop()?.replace('.png', '').replace(/-/g, ' ') : '';
-        const manufacturer = row['Company Name'];
-        const generic = row['Generic Name'];
+        // Trim and clean all values
+        const imageUrl = (row['image'] || '').trim();
+        const dosageForm = imageUrl ? imageUrl.split('/').pop()?.replace('.png', '').replace(/-/g, ' ').trim() : '';
+        const manufacturer = (row['Company Name'] || '').trim();
+        const generic = (row['Generic Name'] || '').trim();
         
         if (dosageForm && !dosageFormsMap.has(dosageForm)) {
           dosageFormsMap.set(dosageForm, {
             name: dosageForm.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-            iconUrl: row['image'] || ''
+            iconUrl: imageUrl
           });
         }
         if (manufacturer) manufacturersMap.set(manufacturer, manufacturer);
@@ -248,6 +250,8 @@ export class ImportService {
       const { data: manufacturers } = await supabase.from('manufacturers').select('id, name, slug');
       const { data: generics } = await supabase.from('generics').select('id, name, slug');
 
+      console.log(`Fetched ${dosageForms?.length || 0} dosage forms, ${manufacturers?.length || 0} manufacturers, ${generics?.length || 0} generics`);
+
       const dosageFormLookup = new Map(dosageForms?.map(d => [d.slug, d.id]));
       const manufacturerLookup = new Map(manufacturers?.map(m => [m.slug, m.id]));
       const genericLookup = new Map(generics?.map(g => [g.slug, g.id]));
@@ -256,30 +260,51 @@ export class ImportService {
       let medicinesImported = 0;
       let medicinesFailed = 0;
       
+      console.log('Processing medicines...');
       const medicinesToImport = rows
-        .filter(row => row['Brand Name'] && row['Generic Name'])
-        .map(row => {
-          const brandName = row['Brand Name'];
-          const strength = row['Quantity'] || '';
-          const manufacturer = row['Company Name'];
-          const generic = row['Generic Name'];
-          const dosageFormName = row['image'] ? row['image'].split('/').pop()?.replace('.png', '').replace(/-/g, ' ') : '';
+        .filter(row => {
+          const brandName = (row['Brand Name'] || '').trim();
+          const generic = (row['Generic Name'] || '').trim();
+          return brandName && generic;
+        })
+        .map((row, index) => {
+          const brandName = (row['Brand Name'] || '').trim();
+          const strength = (row['Quantity'] || '').trim();
+          const manufacturer = (row['Company Name'] || '').trim();
+          const generic = (row['Generic Name'] || '').trim();
+          const imageUrl = (row['image'] || '').trim();
+          const dosageFormName = imageUrl ? imageUrl.split('/').pop()?.replace('.png', '').replace(/-/g, ' ').trim() : '';
 
           const dosageFormSlug = this.createSlug(dosageFormName || '');
           const manufacturerSlug = this.createSlug(manufacturer || '');
           const genericSlug = this.createSlug(generic);
           const medicineSlug = this.createSlug(brandName);
 
-          return {
+          const medicine = {
             brand_name: brandName,
             strength,
             slug: medicineSlug,
-            generic_id: genericLookup.get(genericSlug),
-            manufacturer_id: manufacturerLookup.get(manufacturerSlug),
-            dosage_form_id: dosageFormLookup.get(dosageFormSlug),
-            icon_url: row['image'] || null
+            generic_id: genericLookup.get(genericSlug) || null,
+            manufacturer_id: manufacturerLookup.get(manufacturerSlug) || null,
+            dosage_form_id: dosageFormLookup.get(dosageFormSlug) || null,
+            icon_url: iconCache.get(imageUrl) || imageUrl || null
           };
+
+          // Log first few for debugging
+          if (index < 3) {
+            console.log(`Sample medicine ${index + 1}:`, {
+              brandName,
+              dosageFormSlug,
+              dosageFormId: medicine.dosage_form_id,
+              genericSlug,
+              genericId: medicine.generic_id
+            });
+          }
+
+          return medicine;
         });
+
+      console.log(`Prepared ${medicinesToImport.length} medicines for import`);
 
       // Import in large batches of 1000
       for (let i = 0; i < medicinesToImport.length; i += 1000) {
@@ -306,13 +331,13 @@ export class ImportService {
       const duration = Date.now() - startTime;
 
       return {
-        success: true,
-        message: `Excel import completed in ${(duration / 1000).toFixed(2)}s`,
-        imported: dosageFormsImported + manufacturersImported + genericsImported + medicinesImported,
+        success: medicinesFailed === 0,
+        message: `Excel import completed in ${(duration / 1000).toFixed(2)}s. Imported ${medicinesImported} medicines, ${dosageFormsImported} dosage forms, ${manufacturersImported} manufacturers, ${genericsImported} generics. ${medicinesFailed > 0 ? `${medicinesFailed} medicines failed.` : ''}`,
+        imported: medicinesImported,
         updated: 0,
         skipped: 0,
         failed: medicinesFailed,
-        errors
+        errors: errors.slice(0, 10) // Only return first 10 errors
       };
 
     } catch (error: any) {
