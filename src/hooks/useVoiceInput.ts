@@ -1,99 +1,76 @@
-import { useState, useEffect, useCallback } from 'react';
-
-interface SpeechRecognitionEvent extends Event {
-  results: SpeechRecognitionResultList;
-  resultIndex: number;
-}
-
-interface SpeechRecognitionErrorEvent extends Event {
-  error: string;
-}
-
-interface SpeechRecognition extends EventTarget {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start(): void;
-  stop(): void;
-  abort(): void;
-  onresult: ((event: SpeechRecognitionEvent) => void) | null;
-  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
-  onend: (() => void) | null;
-}
-
-declare global {
-  interface Window {
-    SpeechRecognition: new () => SpeechRecognition;
-    webkitSpeechRecognition: new () => SpeechRecognition;
-  }
-}
+import { useState, useRef, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useVoiceInput = (language: 'en-US' | 'bn-BD' = 'en-US') => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
-  useEffect(() => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      console.error('Speech recognition not supported');
-      return;
-    }
+  const startListening = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm',
+      });
+      
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognitionInstance = new SpeechRecognition();
-    
-    recognitionInstance.continuous = true;
-    recognitionInstance.interimResults = true;
-    recognitionInstance.lang = language;
-
-    recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
-      let finalTranscript = '';
-      let interimTranscript = '';
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript + ' ';
-        } else {
-          interimTranscript += transcript;
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
         }
-      }
+      };
 
-      setTranscript(finalTranscript || interimTranscript);
-    };
+      mediaRecorder.onstop = async () => {
+        setIsProcessing(true);
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        
+        // Convert to base64
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Audio = reader.result?.toString().split(',')[1];
+          
+          if (base64Audio) {
+            try {
+              const { data, error } = await supabase.functions.invoke('transcribe-audio', {
+                body: { audio: base64Audio, language },
+              });
 
-    recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
-      console.error('Speech recognition error:', event.error);
+              if (error) throw error;
+              
+              setTranscript(data.text || '');
+            } catch (error) {
+              console.error('Transcription error:', error);
+              setTranscript('');
+            }
+          }
+          
+          setIsProcessing(false);
+        };
+
+        // Stop all tracks
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsListening(true);
+      setTranscript('');
+    } catch (error) {
+      console.error('Error accessing microphone:', error);
       setIsListening(false);
-    };
-
-    recognitionInstance.onend = () => {
-      setIsListening(false);
-    };
-
-    setRecognition(recognitionInstance);
-
-    return () => {
-      if (recognitionInstance) {
-        recognitionInstance.abort();
-      }
-    };
+    }
   }, [language]);
 
-  const startListening = useCallback(() => {
-    if (recognition && !isListening) {
-      setTranscript('');
-      recognition.start();
-      setIsListening(true);
-    }
-  }, [recognition, isListening]);
-
   const stopListening = useCallback(() => {
-    if (recognition && isListening) {
-      recognition.stop();
+    if (mediaRecorderRef.current && isListening) {
+      mediaRecorderRef.current.stop();
       setIsListening(false);
     }
-  }, [recognition, isListening]);
+  }, [isListening]);
 
   const toggleListening = useCallback(() => {
     if (isListening) {
@@ -106,6 +83,7 @@ export const useVoiceInput = (language: 'en-US' | 'bn-BD' = 'en-US') => {
   return {
     isListening,
     transcript,
+    isProcessing,
     startListening,
     stopListening,
     toggleListening,

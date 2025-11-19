@@ -9,11 +9,12 @@ import {
 
 interface VoiceInputButtonProps {
   isListening: boolean;
+  isProcessing?: boolean;
   onToggle: (language: 'en-US' | 'bn-BD') => void;
   className?: string;
 }
 
-export const VoiceInputButton = ({ isListening, onToggle, className }: VoiceInputButtonProps) => {
+export const VoiceInputButton = ({ isListening, isProcessing, onToggle, className }: VoiceInputButtonProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -21,13 +22,16 @@ export const VoiceInputButton = ({ isListening, onToggle, className }: VoiceInpu
           variant="ghost"
           size="sm"
           className={className}
+          disabled={isProcessing}
           style={{
             padding: '4px 8px',
             height: 'auto',
             minWidth: 'auto',
           }}
         >
-          {isListening ? (
+          {isProcessing ? (
+            <Mic className="h-4 w-4 animate-pulse text-muted-foreground" />
+          ) : isListening ? (
             <MicOff className="h-4 w-4 text-red-500 animate-pulse" />
           ) : (
             <Mic className="h-4 w-4" />
