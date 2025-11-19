@@ -186,48 +186,82 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
               </>
             ) : (
               <>
-                <div className="no-print" style={{ marginBottom: "8px" }}>
-                  <MedicineAutocomplete
-                    value={med.name || ""}
-                    onSelect={(medicine) => {
-                      updateMedicineMultiple(med.id, {
-                        name: medicine.brand_name,
-                        generic_name: medicine.generics?.name,
-                        strength: medicine.strength || "",
-                        manufacturer_name: medicine.manufacturers?.name,
-                        dosage_form_icon: medicine.dosage_forms?.icon_url || "",
-                      });
-                    }}
-                  />
-                </div>
-
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "8px", marginBottom: "8px" }}>
-                  {med.dosage_form_icon && (
-                    <img
-                      src={med.dosage_form_icon}
-                      alt="Dosage form"
-                      style={{ width: "20px", height: "20px", marginTop: "2px" }}
+                <div style={{ marginBottom: "8px" }}>
+                  <div className="no-print" style={{ marginBottom: "8px" }}>
+                    <MedicineAutocomplete
+                      value={med.name || ""}
+                      onSelect={(medicine) => {
+                        updateMedicineMultiple(med.id, {
+                          name: medicine.brand_name,
+                          generic_name: medicine.generics?.name,
+                          strength: medicine.strength || "",
+                          manufacturer_name: medicine.manufacturers?.name,
+                          dosage_form_icon: medicine.dosage_forms?.icon_url || "",
+                        });
+                      }}
                     />
-                  )}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: "15px", fontWeight: 700, color: "#000" }}>
-                      {med.name || "Medicine Name"}
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+                    {med.dosage_form_icon && (
+                      <img
+                        src={med.dosage_form_icon}
+                        alt="Dosage form"
+                        style={{ width: "20px", height: "20px", marginTop: "2px" }}
+                        className="dosage-icon"
+                      />
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <div
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => updateMedicine(med.id, "name", e.currentTarget.textContent || "")}
+                        style={{ 
+                          fontSize: "15px", 
+                          fontWeight: 700, 
+                          color: "#000", 
+                          minHeight: "20px", 
+                          outline: "none",
+                          padding: "2px"
+                        }}
+                      >
+                        {med.name || "Medicine Name"}
+                      </div>
+                      <div
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => updateMedicine(med.id, "generic_name", e.currentTarget.textContent || "")}
+                        style={{ 
+                          fontSize: "12px", 
+                          color: "#0056b3", 
+                          fontWeight: 600, 
+                          minHeight: "16px", 
+                          outline: "none",
+                          padding: "2px"
+                        }}
+                      >
+                        {med.generic_name || "Generic Name"}
+                      </div>
+                      <div style={{ display: "flex", gap: "8px", fontSize: "11px", color: "#666" }}>
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => updateMedicine(med.id, "strength", e.currentTarget.textContent || "")}
+                          style={{ outline: "none", padding: "2px", minWidth: "40px" }}
+                        >
+                          {med.strength || "Strength"}
+                        </span>
+                        <span>|</span>
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => updateMedicine(med.id, "manufacturer_name", e.currentTarget.textContent || "")}
+                          style={{ outline: "none", padding: "2px", minWidth: "60px", color: "#999" }}
+                        >
+                          {med.manufacturer_name || "Manufacturer"}
+                        </span>
+                      </div>
                     </div>
-                    {med.generic_name && (
-                      <div style={{ fontSize: "12px", color: "#0056b3", fontWeight: 600 }}>
-                        {med.generic_name}
-                      </div>
-                    )}
-                    {med.strength && (
-                      <div style={{ fontSize: "11px", color: "#666" }}>
-                        {med.strength}
-                      </div>
-                    )}
-                    {med.manufacturer_name && (
-                      <div style={{ fontSize: "11px", color: "#999" }}>
-                        {med.manufacturer_name}
-                      </div>
-                    )}
                   </div>
                 </div>
 

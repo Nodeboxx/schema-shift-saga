@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Home } from "lucide-react";
+import RichTextToolbar from "../RichTextToolbar";
 
 interface PrescriptionControlsProps {
   prescriptionId?: string;
   userId?: string;
+  onRichTextCommand?: (command: string, value?: string) => void;
 }
 
-const PrescriptionControls = ({ prescriptionId, userId }: PrescriptionControlsProps) => {
+const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: PrescriptionControlsProps) => {
   const navigate = useNavigate();
 
   const handlePrint = () => {
@@ -16,6 +18,15 @@ const PrescriptionControls = ({ prescriptionId, userId }: PrescriptionControlsPr
 
   const handleGoHome = () => {
     navigate("/dashboard");
+  };
+
+  const handleCommand = (command: string, value?: string) => {
+    // Execute command on currently focused element
+    if (value) {
+      document.execCommand(command, false, value);
+    } else {
+      document.execCommand(command, false);
+    }
   };
 
   return (
@@ -36,6 +47,9 @@ const PrescriptionControls = ({ prescriptionId, userId }: PrescriptionControlsPr
           }
           .add-medicine-btn {
             display: none !important;
+          }
+          .dosage-icon {
+            display: inline-block !important;
           }
           button[style*="position: absolute"] {
             display: none !important;
@@ -82,6 +96,9 @@ const PrescriptionControls = ({ prescriptionId, userId }: PrescriptionControlsPr
           >
             Print Prescription
           </Button>
+        </div>
+        <div style={{ marginTop: "10px", padding: "10px", background: "#f5f5f5", borderTop: "1px solid #ccc" }}>
+          <RichTextToolbar onCommand={handleCommand} />
         </div>
       </div>
     </>

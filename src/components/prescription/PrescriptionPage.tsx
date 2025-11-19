@@ -21,9 +21,9 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   const [doctorInfo, setDoctorInfo] = useState({
     bismillah: "بسم الله الرحمن الرحيم",
     docNameEN: "Dr. Rashedul Islam",
-    docDegreeEN: "MBBS(DU), MRCP(Part-1)...",
+    docDegreeEN: `MBBS(DU), MRCP(Part-1)<br/>Experienced in Neonate, children & Medicine.<br/>Register & Incharge, NICU & PICU.<br/>Delta Healthcare Jatrabari Ltd, Jatrabari, Dhaka.<br/>BMDC Reg. No-A 120051`,
     docNameBN: "ডাঃ রাশেদুল ইসলাম",
-    docDegreeBN: "এম.বি.বি.এস (ডি.ইউ)...",
+    docDegreeBN: `এম.বি.বি.এস (ডি.ইউ), এম.আর.সি.পি (পার্ট-১)<br/>নবজাতক, শিশু ও মেডিসিনে অভিজ্ঞতা সম্পন্ন।<br/>রেজিস্টার এন্ড ইনচার্জ, এন.আই.সি.ইউ এন্ড পি.ই.সি.ইউ.<br/>ডেল্টা হেলথকেয়ার যাত্রাবাড়ী লিমিটেড, যাত্রাবাড়ী, ঢাকা।<br/>বি.এম.ডি.সি. রে.জি নং- এ ১২০০৫১`,
   });
 
   const [patientInfo, setPatientInfo] = useState({

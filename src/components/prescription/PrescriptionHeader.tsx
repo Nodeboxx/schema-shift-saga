@@ -46,13 +46,13 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderPro
         >
           {doctorInfo.docNameEN}
         </h2>
-        <p
+        <div
           contentEditable
           suppressContentEditableWarning
-          onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.textContent || "")}
-        >
-          {doctorInfo.docDegreeEN}
-        </p>
+          onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
+          dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
+          style={{ margin: 0 }}
+        />
       </div>
       <div style={{ float: "right", width: "48%", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
         <h2
@@ -68,13 +68,13 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderPro
         >
           {doctorInfo.docNameBN}
         </h2>
-        <p
+        <div
           contentEditable
           suppressContentEditableWarning
-          onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.textContent || "")}
-        >
-          {doctorInfo.docDegreeBN}
-        </p>
+          onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
+          dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
+          style={{ margin: 0 }}
+        />
       </div>
     </header>
   );
