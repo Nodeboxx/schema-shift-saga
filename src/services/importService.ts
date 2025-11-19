@@ -255,6 +255,8 @@ export class ImportService {
       const dosageFormLookup = new Map(dosageForms?.map(d => [d.slug, d.id]));
       const manufacturerLookup = new Map(manufacturers?.map(m => [m.slug, m.id]));
       const genericLookup = new Map(generics?.map(g => [g.slug, g.id]));
+      
+      console.log('Sample generics in lookup:', Array.from(genericLookup.entries()).slice(0, 5));
 
       // Prepare medicines in batches
       let medicinesImported = 0;
@@ -295,10 +297,13 @@ export class ImportService {
           if (index < 3) {
             console.log(`Sample medicine ${index + 1}:`, {
               brandName,
-              dosageFormSlug,
-              dosageFormId: medicine.dosage_form_id,
+              generic,
               genericSlug,
               genericId: medicine.generic_id,
+              dosageFormSlug,
+              dosageFormId: medicine.dosage_form_id,
+              manufacturerSlug,
+              manufacturerId: medicine.manufacturer_id,
             });
           }
 
