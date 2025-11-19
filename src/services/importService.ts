@@ -278,7 +278,8 @@ export class ImportService {
           const dosageFormSlug = this.createSlug(dosageFormName || '');
           const manufacturerSlug = this.createSlug(manufacturer || '');
           const genericSlug = this.createSlug(generic);
-          const medicineSlug = this.createSlug(brandName);
+          // Make slug unique by combining brand name and strength
+          const medicineSlug = this.createSlug(`${brandName}-${strength}`);
 
           const medicine = {
             brand_name: brandName,
@@ -307,13 +308,17 @@ export class ImportService {
       console.log(`Prepared ${medicinesToImport.length} medicines for import`);
 
       // Import in large batches of 1000
+      console.log(`Starting medicine import in batches of 1000...`);
       for (let i = 0; i < medicinesToImport.length; i += 1000) {
         const batch = medicinesToImport.slice(i, i + 1000);
+        console.log(`Importing batch ${Math.floor(i / 1000) + 1}/${Math.ceil(medicinesToImport.length / 1000)} (${batch.length} medicines)...`);
+        
         const { error, count } = await supabase
           .from('medicines')
           .upsert(batch, { onConflict: 'slug', count: 'exact' });
 
         if (error) {
+          console.error(`Batch ${Math.floor(i / 1000) + 1} error:`, error.message);
           errors.push({
             row: i,
             field: 'batch',
@@ -322,6 +327,7 @@ export class ImportService {
           });
           medicinesFailed += batch.length;
         } else {
+          console.log(`Batch ${Math.floor(i / 1000) + 1} imported ${count} medicines`);
           medicinesImported += count || batch.length;
         }
       }

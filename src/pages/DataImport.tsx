@@ -32,8 +32,14 @@ const DataImport = () => {
     const startTime = Date.now();
 
     try {
-      setStatusMessage("Importing from Excel file...");
-      setProgress(50);
+      setStatusMessage("Reading Excel file...");
+      setProgress(10);
+      
+      // Small delay to show progress
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      setStatusMessage("Downloading and caching dosage form icons...");
+      setProgress(30);
       
       const result = await importService.importFromExcel(excelFile);
       
@@ -224,6 +230,9 @@ const DataImport = () => {
                   hover:file:bg-primary/90
                   cursor-pointer border border-input rounded-md p-2"
               />
+              <p className="text-xs text-muted-foreground mt-2">
+                Expected columns: image, Quantity, Company Name, Brand Name, Generic Name
+              </p>
             </div>
 
             <Button
