@@ -48,45 +48,55 @@ serve(async (req) => {
       throw new Error('No audio data provided')
     }
 
-    console.log('Processing audio transcription with Gemini, language:', language)
+    console.log('Processing audio transcription with Lovable AI, language:', language)
 
     // Prepare prompt based on language
     const languagePrompt = language === 'bn-BD' 
-      ? 'Transcribe this audio in Bengali language.' 
-      : 'Transcribe this audio in English language.'
+      ? 'Transcribe this audio in Bengali language. Return only the transcribed text, nothing else.' 
+      : 'Transcribe this audio in English language. Return only the transcribed text, nothing else.'
 
-    // Send to Gemini API (using gemini-2.5-flash model)
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${Deno.env.get('GEMINI_API_KEY')}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: languagePrompt },
+    // Send to Lovable AI Gateway (using google/gemini-2.5-flash)
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: languagePrompt },
               {
-                inline_data: {
-                  mime_type: 'audio/webm',
-                  data: audio,
-                },
-              },
-            ],
-          }],
-        }),
-      }
-    )
+                type: 'image_url',
+                image_url: {
+                  url: `data:audio/webm;base64,${audio}`
+                }
+              }
+            ]
+          }
+        ]
+      }),
+    })
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Gemini API error:', errorText)
-      throw new Error(`Gemini API error: ${errorText}`)
+      console.error('Lovable AI error:', errorText)
+      
+      if (response.status === 429) {
+        throw new Error('Rate limit exceeded. Please wait a moment and try again.')
+      }
+      if (response.status === 402) {
+        throw new Error('AI credits exhausted. Please add credits to your workspace.')
+      }
+      
+      throw new Error(`Lovable AI error: ${errorText}`)
     }
 
     const result = await response.json()
-    const transcribedText = result.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    const transcribedText = result.choices?.[0]?.message?.content || ''
     console.log('Transcription successful:', transcribedText)
 
     return new Response(
