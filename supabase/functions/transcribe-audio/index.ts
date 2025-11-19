@@ -55,9 +55,9 @@ serve(async (req) => {
       ? 'Transcribe this audio in Bengali language.' 
       : 'Transcribe this audio in English language.'
 
-    // Send to Gemini API
+    // Send to Gemini API (using gemini-2.5-flash model)
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${Deno.env.get('GEMINI_API_KEY')}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${Deno.env.get('GEMINI_API_KEY')}`,
       {
         method: 'POST',
         headers: {
@@ -70,11 +70,11 @@ serve(async (req) => {
               {
                 inline_data: {
                   mime_type: 'audio/webm',
-                  data: audio
-                }
-              }
-            ]
-          }]
+                  data: audio,
+                },
+              },
+            ],
+          }],
         }),
       }
     )
