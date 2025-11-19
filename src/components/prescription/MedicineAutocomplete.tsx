@@ -11,6 +11,8 @@ interface Medicine {
   brand_name: string;
   strength: string;
   icon_url?: string;
+  generic_name?: string;
+  manufacturer_name?: string;
   generics?: {
     name: string;
   } | null;
@@ -50,6 +52,8 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
             brand_name,
             strength,
             icon_url,
+            generic_name,
+            manufacturer_name,
             generics (
               name
             ),
@@ -135,15 +139,17 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
                   )}
                   <div className="flex flex-col flex-1 min-w-0">
                     <div className="font-bold text-sm">{medicine.brand_name}</div>
-                    {medicine.generics?.name && (
-                      <div className="text-xs text-primary font-medium">{medicine.generics.name}</div>
+                    {(medicine.generic_name || medicine.generics?.name) && (
+                      <div className="text-xs text-primary font-medium">
+                        {medicine.generic_name || medicine.generics?.name}
+                      </div>
                     )}
                     <div className="flex gap-2 items-center text-xs text-muted-foreground flex-wrap">
                       {medicine.strength && <span>{medicine.strength}</span>}
-                      {medicine.manufacturers?.name && (
+                      {(medicine.manufacturer_name || medicine.manufacturers?.name) && (
                         <>
                           {medicine.strength && <span>•</span>}
-                          <span>{medicine.manufacturers.name}</span>
+                          <span>{medicine.manufacturer_name || medicine.manufacturers?.name}</span>
                         </>
                       )}
                     </div>

@@ -283,7 +283,38 @@ export class ImportService {
         .filter(row => {
           const brandName = String(row['Brand Name'] || '').trim();
           const generic = String(row['Generic Name'] || '').trim();
-          return brandName && generic;
+          const manufacturer = String(row['Company Name'] || '').trim();
+          
+          // Require all three fields
+          if (!brandName) {
+            errors.push({
+              row: rows.indexOf(row),
+              field: 'Brand Name',
+              value: '',
+              reason: 'Missing brand name'
+            });
+            return false;
+          }
+          if (!generic) {
+            errors.push({
+              row: rows.indexOf(row),
+              field: 'Generic Name',
+              value: brandName,
+              reason: 'Missing generic name'
+            });
+            return false;
+          }
+          if (!manufacturer) {
+            errors.push({
+              row: rows.indexOf(row),
+              field: 'Company Name',
+              value: brandName,
+              reason: 'Missing manufacturer name'
+            });
+            return false;
+          }
+          
+          return true;
         })
         .map((row, index) => {
           const brandName = String(row['Brand Name'] || '').trim();
@@ -294,12 +325,12 @@ export class ImportService {
           const dosageFormName = imageUrl ? imageUrl.split('/').pop()?.replace('.png', '').replace(/-/g, ' ').trim() : '';
 
           const dosageFormSlug = this.createSlug(dosageFormName || '');
-          const manufacturerSlug = this.createSlug(manufacturer || '');
+          const manufacturerSlug = this.createSlug(manufacturer);
           const genericSlug = this.createSlug(generic);
           const genericNormalized = normalizeGenericName(generic);
-          // Make slug unique by combining brand name and strength
           const medicineSlug = this.createSlug(`${brandName}-${strength}`);
 
+          // Try to find existing IDs, or we'll create them
           const genericIdFromSlug = genericLookup.get(genericSlug) || null;
           const genericId = genericIdFromSlug || (genericNormalized ? genericNameLookup.get(genericNormalized) || null : null);
 
@@ -308,7 +339,9 @@ export class ImportService {
             strength,
             slug: medicineSlug,
             generic_id: genericId,
+            generic_name: generic, // Store raw name
             manufacturer_id: manufacturerLookup.get(manufacturerSlug) || null,
+            manufacturer_name: manufacturer, // Store raw name
             dosage_form_id: dosageFormLookup.get(dosageFormSlug) || null,
             icon_url: imageUrl || null,
           };

@@ -121,9 +121,11 @@ export type Database = {
           created_at: string | null
           dosage_form_id: number | null
           generic_id: number | null
+          generic_name: string | null
           icon_url: string | null
           id: number
           manufacturer_id: number | null
+          manufacturer_name: string | null
           package_info: string | null
           slug: string
           strength: string | null
@@ -133,9 +135,11 @@ export type Database = {
           created_at?: string | null
           dosage_form_id?: number | null
           generic_id?: number | null
+          generic_name?: string | null
           icon_url?: string | null
           id?: number
           manufacturer_id?: number | null
+          manufacturer_name?: string | null
           package_info?: string | null
           slug: string
           strength?: string | null
@@ -145,9 +149,11 @@ export type Database = {
           created_at?: string | null
           dosage_form_id?: number | null
           generic_id?: number | null
+          generic_name?: string | null
           icon_url?: string | null
           id?: number
           manufacturer_id?: number | null
+          manufacturer_name?: string | null
           package_info?: string | null
           slug?: string
           strength?: string | null

@@ -4,12 +4,14 @@ import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { CheckCircle2, XCircle, AlertCircle, Trash2 } from "lucide-react";
 import { importService } from "@/services/importService";
 import { ImportSummary, ImportResult } from "@/types/import";
+import { supabase } from "@/integrations/supabase/client";
 
 const DataImport = () => {
   const [importing, setImporting] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState("");
   const [summary, setSummary] = useState<ImportSummary | null>(null);
@@ -158,6 +160,35 @@ const DataImport = () => {
     }
   };
 
+  const handleClearMedicines = async () => {
+    if (!confirm('Are you sure you want to delete ALL medicine data? This action cannot be undone.')) {
+      return;
+    }
+
+    setClearing(true);
+    try {
+      const { error } = await supabase.from('medicines').delete().neq('id', 0);
+      
+      if (error) throw error;
+
+      toast({
+        title: "Medicines cleared",
+        description: "All medicine data has been deleted successfully.",
+      });
+      
+      setSummary(null);
+    } catch (error: any) {
+      console.error('Clear error:', error);
+      toast({
+        title: "Clear failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setClearing(false);
+    }
+  };
+
   const ResultCard = ({ title, result }: { title: string; result: ImportResult }) => (
     <Card>
       <CardHeader className="pb-3">
@@ -235,14 +266,27 @@ const DataImport = () => {
               </p>
             </div>
 
-            <Button
-              onClick={handleExcelImport}
-              disabled={importing || !excelFile}
-              size="lg"
-              className="w-full"
-            >
-              {importing ? "Importing..." : "Import from Excel"}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleExcelImport}
+                disabled={importing || clearing || !excelFile}
+                size="lg"
+                className="flex-1"
+              >
+                {importing ? "Importing..." : "Import from Excel"}
+              </Button>
+              
+              <Button
+                onClick={handleClearMedicines}
+                disabled={importing || clearing}
+                size="lg"
+                variant="destructive"
+                className="gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                {clearing ? "Clearing..." : "Clear All"}
+              </Button>
+            </div>
 
             {importing && (
               <div className="space-y-2">
