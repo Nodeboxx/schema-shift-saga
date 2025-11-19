@@ -32,9 +32,15 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: Pre
   return (
     <>
       <style>{`
+        .print-only {
+          display: none;
+        }
         @media print {
           .no-print {
             display: none !important;
+          }
+          .print-only {
+            display: flex !important;
           }
           #page-wrapper {
             padding-top: 0 !important;

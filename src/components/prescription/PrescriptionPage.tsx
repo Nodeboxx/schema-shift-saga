@@ -27,7 +27,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   });
 
   const [patientInfo, setPatientInfo] = useState({
-    patientDate: new Date().toLocaleDateString(),
+    patientDate: new Date().toLocaleDateString('en-GB'), // dd/mm/yyyy format
     patientName: "",
     patientAge: "",
     patientSex: "",
@@ -39,8 +39,14 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   useEffect(() => {
     if (prescriptionData) {
       // Load patient info
+      const formatDateFromDB = (dateStr: string) => {
+        if (!dateStr) return new Date().toLocaleDateString('en-GB');
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-GB'); // dd/mm/yyyy format
+      };
+
       setPatientInfo({
-        patientDate: prescriptionData.prescription_date || new Date().toLocaleDateString(),
+        patientDate: formatDateFromDB(prescriptionData.prescription_date),
         patientName: prescriptionData.patient_name || "",
         patientAge: prescriptionData.patient_age || "",
         patientSex: prescriptionData.patient_sex || "",
