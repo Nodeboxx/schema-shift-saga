@@ -261,7 +261,7 @@ export class ImportService {
       let medicinesFailed = 0;
       
       console.log('Processing medicines...');
-      const medicinesToImport = rows
+      const rawMedicines = rows
         .filter(row => {
           const brandName = String(row['Brand Name'] || '').trim();
           const generic = String(row['Generic Name'] || '').trim();
@@ -288,7 +288,7 @@ export class ImportService {
             generic_id: genericLookup.get(genericSlug) || null,
             manufacturer_id: manufacturerLookup.get(manufacturerSlug) || null,
             dosage_form_id: dosageFormLookup.get(dosageFormSlug) || null,
-            icon_url: imageUrl || null
+            icon_url: imageUrl || null,
           };
 
           // Log first few for debugging
@@ -298,14 +298,28 @@ export class ImportService {
               dosageFormSlug,
               dosageFormId: medicine.dosage_form_id,
               genericSlug,
-              genericId: medicine.generic_id
+              genericId: medicine.generic_id,
             });
           }
 
           return medicine;
         });
 
-      console.log(`Prepared ${medicinesToImport.length} medicines for import`);
+      // Deduplicate by slug to avoid "ON CONFLICT DO UPDATE" affecting same row twice per batch
+      const slugMap = new Map<string, (typeof rawMedicines)[number]>();
+      let duplicateSlugCount = 0;
+      for (const med of rawMedicines) {
+        if (slugMap.has(med.slug)) {
+          duplicateSlugCount++;
+        }
+        slugMap.set(med.slug, med);
+      }
+
+      const medicinesToImport = Array.from(slugMap.values());
+
+      console.log(
+        `Prepared ${medicinesToImport.length} medicines for import (deduplicated from ${rawMedicines.length}, ${duplicateSlugCount} duplicate slugs)`
+      );
 
       // Import in large batches of 1000
       console.log(`Starting medicine import in batches of 1000...`);
