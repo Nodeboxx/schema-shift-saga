@@ -1,4 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import { useVoiceInput } from "@/hooks/useVoiceInput";
+import { VoiceInputButton } from "./VoiceInputButton";
 
 interface LeftColumnProps {
   width: number;
@@ -12,6 +14,35 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
   const advRef = useRef<HTMLDivElement>(null);
   const instructionsRef = useRef<HTMLDivElement>(null);
   const followUpRef = useRef<HTMLDivElement>(null);
+
+  const [activeVoiceField, setActiveVoiceField] = useState<string | null>(null);
+  const [voiceLanguage, setVoiceLanguage] = useState<'en-US' | 'bn-BD'>('en-US');
+  
+  const { isListening, transcript, toggleListening } = useVoiceInput(voiceLanguage);
+
+  // Update content when voice transcript changes
+  useEffect(() => {
+    if (transcript && activeVoiceField) {
+      const fieldRef = {
+        ccText: ccRef,
+        dxText: dxRef,
+        instructionsText: instructionsRef,
+      }[activeVoiceField];
+
+      if (fieldRef?.current) {
+        const currentContent = fieldRef.current.innerHTML || '';
+        const newContent = currentContent + (currentContent ? ' ' : '') + transcript;
+        fieldRef.current.innerHTML = newContent;
+        handleContentChange(activeVoiceField, newContent);
+      }
+    }
+  }, [transcript]);
+
+  const handleVoiceToggle = (field: string, language: 'en-US' | 'bn-BD') => {
+    setVoiceLanguage(language);
+    setActiveVoiceField(field);
+    setTimeout(() => toggleListening(), 100);
+  };
 
   const vitals = data?.vitals || {
     bp_s: "",
@@ -60,8 +91,15 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         paddingBottom: "2px",
         marginTop: "10px",
         marginBottom: "5px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
       }}>
-        Presenting Complains:
+        <span>Presenting Complains:</span>
+        <VoiceInputButton
+          isListening={isListening && activeVoiceField === 'ccText'}
+          onToggle={(lang) => handleVoiceToggle('ccText', lang)}
+        />
       </h4>
       <div
         ref={ccRef}
@@ -188,8 +226,15 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         paddingBottom: "2px",
         marginTop: "10px",
         marginBottom: "5px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
       }}>
-        Diagnosis:
+        <span>Diagnosis:</span>
+        <VoiceInputButton
+          isListening={isListening && activeVoiceField === 'dxText'}
+          onToggle={(lang) => handleVoiceToggle('dxText', lang)}
+        />
       </h4>
       <div
         ref={dxRef}
@@ -248,8 +293,15 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         paddingBottom: "2px",
         marginTop: "10px",
         marginBottom: "5px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
       }}>
-        Instructions:
+        <span>Instructions:</span>
+        <VoiceInputButton
+          isListening={isListening && activeVoiceField === 'instructionsText'}
+          onToggle={(lang) => handleVoiceToggle('instructionsText', lang)}
+        />
       </h4>
       <div
         ref={instructionsRef}
