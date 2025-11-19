@@ -234,6 +234,8 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
             position: "relative",
             boxSizing: "border-box",
             pageBreakAfter: "always",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />

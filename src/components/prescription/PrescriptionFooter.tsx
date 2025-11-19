@@ -16,7 +16,7 @@ const PrescriptionFooter = () => {
       position: "relative",
       width: "100%",
       boxSizing: "border-box",
-      marginTop: "20px",
+      marginTop: "auto",
     }}>
       <div
         contentEditable
