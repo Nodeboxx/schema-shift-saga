@@ -212,6 +212,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
       {pages.map((page) => (
         <div
           key={page.id}
+          className="prescription-page"
           style={{
             width: "800px",
             minHeight: "1120px",
