@@ -67,8 +67,26 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         ref={ccRef}
         contentEditable
         suppressContentEditableWarning
+        onInput={(e) => {
+          const content = e.currentTarget.innerHTML;
+          if (!content.trim() || content.trim() === '<br>') {
+            e.currentTarget.innerHTML = '• ';
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(e.currentTarget);
+            range.collapse(false);
+            sel?.removeAllRanges();
+            sel?.addRange(range);
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            document.execCommand('insertHTML', false, '<br>• ');
+          }
+        }}
         onBlur={(e) => handleContentChange("ccText", e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: data?.ccText || "" }}
+        dangerouslySetInnerHTML={{ __html: data?.ccText || "• " }}
         style={{
           fontSize: "9px",
           lineHeight: "1.4",
@@ -227,6 +245,19 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         suppressContentEditableWarning
         onInput={(e) => {
           const content = e.currentTarget.textContent || "";
+          const htmlContent = e.currentTarget.innerHTML;
+          
+          if (!content.trim() || htmlContent.trim() === '<br>') {
+            e.currentTarget.innerHTML = '• ';
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(e.currentTarget);
+            range.collapse(false);
+            sel?.removeAllRanges();
+            sel?.addRange(range);
+            return;
+          }
+          
           if (content.endsWith("..")) {
             const beforeDots = content.slice(0, -2);
             const lastWord = beforeDots.split(/[\s\n]/).pop() || "";
@@ -244,8 +275,14 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
             }
           }
         }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            document.execCommand('insertHTML', false, '<br>• ');
+          }
+        }}
         onBlur={(e) => handleContentChange("advText", e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: data?.advText || "" }}
+        dangerouslySetInnerHTML={{ __html: data?.advText || "• " }}
         style={{
           fontSize: "9px",
           lineHeight: "1.4",
