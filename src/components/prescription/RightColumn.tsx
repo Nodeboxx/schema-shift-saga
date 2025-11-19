@@ -100,7 +100,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
     }}>
       <h1 style={{
         fontFamily: "'Times New Roman', Times, serif",
-        fontSize: "48px",
+        fontSize: "40px",
         fontWeight: "bold",
         color: "#333",
         margin: 0,
@@ -110,10 +110,10 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
       </h1>
 
       <div style={{
-        marginTop: "15px",
+        marginTop: "10px",
         paddingLeft: "5px",
-        fontSize: "14px",
-        lineHeight: "1.8",
+        fontSize: "12px",
+        lineHeight: "1.5",
         flexGrow: 1,
         overflow: "visible",
         minHeight: "100px",
@@ -122,8 +122,8 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
           <div
             key={med.id}
             style={{
-              marginBottom: "15px",
-              paddingLeft: "10px",
+              marginBottom: "8px",
+              paddingLeft: "8px",
               paddingRight: "30px",
               position: "relative",
               borderBottom: "1px solid #f0f0f0",
@@ -161,21 +161,21 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                   onBlur={(e) => updateMedicine(med.id, "categoryContent", e.currentTarget.innerHTML)}
                   dangerouslySetInnerHTML={{ __html: med.categoryContent || "" }}
                   style={{
-                    fontSize: "16px",
+                    fontSize: "14px",
                     fontWeight: 700,
                     color: "#0056b3",
-                    marginTop: "20px",
-                    marginBottom: "10px",
-                    minHeight: "20px",
-                    padding: "4px",
+                    marginTop: "12px",
+                    marginBottom: "6px",
+                    minHeight: "18px",
+                    padding: "3px",
                     border: "1px solid transparent",
                   }}
                 />
               </>
             ) : (
               <>
-                <div style={{ marginBottom: "8px" }}>
-                  <div className="no-print" style={{ marginBottom: "8px" }}>
+                <div style={{ marginBottom: "6px" }}>
+                  <div className="no-print" style={{ marginBottom: "6px" }}>
                     <MedicineAutocomplete
                       value={med.name || ""}
                       onSelect={(medicine) => {
@@ -191,28 +191,28 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                     />
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "6px" }}>
                     {(med.dosage_form_icon || med.dosage_form_name) && (
-                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: "28px" }}>
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: "20px" }}>
                         {med.dosage_form_icon ? (
                           <img
                             src={med.dosage_form_icon}
                             alt={med.dosage_form_name || "Dosage form"}
-                            style={{ width: "20px", height: "20px", marginTop: "2px" }}
+                            style={{ width: "16px", height: "16px", marginTop: "1px" }}
                             className="dosage-icon"
                           />
                         ) : (
                           <div
                             style={{
-                              width: "20px",
-                              height: "20px",
-                              marginTop: "2px",
+                              width: "16px",
+                              height: "16px",
+                              marginTop: "1px",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
                               background: "#e0e0e0",
                               borderRadius: "2px",
-                              fontSize: "8px",
+                              fontSize: "7px",
                               fontWeight: 700,
                             }}
                           >
@@ -222,8 +222,8 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                         {med.dosage_form_name && (
                           <span
                             style={{
-                              marginTop: "4px",
-                              fontSize: "10px",
+                              marginTop: "2px",
+                              fontSize: "8px",
                               fontWeight: 700,
                               letterSpacing: "0.08em",
                               textTransform: "uppercase",
@@ -235,66 +235,57 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                       </div>
                     )}
                     <div style={{ flex: 1 }}>
-                      <div
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => updateMedicine(med.id, "name", e.currentTarget.textContent || "")}
-                        style={{ 
-                          fontSize: "15px", 
-                          fontWeight: 700, 
-                          color: "#000", 
-                          minHeight: "20px", 
-                          outline: "none",
-                          padding: "2px"
-                        }}
-                      >
-                        {med.name || "Medicine Name"}
-                      </div>
-                      <div
-                        contentEditable
-                        suppressContentEditableWarning
-                        onBlur={(e) => updateMedicine(med.id, "generic_name", e.currentTarget.textContent || "")}
-                        style={{ 
-                          fontSize: "12px", 
-                          color: "#0056b3", 
-                          fontWeight: 600, 
-                          minHeight: "16px", 
-                          outline: "none",
-                          padding: "2px"
-                        }}
-                      >
-                        {med.generic_name || "Generic Name"}
-                      </div>
-                      <div style={{ display: "flex", gap: "8px", fontSize: "11px", color: "#666" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "baseline" }}>
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => updateMedicine(med.id, "name", e.currentTarget.textContent || "")}
+                          style={{ 
+                            fontSize: "13px", 
+                            fontWeight: 700, 
+                            color: "#000", 
+                            minHeight: "16px", 
+                            outline: "none",
+                            padding: "1px"
+                          }}
+                        >
+                          {med.name || "Medicine Name"}
+                        </span>
+                        <span
+                          contentEditable
+                          suppressContentEditableWarning
+                          onBlur={(e) => updateMedicine(med.id, "generic_name", e.currentTarget.textContent || "")}
+                          style={{ 
+                            fontSize: "11px", 
+                            color: "#0056b3", 
+                            fontWeight: 600, 
+                            minHeight: "14px", 
+                            outline: "none",
+                            padding: "1px"
+                          }}
+                        >
+                          {med.generic_name || "Generic"}
+                        </span>
                         <span
                           contentEditable
                           suppressContentEditableWarning
                           onBlur={(e) => updateMedicine(med.id, "strength", e.currentTarget.textContent || "")}
-                          style={{ outline: "none", padding: "2px", minWidth: "40px" }}
+                          style={{ outline: "none", padding: "1px", minWidth: "30px", fontSize: "11px", color: "#666" }}
                         >
-                          {med.strength || "Strength"}
-                        </span>
-                        <span>|</span>
-                        <span
-                          contentEditable
-                          suppressContentEditableWarning
-                          onBlur={(e) => updateMedicine(med.id, "manufacturer_name", e.currentTarget.textContent || "")}
-                          style={{ outline: "none", padding: "2px", minWidth: "60px", color: "#999" }}
-                        >
-                          {med.manufacturer_name || "Manufacturer"}
+                          {med.strength || "mg"}
                         </span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="no-print" style={{ marginBottom: "8px" }}>
+                <div className="no-print" style={{ marginBottom: "6px", marginLeft: "22px" }}>
                   <DoseSelector
                     value={med.dose || ""}
                     onChange={(value) => updateMedicine(med.id, "dose", value)}
                   />
                 </div>
-                <div style={{ fontSize: "13px", fontWeight: 500, marginBottom: "4px" }}>
+                <div style={{ fontSize: "11px", fontWeight: 500, marginBottom: "3px", marginLeft: "22px" }}>
                   {med.dose || "Dosage"}
                 </div>
 
@@ -305,13 +296,14 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                   onBlur={(e) => updateMedicine(med.id, "details", e.currentTarget.innerHTML)}
                   dangerouslySetInnerHTML={{ __html: med.details || "" }}
                   style={{
-                    fontSize: "12px",
-                    lineHeight: "1.5",
+                    fontSize: "10px",
+                    lineHeight: "1.4",
                     color: "#555",
                     fontStyle: "italic",
-                    marginBottom: "8px",
-                    minHeight: "18px",
-                    padding: "4px",
+                    marginBottom: "6px",
+                    marginLeft: "22px",
+                    minHeight: "14px",
+                    padding: "2px",
                     border: "1px solid transparent",
                   }}
                 />
