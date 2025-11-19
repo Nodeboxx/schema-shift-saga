@@ -91,25 +91,27 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      fontSize: "14px",
+      fontSize: "12px",
       fontWeight: 600,
-      padding: "8px 15px",
+      padding: "6px 10px",
       borderBottom: "1px solid #eee",
-      gap: "15px",
+      gap: "8px",
+      width: "100%",
+      boxSizing: "border-box",
     }}>
-      <span style={{ display: "flex", gap: "5px", alignItems: "center" }} className="no-print">
+      <span style={{ display: "flex", gap: "3px", alignItems: "center", fontSize: "11px", whiteSpace: "nowrap" }} className="no-print">
         Date:{" "}
         <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
               className={cn(
-                "h-7 px-2 text-sm font-semibold border-gray-300 hover:bg-gray-50",
+                "h-6 px-1.5 text-xs font-semibold border-gray-300 hover:bg-gray-50",
                 !patientInfo.patientDate && "text-muted-foreground"
               )}
             >
-              <CalendarIcon className="mr-1.5 h-3.5 w-3.5" />
-              {patientInfo.patientDate || "Select date"}
+              <CalendarIcon className="mr-1 h-3 w-3" />
+              {patientInfo.patientDate || "Date"}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800 z-[9999]" align="start">
@@ -124,26 +126,26 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
         </Popover>
       </span>
       
-      <span className="print:inline hidden" style={{ fontSize: "14px", fontWeight: 600 }}>
+      <span className="print:inline hidden" style={{ fontSize: "12px", fontWeight: 600, whiteSpace: "nowrap" }}>
         Date: {patientInfo.patientDate}
       </span>
       
-      <span style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+      <span style={{ display: "flex", gap: "3px", alignItems: "center", fontSize: "11px", flex: 1, minWidth: 0 }}>
         Name:{" "}
         <div
           contentEditable
           suppressContentEditableWarning
           onBlur={(e) => handleEdit("patientName", e.currentTarget.textContent || "")}
-          style={{ minWidth: "150px" }}
+          style={{ minWidth: "100px", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
         >
           {patientInfo.patientName}
         </div>
       </span>
       
-      <span style={{ display: "flex", gap: "3px", alignItems: "center" }} className="no-print">
+      <span style={{ display: "flex", gap: "2px", alignItems: "center", fontSize: "11px", whiteSpace: "nowrap" }} className="no-print">
         Age:{" "}
         <Select value={patientInfo.patientAgeYears || "0"} onValueChange={(v) => handleAgeChange("patientAgeYears", v)}>
-          <SelectTrigger className="h-7 w-16 text-xs bg-white">
+          <SelectTrigger className="h-6 w-12 text-[10px] bg-white px-1">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="pointer-events-auto bg-white z-[9999] max-h-60">
@@ -153,7 +155,7 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
           </SelectContent>
         </Select>
         <Select value={patientInfo.patientAgeMonths || "0"} onValueChange={(v) => handleAgeChange("patientAgeMonths", v)}>
-          <SelectTrigger className="h-7 w-16 text-xs bg-white">
+          <SelectTrigger className="h-6 w-12 text-[10px] bg-white px-1">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="pointer-events-auto bg-white z-[9999]">
@@ -163,7 +165,7 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
           </SelectContent>
         </Select>
         <Select value={patientInfo.patientAgeDays || "0"} onValueChange={(v) => handleAgeChange("patientAgeDays", v)}>
-          <SelectTrigger className="h-7 w-16 text-xs bg-white">
+          <SelectTrigger className="h-6 w-12 text-[10px] bg-white px-1">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="pointer-events-auto bg-white z-[9999]">
@@ -174,15 +176,15 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
         </Select>
       </span>
       
-      <span className="print:inline hidden" style={{ fontSize: "14px", fontWeight: 600 }}>
+      <span className="print:inline hidden" style={{ fontSize: "12px", fontWeight: 600, whiteSpace: "nowrap" }}>
         Age: {patientInfo.patientAge}
       </span>
       
-      <span style={{ display: "flex", gap: "5px", alignItems: "center" }} className="no-print">
+      <span style={{ display: "flex", gap: "2px", alignItems: "center", fontSize: "11px", whiteSpace: "nowrap" }} className="no-print">
         Sex:{" "}
         <Select value={patientInfo.patientSex || ""} onValueChange={(v) => handleEdit("patientSex", v)}>
-          <SelectTrigger className="h-7 w-24 text-xs bg-white">
-            <SelectValue placeholder="Select" />
+          <SelectTrigger className="h-6 w-16 text-[10px] bg-white px-1">
+            <SelectValue placeholder="Sex" />
           </SelectTrigger>
           <SelectContent className="pointer-events-auto bg-white z-[9999]">
             <SelectItem value="Male">Male</SelectItem>
@@ -191,14 +193,14 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
         </Select>
       </span>
       
-      <span className="print:inline hidden" style={{ fontSize: "14px", fontWeight: 600 }}>
+      <span className="print:inline hidden" style={{ fontSize: "12px", fontWeight: 600, whiteSpace: "nowrap" }}>
         Sex: {patientInfo.patientSex}
       </span>
       
-      <span style={{ display: "flex", gap: "3px", alignItems: "center" }} className="no-print">
-        Weight:{" "}
+      <span style={{ display: "flex", gap: "2px", alignItems: "center", fontSize: "11px", whiteSpace: "nowrap" }} className="no-print">
+        Wt:{" "}
         <Select value={patientInfo.patientWeightKg || "0"} onValueChange={(v) => handleWeightChange("patientWeightKg", v)}>
-          <SelectTrigger className="h-7 w-20 text-xs bg-white">
+          <SelectTrigger className="h-6 w-14 text-[10px] bg-white px-1">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="pointer-events-auto bg-white z-[9999] max-h-60">
@@ -208,7 +210,7 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
           </SelectContent>
         </Select>
         <Select value={patientInfo.patientWeightGrams || "0"} onValueChange={(v) => handleWeightChange("patientWeightGrams", v)}>
-          <SelectTrigger className="h-7 w-20 text-xs bg-white">
+          <SelectTrigger className="h-6 w-14 text-[10px] bg-white px-1">
             <SelectValue />
           </SelectTrigger>
           <SelectContent className="pointer-events-auto bg-white z-[9999] max-h-60">
@@ -219,7 +221,7 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
         </Select>
       </span>
       
-      <span className="print:inline hidden" style={{ fontSize: "14px", fontWeight: 600 }}>
+      <span className="print:inline hidden" style={{ fontSize: "12px", fontWeight: 600, whiteSpace: "nowrap" }}>
         Weight: {patientInfo.patientWeight}
       </span>
     </div>
