@@ -143,36 +143,45 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Pulse</label>
-          <div
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => handleVitalEdit("pulse", e.currentTarget.textContent || "")}
-            style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
-          >
-            {vitals.pulse}
-          </div>
+          <span style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleVitalEdit("pulse", e.currentTarget.textContent || "")}
+              style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden", width: "30px" }}
+            >
+              {vitals.pulse}
+            </div>
+            <span style={{ fontSize: "7px", color: "#666" }}>beat/min</span>
+          </span>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Temp</label>
-          <div
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => handleVitalEdit("temp", e.currentTarget.textContent || "")}
-            style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
-          >
-            {vitals.temp}
-          </div>
+          <span style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleVitalEdit("temp", e.currentTarget.textContent || "")}
+              style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden", width: "30px" }}
+            >
+              {vitals.temp}
+            </div>
+            <span style={{ fontSize: "7px", color: "#666" }}>°C</span>
+          </span>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>SpO2</label>
-          <div
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => handleVitalEdit("spo2", e.currentTarget.textContent || "")}
-            style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
-          >
-            {vitals.spo2}
-          </div>
+          <span style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleVitalEdit("spo2", e.currentTarget.textContent || "")}
+              style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden", width: "30px" }}
+            >
+              {vitals.spo2}
+            </div>
+            <span style={{ fontSize: "7px", color: "#666" }}>% on air</span>
+          </span>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
           <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Anemia</label>
