@@ -112,35 +112,78 @@ export class ImportService {
 
       // Import dosage forms with icons
       let dosageFormsImported = 0;
-      for (const [key, { name, iconUrl }] of dosageFormsMap) {
-        const slug = this.createSlug(name);
-        const { error } = await supabase
+      const dosageFormRows = Array.from(dosageFormsMap.values()).map(({ name, iconUrl }) => ({
+        name,
+        slug: this.createSlug(name),
+        icon_url: iconUrl,
+      }));
+
+      for (let i = 0; i < dosageFormRows.length; i += 500) {
+        const batch = dosageFormRows.slice(i, i + 500);
+        const { error, count } = await supabase
           .from('dosage_forms')
-          .upsert({ name, slug, icon_url: iconUrl }, { onConflict: 'slug' });
-        
-        if (!error) dosageFormsImported++;
+          .upsert(batch, { onConflict: 'slug', count: 'exact' });
+
+        if (error) {
+          errors.push({
+            row: i,
+            field: 'dosage_forms_batch',
+            value: `batch ${i / 500 + 1}`,
+            reason: error.message,
+          });
+        } else {
+          dosageFormsImported += count || batch.length;
+        }
       }
 
       // Import manufacturers
       let manufacturersImported = 0;
-      for (const name of manufacturersMap.values()) {
-        const slug = this.createSlug(name);
-        const { error } = await supabase
+      const manufacturerRows = Array.from(manufacturersMap.values()).map((name) => ({
+        name,
+        slug: this.createSlug(name),
+      }));
+
+      for (let i = 0; i < manufacturerRows.length; i += 500) {
+        const batch = manufacturerRows.slice(i, i + 500);
+        const { error, count } = await supabase
           .from('manufacturers')
-          .upsert({ name, slug }, { onConflict: 'slug' });
-        
-        if (!error) manufacturersImported++;
+          .upsert(batch, { onConflict: 'slug', count: 'exact' });
+
+        if (error) {
+          errors.push({
+            row: i,
+            field: 'manufacturers_batch',
+            value: `batch ${i / 500 + 1}`,
+            reason: error.message,
+          });
+        } else {
+          manufacturersImported += count || batch.length;
+        }
       }
 
       // Import generics (without drug class for now)
       let genericsImported = 0;
-      for (const name of genericsMap.values()) {
-        const slug = this.createSlug(name);
-        const { error } = await supabase
+      const genericRows = Array.from(genericsMap.values()).map((name) => ({
+        name,
+        slug: this.createSlug(name),
+      }));
+
+      for (let i = 0; i < genericRows.length; i += 500) {
+        const batch = genericRows.slice(i, i + 500);
+        const { error, count } = await supabase
           .from('generics')
-          .upsert({ name, slug }, { onConflict: 'slug' });
-        
-        if (!error) genericsImported++;
+          .upsert(batch, { onConflict: 'slug', count: 'exact' });
+
+        if (error) {
+          errors.push({
+            row: i,
+            field: 'generics_batch',
+            value: `batch ${i / 500 + 1}`,
+            reason: error.message,
+          });
+        } else {
+          genericsImported += count || batch.length;
+        }
       }
 
       // Fetch IDs for medicines
