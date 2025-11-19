@@ -4,6 +4,7 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 interface PatientInfoBarProps {
@@ -11,8 +12,13 @@ interface PatientInfoBarProps {
     patientDate: string;
     patientName: string;
     patientAge: string;
+    patientAgeYears?: string;
+    patientAgeMonths?: string;
+    patientAgeDays?: string;
     patientSex: string;
     patientWeight: string;
+    patientWeightKg?: string;
+    patientWeightGrams?: string;
   };
   setPatientInfo: (info: any) => void;
 }
@@ -22,6 +28,36 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
   
   const handleEdit = (field: string, value: string) => {
     setPatientInfo({ ...patientInfo, [field]: value });
+  };
+
+  const handleAgeChange = (field: string, value: string) => {
+    const updates = { ...patientInfo, [field]: value };
+    
+    const years = field === "patientAgeYears" ? value : (updates.patientAgeYears || "0");
+    const months = field === "patientAgeMonths" ? value : (updates.patientAgeMonths || "0");
+    const days = field === "patientAgeDays" ? value : (updates.patientAgeDays || "0");
+    
+    const parts = [];
+    if (years !== "0") parts.push(`${years}y`);
+    if (months !== "0") parts.push(`${months}m`);
+    if (days !== "0") parts.push(`${days}d`);
+    
+    updates.patientAge = parts.join(' ') || '0y';
+    setPatientInfo(updates);
+  };
+
+  const handleWeightChange = (field: string, value: string) => {
+    const updates = { ...patientInfo, [field]: value };
+    
+    const kg = field === "patientWeightKg" ? value : (updates.patientWeightKg || "0");
+    const grams = field === "patientWeightGrams" ? value : (updates.patientWeightGrams || "0");
+    
+    const parts = [];
+    if (kg !== "0") parts.push(`${kg}kg`);
+    if (grams !== "0") parts.push(`${grams}g`);
+    
+    updates.patientWeight = parts.join(' ') || '0kg';
+    setPatientInfo(updates);
   };
 
   const handleDateSelect = (date: Date | undefined) => {
@@ -54,10 +90,12 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
     <div style={{
       display: "flex",
       justifyContent: "space-between",
+      alignItems: "center",
       fontSize: "14px",
       fontWeight: 600,
       padding: "8px 15px",
       borderBottom: "1px solid #eee",
+      gap: "15px",
     }}>
       <span style={{ display: "flex", gap: "5px", alignItems: "center" }} className="no-print">
         Date:{" "}
@@ -85,49 +123,104 @@ const PatientInfoBar = ({ patientInfo, setPatientInfo }: PatientInfoBarProps) =>
           </PopoverContent>
         </Popover>
       </span>
+      
+      <span className="print:inline hidden" style={{ fontSize: "14px", fontWeight: 600 }}>
+        Date: {patientInfo.patientDate}
+      </span>
+      
       <span style={{ display: "flex", gap: "5px", alignItems: "center" }}>
         Name:{" "}
         <div
           contentEditable
           suppressContentEditableWarning
           onBlur={(e) => handleEdit("patientName", e.currentTarget.textContent || "")}
-          style={{ minWidth: "200px" }}
+          style={{ minWidth: "150px" }}
         >
           {patientInfo.patientName}
         </div>
       </span>
-      <span style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+      
+      <span style={{ display: "flex", gap: "3px", alignItems: "center" }} className="no-print">
         Age:{" "}
-        <div
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => handleEdit("patientAge", e.currentTarget.textContent || "")}
-          style={{ minWidth: "50px" }}
-        >
-          {patientInfo.patientAge}
-        </div>
+        <Select value={patientInfo.patientAgeYears || "0"} onValueChange={(v) => handleAgeChange("patientAgeYears", v)}>
+          <SelectTrigger className="h-7 w-16 text-xs bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="pointer-events-auto bg-white z-[9999] max-h-60">
+            {Array.from({ length: 121 }, (_, i) => (
+              <SelectItem key={i} value={i.toString()}>{i}y</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={patientInfo.patientAgeMonths || "0"} onValueChange={(v) => handleAgeChange("patientAgeMonths", v)}>
+          <SelectTrigger className="h-7 w-16 text-xs bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="pointer-events-auto bg-white z-[9999]">
+            {Array.from({ length: 12 }, (_, i) => (
+              <SelectItem key={i} value={i.toString()}>{i}m</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={patientInfo.patientAgeDays || "0"} onValueChange={(v) => handleAgeChange("patientAgeDays", v)}>
+          <SelectTrigger className="h-7 w-16 text-xs bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="pointer-events-auto bg-white z-[9999]">
+            {Array.from({ length: 31 }, (_, i) => (
+              <SelectItem key={i} value={i.toString()}>{i}d</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </span>
-      <span style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+      
+      <span className="print:inline hidden" style={{ fontSize: "14px", fontWeight: 600 }}>
+        Age: {patientInfo.patientAge}
+      </span>
+      
+      <span style={{ display: "flex", gap: "5px", alignItems: "center" }} className="no-print">
         Sex:{" "}
-        <div
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => handleEdit("patientSex", e.currentTarget.textContent || "")}
-          style={{ minWidth: "50px" }}
-        >
-          {patientInfo.patientSex}
-        </div>
+        <Select value={patientInfo.patientSex || ""} onValueChange={(v) => handleEdit("patientSex", v)}>
+          <SelectTrigger className="h-7 w-24 text-xs bg-white">
+            <SelectValue placeholder="Select" />
+          </SelectTrigger>
+          <SelectContent className="pointer-events-auto bg-white z-[9999]">
+            <SelectItem value="Male">Male</SelectItem>
+            <SelectItem value="Female">Female</SelectItem>
+          </SelectContent>
+        </Select>
       </span>
-      <span style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+      
+      <span className="print:inline hidden" style={{ fontSize: "14px", fontWeight: 600 }}>
+        Sex: {patientInfo.patientSex}
+      </span>
+      
+      <span style={{ display: "flex", gap: "3px", alignItems: "center" }} className="no-print">
         Weight:{" "}
-        <div
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => handleEdit("patientWeight", e.currentTarget.textContent || "")}
-          style={{ minWidth: "50px" }}
-        >
-          {patientInfo.patientWeight}
-        </div>
+        <Select value={patientInfo.patientWeightKg || "0"} onValueChange={(v) => handleWeightChange("patientWeightKg", v)}>
+          <SelectTrigger className="h-7 w-20 text-xs bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="pointer-events-auto bg-white z-[9999] max-h-60">
+            {Array.from({ length: 201 }, (_, i) => (
+              <SelectItem key={i} value={i.toString()}>{i}kg</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={patientInfo.patientWeightGrams || "0"} onValueChange={(v) => handleWeightChange("patientWeightGrams", v)}>
+          <SelectTrigger className="h-7 w-20 text-xs bg-white">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="pointer-events-auto bg-white z-[9999] max-h-60">
+            {Array.from({ length: 1000 }, (_, i) => (
+              <SelectItem key={i} value={i.toString()}>{i}g</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </span>
+      
+      <span className="print:inline hidden" style={{ fontSize: "14px", fontWeight: 600 }}>
+        Weight: {patientInfo.patientWeight}
       </span>
     </div>
   );
