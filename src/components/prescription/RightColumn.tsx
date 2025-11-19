@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import MedicineAutocomplete from "./MedicineAutocomplete";
 import DoseSelector from "./DoseSelector";
-import RichTextToolbar from "../RichTextToolbar";
 
 interface Medicine {
   id: string;
@@ -86,17 +85,6 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
     }
   };
 
-  const handleCommand = (medId: string, field: "details" | "categoryContent") => (command: string, value?: string) => {
-    const element = document.getElementById(`${field}-${medId}`);
-    if (element) {
-      element.focus();
-      if (value) {
-        document.execCommand(command, false, value);
-      } else {
-        document.execCommand(command, false);
-      }
-    }
-  };
 
   return (
     <div style={{
@@ -165,7 +153,6 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
 
             {med.type === "category" ? (
               <>
-                <RichTextToolbar onCommand={handleCommand(med.id, "categoryContent")} className="no-print mb-2" />
                 <div
                   id={`categoryContent-${med.id}`}
                   contentEditable
@@ -275,7 +262,6 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                   {med.dose || "Dosage"}
                 </div>
 
-                <RichTextToolbar onCommand={handleCommand(med.id, "details")} className="no-print mb-2" />
                 <div
                   id={`details-${med.id}`}
                   contentEditable
