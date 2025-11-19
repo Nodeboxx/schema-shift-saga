@@ -138,11 +138,11 @@ export class ImportService {
       console.log(`Processing ${rows.length} rows from Excel...`);
       
       rows.forEach((row: any) => {
-        // Trim and clean all values
-        const imageUrl = (row['image'] || '').trim();
+        // Convert Excel values to strings before trimming
+        const imageUrl = String(row['image'] || '').trim();
         const dosageForm = imageUrl ? imageUrl.split('/').pop()?.replace('.png', '').replace(/-/g, ' ').trim() : '';
-        const manufacturer = (row['Company Name'] || '').trim();
-        const generic = (row['Generic Name'] || '').trim();
+        const manufacturer = String(row['Company Name'] || '').trim();
+        const generic = String(row['Generic Name'] || '').trim();
         
         if (dosageForm && !dosageFormsMap.has(dosageForm)) {
           dosageFormsMap.set(dosageForm, {
@@ -263,16 +263,16 @@ export class ImportService {
       console.log('Processing medicines...');
       const medicinesToImport = rows
         .filter(row => {
-          const brandName = (row['Brand Name'] || '').trim();
-          const generic = (row['Generic Name'] || '').trim();
+          const brandName = String(row['Brand Name'] || '').trim();
+          const generic = String(row['Generic Name'] || '').trim();
           return brandName && generic;
         })
         .map((row, index) => {
-          const brandName = (row['Brand Name'] || '').trim();
-          const strength = (row['Quantity'] || '').trim();
-          const manufacturer = (row['Company Name'] || '').trim();
-          const generic = (row['Generic Name'] || '').trim();
-          const imageUrl = (row['image'] || '').trim();
+          const brandName = String(row['Brand Name'] || '').trim();
+          const strength = String(row['Quantity'] || '').trim();
+          const manufacturer = String(row['Company Name'] || '').trim();
+          const generic = String(row['Generic Name'] || '').trim();
+          const imageUrl = String(row['image'] || '').trim();
           const dosageFormName = imageUrl ? imageUrl.split('/').pop()?.replace('.png', '').replace(/-/g, ' ').trim() : '';
 
           const dosageFormSlug = this.createSlug(dosageFormName || '');
