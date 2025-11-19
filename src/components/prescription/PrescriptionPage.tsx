@@ -69,14 +69,28 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           anemia: prescriptionData.oe_anemia || "",
           jaundice: prescriptionData.oe_jaundice || "",
         },
-        medicines: (prescriptionData.prescription_items || []).map((item: any) => ({
-          id: item.id,
-          type: item.item_type, // Map item_type from DB to type for UI
-          name: item.name,
-          details: item.details,
-          dose: item.dose,
-          categoryContent: item.category_content,
-        })),
+        medicines: (prescriptionData.prescription_items || []).map((item: any) => {
+          // Parse details JSON if it exists
+          let parsedDetails = {};
+          try {
+            if (item.details) {
+              parsedDetails = JSON.parse(item.details);
+            }
+          } catch (e) {
+            // If details is not JSON, treat as regular text
+            parsedDetails = { details: item.details };
+          }
+          
+          return {
+            id: item.id,
+            type: item.item_type,
+            name: item.name,
+            dose: item.dose,
+            categoryContent: item.category_content,
+            // Restore medicine metadata from parsed details
+            ...parsedDetails,
+          };
+        }),
       });
     }
   }, [prescriptionData]);
@@ -157,15 +171,27 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           .eq("prescription_id", prescriptionId);
 
         // Insert new items
-        const items = bodyData.medicines.map((med: any, index: number) => ({
-          prescription_id: prescriptionId,
-          item_type: med.type || med.item_type || "medicine", // Handle both field names with fallback
-          name: med.name || "",
-          details: med.details || "",
-          dose: med.dose || "",
-          category_content: med.categoryContent || "",
-          sort_order: index,
-        }));
+        const items = bodyData.medicines.map((med: any, index: number) => {
+          // Extract medicine metadata to store in details field
+          const metadata = {
+            generic_name: med.generic_name,
+            strength: med.strength,
+            manufacturer_name: med.manufacturer_name,
+            dosage_form_icon: med.dosage_form_icon,
+            dosage_form_name: med.dosage_form_name,
+            details: med.details, // Keep any text details
+          };
+          
+          return {
+            prescription_id: prescriptionId,
+            item_type: med.type || med.item_type || "medicine",
+            name: med.name || "",
+            details: JSON.stringify(metadata), // Store metadata as JSON
+            dose: med.dose || "",
+            category_content: med.categoryContent || "",
+            sort_order: index,
+          };
+        });
 
         const { error: itemsError } = await supabase
           .from("prescription_items")
