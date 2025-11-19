@@ -1,1 +1,4 @@
 project_id = "mccobdiiknwutougopje"
+
+[functions.download-icon]
+verify_jwt = false
