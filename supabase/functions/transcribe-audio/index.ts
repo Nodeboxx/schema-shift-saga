@@ -48,42 +48,53 @@ serve(async (req) => {
       throw new Error('No audio data provided')
     }
 
-    console.log('Processing audio transcription, language:', language)
+    console.log('Processing audio transcription with Gemini, language:', language)
 
     // Process audio in chunks
     const binaryAudio = processBase64Chunks(audio)
-    
-    // Prepare form data
-    const formData = new FormData()
-    const blob = new Blob([binaryAudio], { type: 'audio/webm' })
-    formData.append('file', blob, 'audio.webm')
-    formData.append('model', 'whisper-1')
-    
-    // Add language if specified
-    if (language && language !== 'en-US') {
-      formData.append('language', language === 'bn-BD' ? 'bn' : 'en')
-    }
+    const base64Audio = btoa(String.fromCharCode(...binaryAudio))
 
-    // Send to OpenAI
-    const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
-      },
-      body: formData,
-    })
+    // Prepare prompt based on language
+    const languagePrompt = language === 'bn-BD' 
+      ? 'Transcribe this audio in Bengali language.' 
+      : 'Transcribe this audio in English language.'
+
+    // Send to Gemini API
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${Deno.env.get('GEMINI_API_KEY')}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: languagePrompt },
+              {
+                inline_data: {
+                  mime_type: 'audio/webm',
+                  data: base64Audio
+                }
+              }
+            ]
+          }]
+        }),
+      }
+    )
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('OpenAI API error:', errorText)
-      throw new Error(`OpenAI API error: ${errorText}`)
+      console.error('Gemini API error:', errorText)
+      throw new Error(`Gemini API error: ${errorText}`)
     }
 
     const result = await response.json()
-    console.log('Transcription successful:', result.text)
+    const transcribedText = result.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    console.log('Transcription successful:', transcribedText)
 
     return new Response(
-      JSON.stringify({ text: result.text }),
+      JSON.stringify({ text: transcribedText }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
