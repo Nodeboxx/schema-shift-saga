@@ -83,6 +83,46 @@ export class ImportService {
       .replace(/^-+|-+$/g, '');
   }
 
+  private async downloadAndSaveIcon(iconUrl: string, dosageFormName: string): Promise<string> {
+    if (!iconUrl) return '';
+    
+    try {
+      const filename = `${this.createSlug(dosageFormName)}.png`;
+      
+      console.log(`Downloading icon for ${dosageFormName} from: ${iconUrl}`);
+      
+      // Call the edge function to download and convert to base64
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/download-icon`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ iconUrl, filename }),
+        }
+      );
+
+      if (!response.ok) {
+        console.error(`Failed to download icon: ${response.status}`);
+        return iconUrl; // Fallback to external URL
+      }
+
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        console.log(`Successfully downloaded icon: ${filename} (${data.size} bytes)`);
+        return data.data; // Return base64 data URL
+      }
+      
+      return iconUrl; // Fallback to external URL
+      
+    } catch (error) {
+      console.error(`Error downloading icon from ${iconUrl}:`, error);
+      return iconUrl; // Fallback to external URL
+    }
+  }
+
   async importFromExcel(file: File): Promise<ImportResult> {
     const startTime = Date.now();
     const errors: ImportError[] = [];
@@ -94,6 +134,8 @@ export class ImportService {
       const dosageFormsMap = new Map<string, { name: string; iconUrl: string }>();
       const manufacturersMap = new Map<string, string>();
       const genericsMap = new Map<string, string>();
+      
+      console.log(`Processing ${rows.length} rows from Excel...`);
       
       rows.forEach((row: any) => {
         const dosageForm = row['image'] ? row['image'].split('/').pop()?.replace('.png', '').replace(/-/g, ' ') : '';
@@ -110,12 +152,27 @@ export class ImportService {
         if (generic) genericsMap.set(generic, generic);
       });
 
-      // Import dosage forms with icons
+      console.log(`Found ${dosageFormsMap.size} unique dosage forms with icons`);
+
+      // Download and cache dosage form icons
+      const iconCache = new Map<string, string>();
+      for (const [key, { iconUrl }] of dosageFormsMap) {
+        if (iconUrl && !iconCache.has(iconUrl)) {
+          const localPath = await this.downloadAndSaveIcon(iconUrl, key);
+          iconCache.set(iconUrl, localPath);
+        }
+      }
+
+      console.log(`Icon cache prepared with ${iconCache.size} unique icons`);
+
+      console.log('Importing dosage forms to database...');
+
+      // Import dosage forms with downloaded icons
       let dosageFormsImported = 0;
       const dosageFormRows = Array.from(dosageFormsMap.values()).map(({ name, iconUrl }) => ({
         name,
         slug: this.createSlug(name),
-        icon_url: iconUrl,
+        icon_url: iconCache.get(iconUrl) || iconUrl, // Use cached local path or fallback to URL
       }));
 
       for (let i = 0; i < dosageFormRows.length; i += 500) {
