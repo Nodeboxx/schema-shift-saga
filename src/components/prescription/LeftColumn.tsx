@@ -18,7 +18,7 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
   const [activeVoiceField, setActiveVoiceField] = useState<string | null>(null);
   const [voiceLanguage, setVoiceLanguage] = useState<'en-US' | 'bn-BD'>('en-US');
   
-  const { isListening, transcript, toggleListening } = useVoiceInput(voiceLanguage);
+  const { isListening, transcript, isProcessing, toggleListening } = useVoiceInput(voiceLanguage);
 
   // Update content when voice transcript changes
   useEffect(() => {
@@ -98,6 +98,7 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         <span>Presenting Complains:</span>
         <VoiceInputButton
           isListening={isListening && activeVoiceField === 'ccText'}
+          isProcessing={isProcessing}
           onToggle={(lang) => handleVoiceToggle('ccText', lang)}
         />
       </h4>
@@ -233,6 +234,7 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         <span>Diagnosis:</span>
         <VoiceInputButton
           isListening={isListening && activeVoiceField === 'dxText'}
+          isProcessing={isProcessing}
           onToggle={(lang) => handleVoiceToggle('dxText', lang)}
         />
       </h4>
@@ -300,6 +302,7 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
         <span>Instructions:</span>
         <VoiceInputButton
           isListening={isListening && activeVoiceField === 'instructionsText'}
+          isProcessing={isProcessing}
           onToggle={(lang) => handleVoiceToggle('instructionsText', lang)}
         />
       </h4>
