@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useRef } from "react";
+import RichTextToolbar from "../RichTextToolbar";
 
 interface LeftColumnProps {
   width: number;
+  data?: any;
+  setData?: (data: any) => void;
 }
 
-const LeftColumn = ({ width }: LeftColumnProps) => {
-  const [ccText, setCcText] = useState("");
-  const [dxText, setDxText] = useState("");
-  const [advText, setAdvText] = useState("");
-  const [instructionsText, setInstructionsText] = useState("");
-  const [followUpText, setFollowUpText] = useState("");
-  const [vitals, setVitals] = useState({
+const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
+  const ccRef = useRef<HTMLDivElement>(null);
+  const dxRef = useRef<HTMLDivElement>(null);
+  const advRef = useRef<HTMLDivElement>(null);
+  const instructionsRef = useRef<HTMLDivElement>(null);
+  const followUpRef = useRef<HTMLDivElement>(null);
+
+  const vitals = data?.vitals || {
     bp_s: "",
     bp_d: "",
     pulse: "",
@@ -18,10 +22,32 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
     spo2: "",
     anemia: "",
     jaundice: "",
-  });
+  };
 
   const handleVitalEdit = (field: string, value: string) => {
-    setVitals({ ...vitals, [field]: value });
+    if (setData) {
+      setData({
+        ...data,
+        vitals: { ...vitals, [field]: value },
+      });
+    }
+  };
+
+  const handleCommand = (ref: React.RefObject<HTMLDivElement>) => (command: string, value?: string) => {
+    if (ref.current) {
+      ref.current.focus();
+      if (value) {
+        document.execCommand(command, false, value);
+      } else {
+        document.execCommand(command, false);
+      }
+    }
+  };
+
+  const handleContentChange = (field: string, value: string) => {
+    if (setData) {
+      setData({ ...data, [field]: value });
+    }
   };
 
   return (
@@ -48,11 +74,13 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
       }}>
         Presenting Complains:
       </h4>
+      <RichTextToolbar onCommand={handleCommand(ccRef)} className="no-print mb-2" />
       <div
+        ref={ccRef}
         contentEditable
         suppressContentEditableWarning
-        onBlur={(e) => setCcText(e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: ccText }}
+        onBlur={(e) => handleContentChange("ccText", e.currentTarget.innerHTML)}
+        dangerouslySetInnerHTML={{ __html: data?.ccText || "" }}
         style={{
           fontSize: "13px",
           lineHeight: "1.6",
@@ -61,6 +89,8 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
           height: "auto",
           minHeight: "20px",
           marginBottom: "15px",
+          padding: "4px",
+          border: "1px solid transparent",
         }}
       />
 
@@ -171,13 +201,15 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
         marginTop: "10px",
         marginBottom: "5px",
       }}>
-        Dx: (Clinical Diagnoses)
+        Diagnosis:
       </h4>
+      <RichTextToolbar onCommand={handleCommand(dxRef)} className="no-print mb-2" />
       <div
+        ref={dxRef}
         contentEditable
         suppressContentEditableWarning
-        onBlur={(e) => setDxText(e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: dxText }}
+        onBlur={(e) => handleContentChange("dxText", e.currentTarget.innerHTML)}
+        dangerouslySetInnerHTML={{ __html: data?.dxText || "" }}
         style={{
           fontSize: "13px",
           lineHeight: "1.6",
@@ -186,6 +218,8 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
           height: "auto",
           minHeight: "20px",
           marginBottom: "15px",
+          padding: "4px",
+          border: "1px solid transparent",
         }}
       />
 
@@ -198,13 +232,15 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
         marginTop: "10px",
         marginBottom: "5px",
       }}>
-        ADVICE: (Lab Tests)
+        Advice:
       </h4>
+      <RichTextToolbar onCommand={handleCommand(advRef)} className="no-print mb-2" />
       <div
+        ref={advRef}
         contentEditable
         suppressContentEditableWarning
-        onBlur={(e) => setAdvText(e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: advText }}
+        onBlur={(e) => handleContentChange("advText", e.currentTarget.innerHTML)}
+        dangerouslySetInnerHTML={{ __html: data?.advText || "" }}
         style={{
           fontSize: "13px",
           lineHeight: "1.6",
@@ -213,30 +249,10 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
           height: "auto",
           minHeight: "20px",
           marginBottom: "15px",
+          padding: "4px",
+          border: "1px solid transparent",
         }}
       />
-
-      <div style={{ paddingLeft: 0 }}>
-        <h4 style={{
-          fontSize: "16px",
-          fontWeight: 700,
-          color: "#0056b3",
-          marginTop: "20px",
-          marginBottom: "10px",
-        }}>
-          📢 Patient Instructions:
-        </h4>
-        <div
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => setInstructionsText(e.currentTarget.innerHTML)}
-          dangerouslySetInnerHTML={{ __html: instructionsText }}
-          style={{
-            fontSize: "13px",
-            lineHeight: "1.6",
-          }}
-        />
-      </div>
 
       <h4 style={{
         fontSize: "14px",
@@ -247,13 +263,15 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
         marginTop: "10px",
         marginBottom: "5px",
       }}>
-        Follow-Up:
+        Instructions:
       </h4>
+      <RichTextToolbar onCommand={handleCommand(instructionsRef)} className="no-print mb-2" />
       <div
+        ref={instructionsRef}
         contentEditable
         suppressContentEditableWarning
-        onBlur={(e) => setFollowUpText(e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: followUpText }}
+        onBlur={(e) => handleContentChange("instructionsText", e.currentTarget.innerHTML)}
+        dangerouslySetInnerHTML={{ __html: data?.instructionsText || "" }}
         style={{
           fontSize: "13px",
           lineHeight: "1.6",
@@ -262,6 +280,39 @@ const LeftColumn = ({ width }: LeftColumnProps) => {
           height: "auto",
           minHeight: "20px",
           marginBottom: "15px",
+          padding: "4px",
+          border: "1px solid transparent",
+        }}
+      />
+
+      <h4 style={{
+        fontSize: "14px",
+        fontWeight: 700,
+        color: "#0056b3",
+        borderBottom: "1px solid #aaa",
+        paddingBottom: "2px",
+        marginTop: "10px",
+        marginBottom: "5px",
+      }}>
+        Follow Up:
+      </h4>
+      <RichTextToolbar onCommand={handleCommand(followUpRef)} className="no-print mb-2" />
+      <div
+        ref={followUpRef}
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={(e) => handleContentChange("followUpText", e.currentTarget.innerHTML)}
+        dangerouslySetInnerHTML={{ __html: data?.followUpText || "" }}
+        style={{
+          fontSize: "13px",
+          lineHeight: "1.6",
+          display: "block",
+          overflow: "visible",
+          height: "auto",
+          minHeight: "20px",
+          marginBottom: "15px",
+          padding: "4px",
+          border: "1px solid transparent",
         }}
       />
     </div>

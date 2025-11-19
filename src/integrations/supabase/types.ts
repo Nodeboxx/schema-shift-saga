@@ -247,6 +247,38 @@ export type Database = {
           },
         ]
       }
+      prescription_pages: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          id: string
+          page_number: number
+          prescription_id: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          page_number: number
+          prescription_id: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          page_number?: number
+          prescription_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prescription_pages_prescription_id_fkey"
+            columns: ["prescription_id"]
+            isOneToOne: false
+            referencedRelation: "prescriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prescriptions: {
         Row: {
           adv_text: string | null
@@ -265,6 +297,7 @@ export type Database = {
           oe_pulse: string | null
           oe_spo2: string | null
           oe_temp: string | null
+          page_count: number | null
           patient_age: string | null
           patient_id: string | null
           patient_name: string
@@ -291,6 +324,7 @@ export type Database = {
           oe_pulse?: string | null
           oe_spo2?: string | null
           oe_temp?: string | null
+          page_count?: number | null
           patient_age?: string | null
           patient_id?: string | null
           patient_name: string
@@ -317,6 +351,7 @@ export type Database = {
           oe_pulse?: string | null
           oe_spo2?: string | null
           oe_temp?: string | null
+          page_count?: number | null
           patient_age?: string | null
           patient_id?: string | null
           patient_name?: string

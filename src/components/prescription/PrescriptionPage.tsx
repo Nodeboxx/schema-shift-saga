@@ -1,10 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import PrescriptionHeader from "./PrescriptionHeader";
 import PatientInfoBar from "./PatientInfoBar";
 import PrescriptionBody from "./PrescriptionBody";
 import PrescriptionFooter from "./PrescriptionFooter";
+import { Button } from "@/components/ui/button";
+import { Plus, Trash2 } from "lucide-react";
 
-const PrescriptionPage = () => {
+interface PrescriptionPageProps {
+  prescriptionData?: any;
+  userId?: string;
+}
+
+const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) => {
+  const { toast } = useToast();
+  const [pages, setPages] = useState([{ id: 1 }]);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const [doctorInfo, setDoctorInfo] = useState({
     bismillah: "بسم الله الرحمن الرحيم",
     docNameEN: "Dr. Rashedul Islam",
@@ -21,22 +34,200 @@ const PrescriptionPage = () => {
     patientWeight: "",
   });
 
+  const [bodyData, setBodyData] = useState<any>({});
+
+  useEffect(() => {
+    if (prescriptionData) {
+      // Load patient info
+      setPatientInfo({
+        patientDate: prescriptionData.prescription_date || new Date().toLocaleDateString(),
+        patientName: prescriptionData.patient_name || "",
+        patientAge: prescriptionData.patient_age || "",
+        patientSex: prescriptionData.patient_sex || "",
+        patientWeight: prescriptionData.patient_weight || "",
+      });
+
+      // Load body data (vitals, complaints, etc.)
+      setBodyData({
+        ccText: prescriptionData.cc_text || "",
+        dxText: prescriptionData.dx_text || "",
+        advText: prescriptionData.adv_text || "",
+        instructionsText: prescriptionData.instructions_text || "",
+        followUpText: prescriptionData.follow_up_text || "",
+        vitals: {
+          bp_s: prescriptionData.oe_bp_s || "",
+          bp_d: prescriptionData.oe_bp_d || "",
+          pulse: prescriptionData.oe_pulse || "",
+          temp: prescriptionData.oe_temp || "",
+          spo2: prescriptionData.oe_spo2 || "",
+          anemia: prescriptionData.oe_anemia || "",
+          jaundice: prescriptionData.oe_jaundice || "",
+        },
+        medicines: prescriptionData.prescription_items || [],
+      });
+    }
+  }, [prescriptionData]);
+
+  const handleSave = async () => {
+    if (!userId || !patientInfo.patientName) {
+      toast({
+        title: "Error",
+        description: "Patient name is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Save or update prescription
+      const prescriptionPayload = {
+        user_id: userId,
+        patient_name: patientInfo.patientName,
+        patient_age: patientInfo.patientAge,
+        patient_sex: patientInfo.patientSex,
+        patient_weight: patientInfo.patientWeight,
+        prescription_date: patientInfo.patientDate,
+        cc_text: bodyData.ccText,
+        dx_text: bodyData.dxText,
+        adv_text: bodyData.advText,
+        instructions_text: bodyData.instructionsText,
+        follow_up_text: bodyData.followUpText,
+        oe_bp_s: bodyData.vitals?.bp_s,
+        oe_bp_d: bodyData.vitals?.bp_d,
+        oe_pulse: bodyData.vitals?.pulse,
+        oe_temp: bodyData.vitals?.temp,
+        oe_spo2: bodyData.vitals?.spo2,
+        oe_anemia: bodyData.vitals?.anemia,
+        oe_jaundice: bodyData.vitals?.jaundice,
+        page_count: pages.length,
+      };
+
+      let prescriptionId = prescriptionData?.id;
+
+      if (prescriptionId) {
+        // Update existing
+        const { error } = await supabase
+          .from("prescriptions")
+          .update(prescriptionPayload)
+          .eq("id", prescriptionId);
+
+        if (error) throw error;
+      } else {
+        // Create new
+        const { data, error } = await supabase
+          .from("prescriptions")
+          .insert([prescriptionPayload])
+          .select()
+          .single();
+
+        if (error) throw error;
+        prescriptionId = data.id;
+      }
+
+      // Save prescription items
+      if (bodyData.medicines && bodyData.medicines.length > 0) {
+        // Delete existing items
+        await supabase
+          .from("prescription_items")
+          .delete()
+          .eq("prescription_id", prescriptionId);
+
+        // Insert new items
+        const items = bodyData.medicines.map((med: any, index: number) => ({
+          prescription_id: prescriptionId,
+          item_type: med.type,
+          name: med.name,
+          details: med.details,
+          dose: med.dose,
+          category_content: med.categoryContent,
+          sort_order: index,
+        }));
+
+        const { error: itemsError } = await supabase
+          .from("prescription_items")
+          .insert(items);
+
+        if (itemsError) throw itemsError;
+      }
+
+      toast({
+        title: "Success",
+        description: "Prescription saved successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save prescription",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addPage = () => {
+    const newPageId = pages.length + 1;
+    setPages([...pages, { id: newPageId }]);
+    setCurrentPage(newPageId);
+  };
+
+  const removePage = (pageId: number) => {
+    if (pages.length === 1) {
+      toast({
+        title: "Cannot remove",
+        description: "At least one page is required",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setPages(pages.filter(p => p.id !== pageId));
+    if (currentPage === pageId) {
+      setCurrentPage(pages[0].id);
+    }
+  };
+
   return (
-    <div style={{
-      width: "800px",
-      minHeight: "1120px",
-      margin: "20px auto",
-      backgroundColor: "#ffffff",
-      border: "1px solid #aaa",
-      boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
-      position: "relative",
-      boxSizing: "border-box",
-    }}>
-      <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
-      <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
-      <PrescriptionBody />
-      <PrescriptionFooter />
-    </div>
+    <>
+      <div className="no-print flex gap-2 justify-center mb-4">
+        <Button onClick={handleSave} size="lg">
+          Save Prescription
+        </Button>
+        <Button onClick={addPage} variant="outline" size="lg" className="add-medicine-btn">
+          <Plus className="w-4 h-4 mr-2" />
+          Add Page
+        </Button>
+        {pages.length > 1 && (
+          <Button onClick={() => removePage(currentPage)} variant="destructive" size="lg">
+            <Trash2 className="w-4 h-4 mr-2" />
+            Remove Page
+          </Button>
+        )}
+      </div>
+
+      {pages.map((page) => (
+        <div
+          key={page.id}
+          style={{
+            width: "800px",
+            minHeight: "1120px",
+            margin: "20px auto",
+            backgroundColor: "#ffffff",
+            border: "1px solid #aaa",
+            boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
+            position: "relative",
+            boxSizing: "border-box",
+            pageBreakAfter: "always",
+          }}
+        >
+          <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
+          <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
+          <PrescriptionBody 
+            data={bodyData} 
+            setData={setBodyData}
+          />
+          <PrescriptionFooter />
+        </div>
+      ))}
+    </>
   );
 };
 
