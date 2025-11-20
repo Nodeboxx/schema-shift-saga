@@ -15,6 +15,7 @@ const Checkout = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bkash' | 'wire'>('card');
 
   const planDetails: Record<string, any> = {
     free: {
@@ -174,21 +175,103 @@ const Checkout = () => {
                 <Input id="email" type="email" required />
               </div>
 
-              <div>
-                <Label htmlFor="card">Card Number</Label>
-                <Input id="card" placeholder="1234 5678 9012 3456" />
+              <div className="space-y-3">
+                <Label>Payment Method</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  <Button
+                    type="button"
+                    variant={paymentMethod === 'card' ? 'default' : 'outline'}
+                    onClick={() => setPaymentMethod('card')}
+                    className="w-full"
+                  >
+                    💳 Card
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={paymentMethod === 'bkash' ? 'default' : 'outline'}
+                    onClick={() => setPaymentMethod('bkash')}
+                    className="w-full"
+                  >
+                    📱 bKash
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={paymentMethod === 'wire' ? 'default' : 'outline'}
+                    onClick={() => setPaymentMethod('wire')}
+                    className="w-full"
+                  >
+                    🏦 Wire
+                  </Button>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="expiry">Expiry Date</Label>
-                  <Input id="expiry" placeholder="MM/YY" />
+              {paymentMethod === 'card' && (
+                <>
+                  <div>
+                    <Label htmlFor="card">Card Number</Label>
+                    <Input id="card" placeholder="1234 5678 9012 3456" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="expiry">Expiry Date</Label>
+                      <Input id="expiry" placeholder="MM/YY" />
+                    </div>
+                    <div>
+                      <Label htmlFor="cvc">CVC</Label>
+                      <Input id="cvc" placeholder="123" />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {paymentMethod === 'bkash' && (
+                <>
+                  <div>
+                    <Label htmlFor="bkash_number">bKash Number</Label>
+                    <Input id="bkash_number" placeholder="01XXXXXXXXX" required />
+                  </div>
+                  <div>
+                    <Label htmlFor="transaction_id">Transaction ID</Label>
+                    <Input id="transaction_id" placeholder="ABCD1234567" required />
+                  </div>
+                  <div className="bg-muted p-4 rounded-lg">
+                    <p className="text-sm mb-2 font-medium">bKash Payment Instructions:</p>
+                    <ol className="text-sm space-y-1 list-decimal list-inside">
+                      <li>Send money to: 01XXX-XXXXXX</li>
+                      <li>Enter amount: ${selectedPlan.price}</li>
+                      <li>Copy the transaction ID</li>
+                      <li>Paste it above and submit</li>
+                    </ol>
+                  </div>
+                </>
+              )}
+
+              {paymentMethod === 'wire' && (
+                <div className="bg-muted p-4 rounded-lg space-y-3">
+                  <p className="text-sm font-medium">Wire Transfer Details:</p>
+                  <div className="text-sm space-y-2">
+                    <div>
+                      <span className="font-medium">Bank Name:</span> Example Bank Ltd.
+                    </div>
+                    <div>
+                      <span className="font-medium">Account Name:</span> MedScribe Technologies
+                    </div>
+                    <div>
+                      <span className="font-medium">Account Number:</span> 1234567890
+                    </div>
+                    <div>
+                      <span className="font-medium">SWIFT/BIC:</span> EXAMPLEBDXXX
+                    </div>
+                    <div>
+                      <span className="font-medium">Amount:</span> ${selectedPlan.price}
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    After transfer, please email the receipt to billing@medscribe.com
+                  </p>
                 </div>
-                <div>
-                  <Label htmlFor="cvc">CVC</Label>
-                  <Input id="cvc" placeholder="123" />
-                </div>
-              </div>
+              )}
 
               <div className="flex items-center gap-2">
                 <Checkbox 
@@ -202,11 +285,17 @@ const Checkout = () => {
               </div>
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Processing..." : `Subscribe for $${selectedPlan.price}/${selectedPlan.period}`}
+                {loading ? "Processing..." : (
+                  paymentMethod === 'wire' 
+                    ? 'Complete Subscription' 
+                    : `Pay $${selectedPlan.price}/${selectedPlan.period}`
+                )}
               </Button>
 
               <p className="text-xs text-muted-foreground text-center">
-                Your payment is secure and encrypted. Cancel anytime.
+                {paymentMethod === 'wire' 
+                  ? 'Your subscription will be activated after payment verification' 
+                  : 'Your payment is secure and encrypted. Cancel anytime.'}
               </p>
             </form>
           </Card>

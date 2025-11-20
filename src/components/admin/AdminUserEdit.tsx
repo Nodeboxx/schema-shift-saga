@@ -260,19 +260,68 @@ export const AdminUserEdit = ({ userId, open, onOpenChange, onSuccess }: AdminUs
 
           <TabsContent value="roles" className="space-y-4">
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Current roles assigned to this user:
+              <p className="text-sm text-muted-foreground mb-4">
+                Manage user roles and permissions:
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {roles.map(role => (
-                  <Badge key={role} variant="secondary">
+                  <Badge key={role} variant="default" className="flex items-center gap-2">
                     {role}
+                    <button
+                      onClick={async () => {
+                        if (confirm(`Remove ${role} role?`)) {
+                          try {
+                            await supabase.rpc('manage_user_role', {
+                              target_user_id: userId,
+                              target_role: role as any,
+                              action: 'remove'
+                            });
+                            toast({ title: 'Role removed successfully' });
+                            loadUserData();
+                            onSuccess();
+                          } catch (error: any) {
+                            toast({ title: 'Error', description: error.message, variant: 'destructive' });
+                          }
+                        }
+                      }}
+                      className="hover:text-destructive"
+                    >
+                      ×
+                    </button>
                   </Badge>
                 ))}
               </div>
-              <p className="text-sm text-muted-foreground mt-4">
-                Role management requires administrative privileges. Contact system administrator to modify user roles.
-              </p>
+              
+              <div className="space-y-2">
+                <Label>Add New Role</Label>
+                <div className="flex flex-wrap gap-2">
+                  {(['super_admin', 'clinic_admin', 'doctor', 'staff', 'patient'] as Array<'super_admin' | 'clinic_admin' | 'doctor' | 'staff' | 'patient'>).map(role => (
+                    !roles.includes(role) && (
+                      <Button
+                        key={role}
+                        variant="outline"
+                        size="sm"
+                        onClick={async () => {
+                          try {
+                            await supabase.rpc('manage_user_role', {
+                              target_user_id: userId,
+                              target_role: role,
+                              action: 'add'
+                            });
+                            toast({ title: 'Role added successfully' });
+                            loadUserData();
+                            onSuccess();
+                          } catch (error: any) {
+                            toast({ title: 'Error', description: error.message, variant: 'destructive' });
+                          }
+                        }}
+                      >
+                        + {role}
+                      </Button>
+                    )
+                  ))}
+                </div>
+              </div>
             </div>
           </TabsContent>
 
