@@ -80,6 +80,8 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           anemia: prescriptionData.oe_anemia || "",
           jaundice: prescriptionData.oe_jaundice || "",
         },
+        // Load template-specific data
+        ...(prescriptionData.template_data || {}),
         medicines: (prescriptionData.prescription_items || []).map((item: any) => {
           // Parse details JSON if it exists
           let parsedDetails = {};
@@ -118,6 +120,22 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
     }
 
     try {
+      // Get user's active template
+      const { data: { user } } = await supabase.auth.getUser();
+      let activeTemplate = 'general_medicine';
+      
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("active_template")
+          .eq("id", user.id)
+          .maybeSingle();
+        
+        if (profile?.active_template) {
+          activeTemplate = profile.active_template;
+        }
+      }
+
       // Convert dd/mm/yyyy to yyyy-mm-dd for database
       const convertDateForDB = (dateStr: string) => {
         if (!dateStr) return null;
@@ -128,6 +146,9 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         }
         return null;
       };
+
+      // Extract template-specific fields from bodyData
+      const { ccText, dxText, advText, instructionsText, followUpText, vitals, medicines, ...templateSpecificData } = bodyData;
 
       // Save or update prescription
       const prescriptionPayload = {
@@ -155,6 +176,8 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         oe_anemia: bodyData.vitals?.anemia,
         oe_jaundice: bodyData.vitals?.jaundice,
         page_count: pages.length,
+        active_template: activeTemplate,
+        template_data: templateSpecificData, // Save all template-specific fields
       };
 
       let prescriptionId = prescriptionData?.id;

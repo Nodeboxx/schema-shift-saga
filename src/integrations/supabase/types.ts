@@ -293,6 +293,7 @@ export type Database = {
       }
       prescriptions: {
         Row: {
+          active_template: string | null
           adv_text: string | null
           cc_text: string | null
           column_width_left: string | null
@@ -321,10 +322,12 @@ export type Database = {
           patient_weight_grams: number | null
           patient_weight_kg: number | null
           prescription_date: string | null
+          template_data: Json | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          active_template?: string | null
           adv_text?: string | null
           cc_text?: string | null
           column_width_left?: string | null
@@ -353,10 +356,12 @@ export type Database = {
           patient_weight_grams?: number | null
           patient_weight_kg?: number | null
           prescription_date?: string | null
+          template_data?: Json | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          active_template?: string | null
           adv_text?: string | null
           cc_text?: string | null
           column_width_left?: string | null
@@ -385,6 +390,7 @@ export type Database = {
           patient_weight_grams?: number | null
           patient_weight_kg?: number | null
           prescription_date?: string | null
+          template_data?: Json | null
           updated_at?: string | null
           user_id?: string
         }
