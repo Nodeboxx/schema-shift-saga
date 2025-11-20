@@ -4,12 +4,16 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
-import Index from "./pages/Index";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Prescription from "./pages/Prescription";
 import DataImport from "./pages/DataImport";
 import Settings from "./pages/Settings";
+import Checkout from "./pages/Checkout";
+import Appointments from "./pages/Appointments";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import ClinicDashboard from "./pages/clinic/ClinicDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,14 +26,19 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/prescription" element={<Prescription />} />
             <Route path="/prescription/new" element={<Prescription />} />
             <Route path="/prescription/:id" element={<Prescription />} />
+            <Route path="/appointments" element={<Appointments />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/import-data" element={<DataImport />} />
+            <Route path="/checkout/:plan" element={<Checkout />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/clinic" element={<ClinicDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
