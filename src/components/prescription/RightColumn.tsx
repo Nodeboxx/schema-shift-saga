@@ -100,6 +100,7 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
       display: "flex",
       flexDirection: "column",
       overflow: "visible",
+      height: "100%",
     }}>
       <h1 style={{
         fontFamily: "'Times New Roman', Times, serif",
@@ -117,10 +118,9 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
         paddingLeft: "5px",
         fontSize: "10px",
         lineHeight: "1.3",
-        flexGrow: 1,
+        flex: "1 1 auto",
         overflow: "visible",
         minHeight: "100px",
-        maxHeight: "calc(100vh - 400px)", // Dynamic height to fit within page
       }}>
         {medicines.map((med) => (
           <div
@@ -317,11 +317,19 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
         ))}
       </div>
 
-      <div className="no-print" style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-        <Button onClick={addMedicine} variant="outline" className="add-medicine-btn">
+      <div className="no-print" style={{ 
+        marginTop: "auto",
+        paddingTop: "20px",
+        display: "flex", 
+        gap: "10px",
+        borderTop: "2px solid #e0e0e0",
+        paddingBottom: "10px",
+        flexShrink: 0,
+      }}>
+        <Button onClick={addMedicine} variant="outline" className="add-medicine-btn" size="sm">
           + Add Medicine
         </Button>
-        <Button onClick={addCategory} variant="outline" className="add-medicine-btn">
+        <Button onClick={addCategory} variant="outline" className="add-medicine-btn" size="sm">
           + Add Category
         </Button>
       </div>
