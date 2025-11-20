@@ -46,7 +46,6 @@ import { AdminAppointments } from "@/components/admin/AdminAppointments";
 import { AdminAPISettings } from "@/components/admin/AdminAPISettings";
 import { AdminOrders } from "@/components/admin/AdminOrders";
 import { AdminPricingPlans } from "@/components/admin/AdminPricingPlans";
-import { AdminAboutUs } from "@/components/admin/AdminAboutUs";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -70,11 +69,10 @@ const AdminDashboard = () => {
     { id: "orders", label: "Orders & Billing", icon: ShoppingCart },
     { id: "products", label: "Products", icon: Package },
     { id: "pricing-plans", label: "Pricing Plans", icon: Package },
-    { id: "about-us", label: "About Us Page", icon: FileText },
+    { id: "pages", label: "Pages", icon: FileText },
     { id: "import", label: "Import Data", icon: Database },
     { id: "api", label: "API Settings", icon: Cpu },
     { id: "homepage", label: "Homepage Editor", icon: Globe },
-    { id: "pages", label: "Pages", icon: FileText },
     { id: "header-footer", label: "Header & Footer", icon: Settings },
     { id: "site-settings", label: "Site Settings", icon: Settings },
     { id: "smtp", label: "SMTP Settings", icon: Mail },
@@ -270,7 +268,7 @@ const AdminDashboard = () => {
             {activeTab === "orders" && <AdminOrders />}
             {activeTab === "products" && <AdminProducts />}
             {activeTab === "pricing-plans" && <AdminPricingPlans />}
-            {activeTab === "about-us" && <AdminAboutUs />}
+            {activeTab === "pages" && <VisualPageEditor />}
             {activeTab === "import" && (
               <Card className="p-6">
                 <iframe
@@ -284,7 +282,6 @@ const AdminDashboard = () => {
           {activeTab === "homepage" && <VisualHomepageEditor />}
           {activeTab === "doctors" && <AdminDoctors />}
           {activeTab === "header-footer" && <VisualHeaderFooterEditor />}
-            {activeTab === "pages" && <VisualPageEditor />}
             {activeTab === "site-settings" && <AdminSiteSettings />}
             {activeTab === "cms" && <AdminCMS />}
             {activeTab === "smtp" && <AdminSMTP />}

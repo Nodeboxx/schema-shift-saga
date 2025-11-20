@@ -25,14 +25,15 @@ const AboutUs = () => {
   const loadContent = async () => {
     try {
       const { data, error } = await supabase
-        .from("cms_sections")
+        .from("custom_pages")
         .select("content")
-        .eq("section_name", "about_us")
+        .eq("slug", "about-us")
         .single();
 
       if (error) throw error;
       if (data?.content) {
-        setContent(data.content);
+        const pageContent = data.content as any;
+        setContent(pageContent.sections || pageContent);
       }
     } catch (error: any) {
       console.error("Error loading content:", error);
@@ -75,15 +76,15 @@ const AboutUs = () => {
 
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
-            <h1 className="text-5xl font-bold mb-6">{content.heading}</h1>
+            <h1 className="text-5xl font-bold mb-6">{content.header?.heading}</h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              {content.subtitle}
+              {content.header?.subtitle}
             </p>
           </div>
 
           <Card className="p-8 md:p-12 mb-12">
-            <h2 className="text-3xl font-semibold mb-6">{content.mission.title}</h2>
-            {content.mission.content.map((paragraph: string, index: number) => (
+            <h2 className="text-3xl font-semibold mb-6">{content.mission?.title}</h2>
+            {content.mission?.paragraphs?.map((paragraph: string, index: number) => (
               <p key={index} className="text-lg text-muted-foreground leading-relaxed mb-6 last:mb-0">
                 {paragraph}
               </p>
@@ -93,7 +94,7 @@ const AboutUs = () => {
           <div className="mb-12">
             <h2 className="text-3xl font-semibold mb-8 text-center">Our Values</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {content.values.map((value: any, index: number) => {
+              {content.values?.map((value: any, index: number) => {
                 const Icon = iconMap[value.icon] || HeartPulse;
                 return (
                   <Card key={index} className="p-6">
@@ -109,8 +110,8 @@ const AboutUs = () => {
           </div>
 
           <Card className="p-8 md:p-12 bg-gradient-to-br from-primary/10 to-purple-500/10">
-            <h2 className="text-3xl font-semibold mb-6">{content.story.title}</h2>
-            {content.story.content.map((paragraph: string, index: number) => (
+            <h2 className="text-3xl font-semibold mb-6">{content.story?.title}</h2>
+            {content.story?.paragraphs?.map((paragraph: string, index: number) => (
               <p key={index} className="text-lg text-muted-foreground leading-relaxed mb-4 last:mb-0">
                 {paragraph}
               </p>
@@ -118,13 +119,13 @@ const AboutUs = () => {
           </Card>
 
           <div className="mt-12 text-center">
-            <h2 className="text-2xl font-semibold mb-6">{content.cta.heading}</h2>
+            <h2 className="text-2xl font-semibold mb-6">{content.cta?.heading}</h2>
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-primary to-purple-600" 
-              onClick={() => navigate(content.cta.buttonUrl)}
+              onClick={() => navigate(content.cta?.buttonUrl || "/register")}
             >
-              {content.cta.buttonText}
+              {content.cta?.buttonText}
             </Button>
           </div>
         </div>
