@@ -49,12 +49,6 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       show: isDoctor || isSuperAdmin || isClinicAdmin
     },
     { 
-      to: '/import-data', 
-      icon: Database, 
-      label: 'Import Data',
-      show: isDoctor || isSuperAdmin || isClinicAdmin
-    },
-    { 
       to: '/admin', 
       icon: Shield, 
       label: 'Admin Panel',
