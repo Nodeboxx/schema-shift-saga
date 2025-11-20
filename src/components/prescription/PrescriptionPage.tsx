@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import PrescriptionHeader from "./PrescriptionHeader";
@@ -17,6 +17,8 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   const { toast } = useToast();
   const [pages, setPages] = useState([{ id: 1 }]);
   const [currentPage, setCurrentPage] = useState(1);
+  const pageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
+  const contentCheckInterval = useRef<NodeJS.Timeout | null>(null);
 
   const [doctorInfo, setDoctorInfo] = useState({
     bismillah: "بسم الله الرحمن الرحيم",
@@ -40,6 +42,41 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   });
 
   const [bodyData, setBodyData] = useState<any>({});
+
+  // Auto-pagination: Check for overflow and add pages automatically
+  useEffect(() => {
+    const checkContentOverflow = () => {
+      const lastPage = pages[pages.length - 1];
+      const lastPageRef = pageRefs.current[lastPage.id];
+      
+      if (lastPageRef) {
+        const bodyElement = lastPageRef.querySelector('[data-prescription-body]') as HTMLElement;
+        if (bodyElement) {
+          const bodyHeight = bodyElement.scrollHeight;
+          // A4 page height is approximately 1120px at 800px width
+          // Trigger new page if content exceeds 1000px (leaving room for header/footer)
+          if (bodyHeight > 1000 && pages.length < 10) { // Max 10 pages for safety
+            console.log(`Content overflow detected: ${bodyHeight}px > 1000px. Adding new page.`);
+            const newPageId = pages.length + 1;
+            setPages(prev => [...prev, { id: newPageId }]);
+            toast({
+              title: "New Page Added",
+              description: `Content exceeded page limit. Page ${newPageId} created automatically.`,
+            });
+          }
+        }
+      }
+    };
+
+    // Check periodically for overflow (every 2 seconds)
+    contentCheckInterval.current = setInterval(checkContentOverflow, 2000);
+
+    return () => {
+      if (contentCheckInterval.current) {
+        clearInterval(contentCheckInterval.current);
+      }
+    };
+  }, [pages, bodyData, toast]);
 
   useEffect(() => {
     if (prescriptionData) {
@@ -266,19 +303,26 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
             Remove Page
           </Button>
         )}
+        <div className="text-sm font-medium px-4 py-2 bg-gray-100 rounded-md">
+          Page {currentPage} of {pages.length}
+        </div>
       </div>
 
-      {pages.map((page) => (
+      {pages.map((page, index) => (
         <div
           key={page.id}
+          ref={(el) => (pageRefs.current[page.id] = el)}
           className="prescription-page"
+          onClick={() => setCurrentPage(page.id)}
           style={{
             width: "800px",
             minHeight: "1120px",
             margin: "20px auto",
             backgroundColor: "#ffffff",
-            border: "1px solid #aaa",
-            boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
+            border: currentPage === page.id ? "2px solid #0056b3" : "1px solid #aaa",
+            boxShadow: currentPage === page.id 
+              ? "0 0 20px rgba(0, 86, 179, 0.3)" 
+              : "0 0 15px rgba(0, 0, 0, 0.1)",
             position: "relative",
             boxSizing: "border-box",
             pageBreakAfter: "always",
@@ -286,12 +330,19 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
             flexDirection: "column",
           }}
         >
+          {/* Page Number Indicator */}
+          <div className="no-print absolute top-2 right-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+            Page {index + 1}
+          </div>
+          
           <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
           <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
-          <PrescriptionBody 
-            data={bodyData} 
-            setData={setBodyData}
-          />
+          <div data-prescription-body>
+            <PrescriptionBody 
+              data={bodyData} 
+              setData={setBodyData}
+            />
+          </div>
           <PrescriptionFooter />
         </div>
       ))}
