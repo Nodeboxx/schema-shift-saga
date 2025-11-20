@@ -308,10 +308,15 @@ export type Database = {
           oe_temp: string | null
           page_count: number | null
           patient_age: string | null
+          patient_age_days: number | null
+          patient_age_months: number | null
+          patient_age_years: number | null
           patient_id: string | null
           patient_name: string
           patient_sex: string | null
           patient_weight: string | null
+          patient_weight_grams: number | null
+          patient_weight_kg: number | null
           prescription_date: string | null
           updated_at: string | null
           user_id: string
@@ -335,10 +340,15 @@ export type Database = {
           oe_temp?: string | null
           page_count?: number | null
           patient_age?: string | null
+          patient_age_days?: number | null
+          patient_age_months?: number | null
+          patient_age_years?: number | null
           patient_id?: string | null
           patient_name: string
           patient_sex?: string | null
           patient_weight?: string | null
+          patient_weight_grams?: number | null
+          patient_weight_kg?: number | null
           prescription_date?: string | null
           updated_at?: string | null
           user_id: string
@@ -362,10 +372,15 @@ export type Database = {
           oe_temp?: string | null
           page_count?: number | null
           patient_age?: string | null
+          patient_age_days?: number | null
+          patient_age_months?: number | null
+          patient_age_years?: number | null
           patient_id?: string | null
           patient_name?: string
           patient_sex?: string | null
           patient_weight?: string | null
+          patient_weight_grams?: number | null
+          patient_weight_kg?: number | null
           prescription_date?: string | null
           updated_at?: string | null
           user_id?: string
