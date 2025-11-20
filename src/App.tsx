@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Prescription from "./pages/Prescription";
+import PrescriptionList from "./pages/PrescriptionList";
 import DataImport from "./pages/DataImport";
 import Settings from "./pages/Settings";
 import Checkout from "./pages/Checkout";
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/prescription" element={<Prescription />} />
               <Route path="/prescription/new" element={<Prescription />} />
               <Route path="/prescription/:id" element={<Prescription />} />
+              <Route path="/prescriptions" element={<PrescriptionList />} />
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/import-data" element={<DataImport />} />

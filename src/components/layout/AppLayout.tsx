@@ -39,7 +39,13 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
     { 
       to: '/prescription', 
       icon: FileText, 
-      label: 'Prescriptions',
+      label: 'New Prescription',
+      show: isDoctor || isSuperAdmin || isClinicAdmin
+    },
+    { 
+      to: '/prescriptions', 
+      icon: FileText, 
+      label: 'All Prescriptions',
       show: isDoctor || isSuperAdmin || isClinicAdmin
     },
     { 
