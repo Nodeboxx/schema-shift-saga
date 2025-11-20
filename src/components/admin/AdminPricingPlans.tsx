@@ -21,6 +21,7 @@ interface PricingPlan {
   yearlySavings: number;
   featured: boolean;
   badge: string;
+  buttonUrl: string;
 }
 
 interface PricingContent {
@@ -103,6 +104,7 @@ export const AdminPricingPlans = () => {
           yearlySavings: 0,
           featured: false,
           badge: "",
+          buttonUrl: "/register",
         },
       ],
     });
@@ -260,6 +262,15 @@ export const AdminPricingPlans = () => {
                   value={plan.description}
                   onChange={(e) => updatePlan(planIndex, "description", e.target.value)}
                   rows={2}
+                />
+              </div>
+
+              <div>
+                <Label>Button Link/URL</Label>
+                <Input
+                  value={plan.buttonUrl}
+                  onChange={(e) => updatePlan(planIndex, "buttonUrl", e.target.value)}
+                  placeholder="/register or /checkout"
                 />
               </div>
 
