@@ -1746,6 +1746,114 @@ export type Database = {
         }
         Relationships: []
       }
+      telemedicine_messages: {
+        Row: {
+          created_at: string | null
+          file_url: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          message_type: string | null
+          sender_id: string
+          sender_type: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_url?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          message_type?: string | null
+          sender_id: string
+          sender_type: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          file_url?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          message_type?: string | null
+          sender_id?: string
+          sender_type?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telemedicine_messages_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "telemedicine_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      telemedicine_sessions: {
+        Row: {
+          appointment_id: string
+          created_at: string | null
+          doctor_id: string
+          end_time: string | null
+          id: string
+          meeting_link: string | null
+          notes: string | null
+          patient_id: string
+          start_time: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          appointment_id: string
+          created_at?: string | null
+          doctor_id: string
+          end_time?: string | null
+          id?: string
+          meeting_link?: string | null
+          notes?: string | null
+          patient_id: string
+          start_time?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          appointment_id?: string
+          created_at?: string | null
+          doctor_id?: string
+          end_time?: string | null
+          id?: string
+          meeting_link?: string | null
+          notes?: string | null
+          patient_id?: string
+          start_time?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telemedicine_sessions_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telemedicine_sessions_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telemedicine_sessions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       usage_logs: {
         Row: {
           action: string

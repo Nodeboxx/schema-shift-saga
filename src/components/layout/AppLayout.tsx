@@ -16,7 +16,8 @@ import {
   Database,
   BarChart3,
   ClipboardList,
-  Bell
+  Bell,
+  Video
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -79,6 +80,12 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       to: '/notifications', 
       icon: Bell, 
       label: 'Notifications',
+      show: isDoctor || isSuperAdmin || isClinicAdmin
+    },
+    { 
+      to: '/telemedicine', 
+      icon: Video, 
+      label: 'Telemedicine',
       show: isDoctor || isSuperAdmin || isClinicAdmin
     },
     { 
