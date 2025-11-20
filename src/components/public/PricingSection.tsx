@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface PricingPlan {
   id: string;
@@ -16,6 +17,7 @@ interface PricingPlan {
   yearlySavings: number;
   featured: boolean;
   badge: string;
+  buttonUrl?: string;
 }
 
 interface PricingSectionProps {
@@ -35,6 +37,7 @@ const iconMap: Record<string, any> = {
 
 export const PricingSection = ({ content }: PricingSectionProps) => {
   const { heading, subtitle, plans, benefits } = content;
+  const navigate = useNavigate();
 
   return (
     <section className="py-20 px-4 bg-gradient-to-b from-background to-muted/20">
@@ -103,6 +106,7 @@ export const PricingSection = ({ content }: PricingSectionProps) => {
                   plan.featured && "bg-primary hover:bg-primary/90"
                 )}
                 variant={plan.featured ? "default" : "outline"}
+                onClick={() => navigate(plan.buttonUrl || "/register")}
               >
                 Get Started
               </Button>
