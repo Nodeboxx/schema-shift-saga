@@ -13,7 +13,7 @@ interface PrescriptionPageProps {
   userId?: string;
 }
 
-const MEDICINES_PER_PAGE = 10;
+const MEDICINES_PER_PAGE = 15;
 
 const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) => {
   const { toast } = useToast();
