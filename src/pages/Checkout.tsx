@@ -17,32 +17,7 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bkash' | 'wire'>('card');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
   const billingCycle = searchParams.get('billing') || 'monthly';
-
-  useEffect(() => {
-    checkAuthentication();
-  }, []);
-
-  const checkAuthentication = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        // Redirect to register with return URL
-        navigate(`/register?redirect=/checkout/${plan}&billing=${billingCycle}`);
-        return;
-      }
-      
-      setIsAuthenticated(true);
-    } catch (error) {
-      console.error('Auth check error:', error);
-      navigate(`/register?redirect=/checkout/${plan}&billing=${billingCycle}`);
-    } finally {
-      setCheckingAuth(false);
-    }
-  };
 
   const planDetails: Record<string, any> = {
     free: {
@@ -91,21 +66,6 @@ const Checkout = () => {
   const displayPrice = isYearly ? selectedPlan.price * 10 : selectedPlan.price; // 10 months price for yearly
   const displayPeriod = isYearly ? 'per year' : selectedPlan.period;
 
-  if (checkingAuth) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -124,7 +84,12 @@ const Checkout = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        navigate("/login");
+        // User not authenticated, redirect to register with return URL
+        toast({
+          title: "Login Required",
+          description: "Please login or signup to complete your subscription",
+        });
+        navigate(`/register?redirect=/checkout/${plan}&billing=${billingCycle}`);
         return;
       }
 
