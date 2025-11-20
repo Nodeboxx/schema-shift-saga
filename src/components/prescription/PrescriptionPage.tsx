@@ -27,6 +27,44 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
     docDegreeBN: `এম.বি.বি.এস (ডি.ইউ), এম.আর.সি.পি (পার্ট-১)<br/>নবজাতক, শিশু ও মেডিসিনে অভিজ্ঞতা সম্পন্ন।<br/>রেজিস্টার এন্ড ইনচার্জ, এন.আই.সি.ইউ এন্ড পি.ই.সি.ইউ.<br/>ডেল্টা হেলথকেয়ার যাত্রাবাড়ী লিমিটেড, যাত্রাবাড়ী, ঢাকা।<br/>বি.এম.ডি.সি. রে.জি নং- এ ১২০০৫১`,
   });
 
+  const [footerInfo, setFooterInfo] = useState({
+    footerLeft: "",
+    footerRight: "",
+  });
+
+  const [templateSections, setTemplateSections] = useState<any[]>([]);
+
+  // Load doctor profile and template sections
+  useEffect(() => {
+    const loadProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name, name_bn, degree_en, degree_bn, footer_left, footer_right, left_template_sections")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (profile) {
+          setDoctorInfo({
+            bismillah: "بسم الله الرحمن الرحيم",
+            docNameEN: profile.full_name || "Dr. Rashedul Islam",
+            docDegreeEN: profile.degree_en || `MBBS(DU), MRCP(Part-1)<br/>Experienced in Neonate, children & Medicine.<br/>Register & Incharge, NICU & PICU.<br/>Delta Healthcare Jatrabari Ltd, Jatrabari, Dhaka.<br/>BMDC Reg. No-A 120051`,
+            docNameBN: profile.name_bn || "ডাঃ রাশেদুল ইসলাম",
+            docDegreeBN: profile.degree_bn || `এম.বি.বি.এস (ডি.ইউ), এম.আর.সি.পি (পার্ট-১)<br/>নবজাতক, শিশু ও মেডিসিনে অভিজ্ঞতা সম্পন্ন।<br/>রেজিস্টার এন্ড ইনচার্জ, এন.আই.সি.ইউ এন্ড পি.ই.সি.ইউ.<br/>ডেল্টা হেলথকেয়ার যাত্রাবাড়ী লিমিটেড, যাত্রাবাড়ী, ঢাকা।<br/>বি.এম.ডি.সি. রে.জি নং- এ ১২০০৫১`,
+          });
+          setFooterInfo({
+            footerLeft: profile.footer_left || "",
+            footerRight: profile.footer_right || "",
+          });
+          setTemplateSections(Array.isArray(profile.left_template_sections) ? profile.left_template_sections : []);
+        }
+      }
+    };
+
+    loadProfile();
+  }, []);
+
   const [patientInfo, setPatientInfo] = useState({
     patientDate: new Date().toLocaleDateString('en-GB'), // dd/mm/yyyy format
     patientName: "",
@@ -106,6 +144,11 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           };
         }),
       });
+
+      // Load template sections from saved prescription if available
+      if (prescriptionData.template_data?.left_template_sections) {
+        setTemplateSections(prescriptionData.template_data.left_template_sections);
+      }
     }
   }, [prescriptionData]);
 
@@ -150,6 +193,23 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
       // Extract template-specific fields from bodyData
       const { ccText, dxText, advText, instructionsText, followUpText, vitals, medicines, ...templateSpecificData } = bodyData;
 
+      // Get current template sections to save with prescription
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      let currentTemplateSections: any[] = [];
+      if (currentUser) {
+        const { data: currentProfile } = await supabase
+          .from("profiles")
+          .select("left_template_sections")
+          .eq("id", currentUser.id)
+          .maybeSingle();
+        
+        if (currentProfile?.left_template_sections) {
+          currentTemplateSections = Array.isArray(currentProfile.left_template_sections) 
+            ? currentProfile.left_template_sections 
+            : [];
+        }
+      }
+
       // Save or update prescription
       const prescriptionPayload = {
         user_id: userId,
@@ -177,7 +237,10 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         oe_jaundice: bodyData.vitals?.jaundice,
         page_count: pages.length,
         active_template: activeTemplate,
-        template_data: templateSpecificData, // Save all template-specific fields
+        template_data: {
+          ...templateSpecificData,
+          left_template_sections: currentTemplateSections, // Save current template configuration
+        },
       };
 
       let prescriptionId = prescriptionData?.id;
