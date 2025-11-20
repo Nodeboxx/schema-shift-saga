@@ -40,7 +40,9 @@ const AppointmentDialog = ({
     start_time: "",
     end_time: "",
     type: "in-person",
-    notes: ""
+    patient_type: "scheduled",
+    notes: "",
+    send_sms_reminder: true
   });
 
   useEffect(() => {
@@ -78,8 +80,10 @@ const AppointmentDialog = ({
           start_time: formData.start_time,
           end_time: formData.end_time,
           type: formData.type,
+          patient_type: formData.patient_type,
           notes: formData.notes,
-          status: "scheduled"
+          status: "scheduled",
+          created_by: user.id
         });
 
       if (error) throw error;
@@ -96,7 +100,9 @@ const AppointmentDialog = ({
         start_time: "",
         end_time: "",
         type: "in-person",
-        notes: ""
+        patient_type: "scheduled",
+        notes: "",
+        send_sms_reminder: true
       });
     } catch (error: any) {
       toast({
@@ -159,21 +165,39 @@ const AppointmentDialog = ({
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="type">Type</Label>
-            <Select
-              value={formData.type}
-              onValueChange={(value) => setFormData({ ...formData, type: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="in-person">In-Person</SelectItem>
-                <SelectItem value="telemedicine">Telemedicine</SelectItem>
-                <SelectItem value="follow-up">Follow-up</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="type">Appointment Type</Label>
+              <Select
+                value={formData.type}
+                onValueChange={(value) => setFormData({ ...formData, type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="in-person">In-Person</SelectItem>
+                  <SelectItem value="telemedicine">Telemedicine</SelectItem>
+                  <SelectItem value="follow-up">Follow-up</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="patient_type">Patient Type</Label>
+              <Select
+                value={formData.patient_type}
+                onValueChange={(value) => setFormData({ ...formData, patient_type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="scheduled">Scheduled</SelectItem>
+                  <SelectItem value="walk_in">Walk-In</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div>

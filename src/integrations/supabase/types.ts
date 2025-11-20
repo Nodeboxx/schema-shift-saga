@@ -14,8 +14,55 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointment_history: {
+        Row: {
+          action: string
+          appointment_id: string
+          changed_by: string | null
+          created_at: string | null
+          id: string
+          new_values: Json | null
+          old_values: Json | null
+        }
+        Insert: {
+          action: string
+          appointment_id: string
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+        }
+        Update: {
+          action?: string
+          appointment_id?: string
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointment_history_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointment_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
+          cancellation_reason: string | null
+          cancelled_by: string | null
           clinic_id: string | null
           created_at: string | null
           created_by: string | null
@@ -24,12 +71,17 @@ export type Database = {
           id: string
           notes: string | null
           patient_id: string
+          patient_type: string | null
+          sms_reminder_sent: boolean | null
+          sms_reminder_sent_at: string | null
           start_time: string
           status: Database["public"]["Enums"]["appointment_status"] | null
           type: string | null
           updated_at: string | null
         }
         Insert: {
+          cancellation_reason?: string | null
+          cancelled_by?: string | null
           clinic_id?: string | null
           created_at?: string | null
           created_by?: string | null
@@ -38,12 +90,17 @@ export type Database = {
           id?: string
           notes?: string | null
           patient_id: string
+          patient_type?: string | null
+          sms_reminder_sent?: boolean | null
+          sms_reminder_sent_at?: string | null
           start_time: string
           status?: Database["public"]["Enums"]["appointment_status"] | null
           type?: string | null
           updated_at?: string | null
         }
         Update: {
+          cancellation_reason?: string | null
+          cancelled_by?: string | null
           clinic_id?: string | null
           created_at?: string | null
           created_by?: string | null
@@ -52,12 +109,22 @@ export type Database = {
           id?: string
           notes?: string | null
           patient_id?: string
+          patient_type?: string | null
+          sms_reminder_sent?: boolean | null
+          sms_reminder_sent_at?: string | null
           start_time?: string
           status?: Database["public"]["Enums"]["appointment_status"] | null
           type?: string | null
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "appointments_cancelled_by_fkey"
+            columns: ["cancelled_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "appointments_clinic_id_fkey"
             columns: ["clinic_id"]
@@ -595,10 +662,12 @@ export type Database = {
           clinic_id: string | null
           created_at: string | null
           doctor_id: string | null
+          email: string | null
           id: string
           medical_history: string | null
           name: string
           notes: string | null
+          phone: string | null
           sex: string | null
           updated_at: string | null
           user_id: string
@@ -611,10 +680,12 @@ export type Database = {
           clinic_id?: string | null
           created_at?: string | null
           doctor_id?: string | null
+          email?: string | null
           id?: string
           medical_history?: string | null
           name: string
           notes?: string | null
+          phone?: string | null
           sex?: string | null
           updated_at?: string | null
           user_id: string
@@ -627,10 +698,12 @@ export type Database = {
           clinic_id?: string | null
           created_at?: string | null
           doctor_id?: string | null
+          email?: string | null
           id?: string
           medical_history?: string | null
           name?: string
           notes?: string | null
+          phone?: string | null
           sex?: string | null
           updated_at?: string | null
           user_id?: string
@@ -1153,6 +1226,47 @@ export type Database = {
           value?: Json
         }
         Relationships: []
+      }
+      sms_queue: {
+        Row: {
+          appointment_id: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          message: string
+          phone_number: string
+          sent_at: string | null
+          status: string | null
+        }
+        Insert: {
+          appointment_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          message: string
+          phone_number: string
+          sent_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          appointment_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          message?: string
+          phone_number?: string
+          sent_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_queue_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       smtp_settings: {
         Row: {
