@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Check, ArrowLeft } from "lucide-react";
 
 const Checkout = () => {
-  const { plan } = useParams<{ plan: string }>();
+  const { plan = 'free' } = useParams<{ plan: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);

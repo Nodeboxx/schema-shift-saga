@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { AuthProvider } from "./contexts/AuthContext";
+import { RoleRedirect } from "./components/guards/RoleRedirect";
 import LandingPage from "./pages/public/LandingPage";
 import PublicVerifyPrescription from "./pages/public/PublicVerifyPrescription";
 import Home from "./pages/Home";
@@ -24,31 +26,34 @@ const queryClient = new QueryClient();
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/prescription" element={<Prescription />} />
-            <Route path="/prescription/new" element={<Prescription />} />
-            <Route path="/prescription/:id" element={<Prescription />} />
-            <Route path="/appointments" element={<Appointments />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/import-data" element={<DataImport />} />
-            <Route path="/checkout/:plan" element={<Checkout />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/clinic" element={<ClinicDashboard />} />
-            <Route path="/verify/:id" element={<PublicVerifyPrescription />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <RoleRedirect />
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Login />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/prescription" element={<Prescription />} />
+              <Route path="/prescription/new" element={<Prescription />} />
+              <Route path="/prescription/:id" element={<Prescription />} />
+              <Route path="/appointments" element={<Appointments />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/import-data" element={<DataImport />} />
+              <Route path="/checkout/:plan" element={<Checkout />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/clinic" element={<ClinicDashboard />} />
+              <Route path="/verify/:id" element={<PublicVerifyPrescription />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );
