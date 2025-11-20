@@ -41,12 +41,6 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       show: true 
     },
     { 
-      to: '/prescription', 
-      icon: FileText, 
-      label: 'New Prescription',
-      show: isDoctor || isSuperAdmin || isClinicAdmin
-    },
-    { 
       to: '/prescriptions', 
       icon: FileText, 
       label: 'All Prescriptions',
