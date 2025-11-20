@@ -6,8 +6,22 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { AdminGuard } from "@/components/guards/AdminGuard";
-import { ArrowLeft, Users, Building2, FileText, Activity } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  LayoutDashboard, 
+  Users, 
+  Building2, 
+  FileText, 
+  Activity,
+  Settings,
+  Mail,
+  Bell,
+  BarChart3,
+  UserCog,
+  Shield,
+  Calendar,
+  Globe
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminClinics from "@/components/admin/AdminClinics";
 import AdminCMS from "@/components/admin/AdminCMS";
@@ -17,17 +31,34 @@ import { AdminNotifications } from "@/components/admin/AdminNotifications";
 import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
 import { AdminImpersonate } from "@/components/admin/AdminImpersonate";
 import { AdminAuditLogs } from "@/components/admin/AdminAuditLogs";
+import { AdminAppointments } from "@/components/admin/AdminAppointments";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isSuperAdmin, loading: roleLoading } = useAuth();
+  const { isSuperAdmin } = useAuth();
+  const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalClinics: 0,
     totalPrescriptions: 0,
-    activeUsers: 0
+    activeUsers: 0,
+    totalAppointments: 0
   });
+
+  const menuItems = [
+    { id: "overview", label: "Overview", icon: LayoutDashboard },
+    { id: "users", label: "Users", icon: Users },
+    { id: "clinics", label: "Clinics", icon: Building2 },
+    { id: "appointments", label: "Appointments", icon: Calendar },
+    { id: "cms", label: "CMS Editor", icon: Globe },
+    { id: "smtp", label: "SMTP Settings", icon: Settings },
+    { id: "templates", label: "Email Templates", icon: Mail },
+    { id: "notifications", label: "Notifications", icon: Bell },
+    { id: "analytics", label: "Analytics", icon: BarChart3 },
+    { id: "impersonate", label: "Impersonate", icon: UserCog },
+    { id: "audit", label: "Audit Logs", icon: Shield },
+  ];
 
   useEffect(() => {
     if (isSuperAdmin) {
@@ -37,17 +68,19 @@ const AdminDashboard = () => {
 
   const loadStats = async () => {
     try {
-      const [usersRes, clinicsRes, prescriptionsRes] = await Promise.all([
+      const [usersRes, clinicsRes, prescriptionsRes, appointmentsRes] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('clinics').select('id', { count: 'exact', head: true }),
-        supabase.from('prescriptions').select('id', { count: 'exact', head: true })
+        supabase.from('prescriptions').select('id', { count: 'exact', head: true }),
+        supabase.from('appointments').select('id', { count: 'exact', head: true })
       ]);
 
       setStats({
         totalUsers: usersRes.count || 0,
         totalClinics: clinicsRes.count || 0,
         totalPrescriptions: prescriptionsRes.count || 0,
-        activeUsers: usersRes.count || 0
+        activeUsers: usersRes.count || 0,
+        totalAppointments: appointmentsRes.count || 0
       });
     } catch (error) {
       console.error('Error loading stats:', error);
@@ -56,97 +89,156 @@ const AdminDashboard = () => {
 
   return (
     <AdminGuard requireSuperAdmin={true}>
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto p-6">
-          <div className="flex items-center gap-4 mb-8">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                Enterprise Admin Panel
-              </h1>
-              <p className="text-muted-foreground mt-1">Complete system management</p>
-            </div>
+      <div className="flex min-h-screen w-full bg-background">
+        {/* Left Sidebar */}
+        <aside className="w-64 border-r border-border bg-card">
+          <div className="flex h-16 items-center border-b border-border px-6">
+            <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+              Admin Panel
+            </h1>
           </div>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-            {[
-              { title: "Total Users", value: stats.totalUsers, icon: Users, color: "bg-gradient-to-br from-blue-500 to-blue-600" },
-              { title: "Clinics", value: stats.totalClinics, icon: Building2, color: "bg-gradient-to-br from-purple-500 to-purple-600" },
-              { title: "Prescriptions", value: stats.totalPrescriptions, icon: FileText, color: "bg-gradient-to-br from-green-500 to-green-600" },
-              { title: "Active Users", value: stats.activeUsers, icon: Activity, color: "bg-gradient-to-br from-orange-500 to-orange-600" }
-            ].map((stat) => {
-              const Icon = stat.icon;
+          
+          <nav className="space-y-1 p-4">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
               return (
-                <Card key={stat.title} className="p-6 hover:shadow-lg transition-shadow">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                      <p className="text-3xl font-bold mt-2">{stat.value}</p>
-                    </div>
-                    <div className={`${stat.color} p-3 rounded-xl shadow-lg`}>
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-                  </div>
-                </Card>
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                    activeTab === item.id
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  )}
+                >
+                  <Icon className="h-5 w-5" />
+                  {item.label}
+                </button>
               );
             })}
+          </nav>
+
+          <div className="absolute bottom-4 left-4 right-4">
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={() => navigate("/dashboard")}
+            >
+              Back to Dashboard
+            </Button>
           </div>
+        </aside>
 
-          <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="users">Users</TabsTrigger>
-              <TabsTrigger value="clinics">Clinics</TabsTrigger>
-              <TabsTrigger value="cms">CMS</TabsTrigger>
-              <TabsTrigger value="smtp">SMTP</TabsTrigger>
-              <TabsTrigger value="templates">Templates</TabsTrigger>
-              <TabsTrigger value="notifications">Notifications</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
-              <TabsTrigger value="impersonate">Impersonate</TabsTrigger>
-              <TabsTrigger value="audit">Audit</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="overview">
-              <Card className="p-6">
-                <h2 className="text-2xl font-bold mb-6">System Overview</h2>
-                <p className="text-muted-foreground mb-4">
-                  Welcome to the Enterprise Admin Panel. Use the tabs above to manage different aspects of the system.
+        {/* Right Content Area */}
+        <main className="flex-1 overflow-auto">
+          {/* Header */}
+          <header className="border-b border-border bg-card">
+            <div className="flex h-16 items-center justify-between px-8">
+              <div>
+                <h2 className="text-2xl font-bold">
+                  {menuItems.find(item => item.id === activeTab)?.label}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Enterprise system management
                 </p>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Card className="p-4">
-                    <h3 className="font-semibold mb-2">Quick Stats</h3>
-                    <ul className="space-y-2 text-sm">
-                      <li>• Total registered users: {stats.totalUsers}</li>
-                      <li>• Active clinics: {stats.totalClinics}</li>
-                      <li>• Prescriptions issued: {stats.totalPrescriptions}</li>
-                      <li>• Currently active users: {stats.activeUsers}</li>
-                    </ul>
-                  </Card>
-                  <Card className="p-4">
-                    <h3 className="font-semibold mb-2">Admin Actions</h3>
-                    <ul className="space-y-2 text-sm">
-                      <li>• Manage users and roles</li>
-                      <li>• Configure system settings</li>
-                      <li>• Monitor system health</li>
-                      <li>• View audit logs</li>
-                    </ul>
-                  </Card>
-                </div>
-              </Card>
-            </TabsContent>
-            <TabsContent value="users"><AdminUsers /></TabsContent>
-            <TabsContent value="clinics"><AdminClinics /></TabsContent>
-            <TabsContent value="cms"><AdminCMS /></TabsContent>
-            <TabsContent value="smtp"><AdminSMTP /></TabsContent>
-            <TabsContent value="templates"><AdminEmailTemplates /></TabsContent>
-            <TabsContent value="notifications"><AdminNotifications /></TabsContent>
-            <TabsContent value="analytics"><AdminAnalytics /></TabsContent>
-            <TabsContent value="impersonate"><AdminImpersonate /></TabsContent>
-            <TabsContent value="audit"><AdminAuditLogs /></TabsContent>
-          </Tabs>
-        </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Stats Cards */}
+          {activeTab === "overview" && (
+            <div className="p-8">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 mb-8">
+                {[
+                  { title: "Total Users", value: stats.totalUsers, icon: Users, gradient: "from-blue-500 to-blue-600" },
+                  { title: "Clinics", value: stats.totalClinics, icon: Building2, gradient: "from-purple-500 to-purple-600" },
+                  { title: "Prescriptions", value: stats.totalPrescriptions, icon: FileText, gradient: "from-green-500 to-green-600" },
+                  { title: "Appointments", value: stats.totalAppointments, icon: Calendar, gradient: "from-orange-500 to-orange-600" },
+                  { title: "Active Users", value: stats.activeUsers, icon: Activity, gradient: "from-pink-500 to-pink-600" }
+                ].map((stat) => {
+                  const Icon = stat.icon;
+                  return (
+                    <Card key={stat.title} className="overflow-hidden">
+                      <div className={cn("h-2 bg-gradient-to-r", stat.gradient)} />
+                      <div className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+                            <p className="text-3xl font-bold mt-2">{stat.value}</p>
+                          </div>
+                          <div className={cn("p-3 rounded-xl bg-gradient-to-br", stat.gradient)}>
+                            <Icon className="h-6 w-6 text-white" />
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Quick Stats</h3>
+                  <ul className="space-y-3 text-sm">
+                    <li className="flex justify-between">
+                      <span className="text-muted-foreground">Total Users:</span>
+                      <span className="font-semibold">{stats.totalUsers}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-muted-foreground">Active Clinics:</span>
+                      <span className="font-semibold">{stats.totalClinics}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-muted-foreground">Prescriptions Issued:</span>
+                      <span className="font-semibold">{stats.totalPrescriptions}</span>
+                    </li>
+                    <li className="flex justify-between">
+                      <span className="text-muted-foreground">Total Appointments:</span>
+                      <span className="font-semibold">{stats.totalAppointments}</span>
+                    </li>
+                  </ul>
+                </Card>
+                
+                <Card className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">Admin Capabilities</h3>
+                  <ul className="space-y-3 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Manage users and permissions
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Building2 className="h-4 w-4" />
+                      Configure clinic settings
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Edit public website content
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      Monitor system analytics
+                    </li>
+                  </ul>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {/* Tab Content */}
+          <div className="p-8">
+            {activeTab === "users" && <AdminUsers />}
+            {activeTab === "clinics" && <AdminClinics />}
+            {activeTab === "appointments" && <AdminAppointments />}
+            {activeTab === "cms" && <AdminCMS />}
+            {activeTab === "smtp" && <AdminSMTP />}
+            {activeTab === "templates" && <AdminEmailTemplates />}
+            {activeTab === "notifications" && <AdminNotifications />}
+            {activeTab === "analytics" && <AdminAnalytics />}
+            {activeTab === "impersonate" && <AdminImpersonate />}
+            {activeTab === "audit" && <AdminAuditLogs />}
+          </div>
+        </main>
       </div>
     </AdminGuard>
   );
