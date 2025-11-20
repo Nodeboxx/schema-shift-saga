@@ -1,35 +1,84 @@
 # Changelog
 
-All notable changes to the MedEx Prescription SaaS platform.
+All notable changes to MedEx Prescription SaaS will be documented in this file.
 
-## [2.1.0] - 2025-01-20
+## [3.0.0] - 2025-11-20
 
-### Fixed - Critical RLS and Navigation Issues
+### Added - Enterprise SaaS Platform
 
-#### Database Security Fixes
-- **Fixed infinite recursion in RLS policies** for `clinics` and `clinic_members` tables
-- Created `is_clinic_member()` and `is_clinic_owner()` SECURITY DEFINER functions
-- Rebuilt all clinic-related RLS policies to use security definer functions
-- Fixed appointments RLS policy to prevent recursive queries
-- All RLS policies now properly use server-side validation
+#### Role-Based Authentication System
+- **Automatic role-based routing** - Super admins go to /admin, clinic admins to /clinic, doctors to /dashboard
+- `RoleRedirect` component for intelligent navigation based on user role
+- Separate dashboards for each user type with appropriate features
+- `AuthProvider` with comprehensive role management and loading states
 
-#### Admin Panel Fixes
-- **Fixed Admin Dashboard Overview tab** - Now shows proper overview content instead of duplicating Analytics
-- **Fixed navigation visibility** - Super admins now see ALL features (Dashboard, Prescriptions, Appointments, Import Data, Admin Panel, Clinic Management, Settings)
-- Admin panel tabs now display correct content in each section
-- Removed duplicate analytics display from Overview tab
+#### Admin Dashboard (Complete Redesign)
+- **Left sidebar navigation** with 11 management modules
+- **Overview Dashboard** with 5 key metrics:
+  - Total users
+  - Total clinics
+  - Total prescriptions
+  - Total appointments
+  - Active users
+- **User Management** - View, search, and manage all system users
+- **Clinics Management** - Manage all registered clinics
+- **Appointments Management** (NEW)
+  - View all system appointments
+  - Search by patient, doctor, or clinic
+  - Real-time status tracking
+  - Duration and time management
+  - Color-coded status badges
+- **CMS Editor** - Edit public website content
+- **SMTP Settings** - Configure email servers
+- **Email Templates** - Manage email communications
+- **Notifications** - Configure notification channels
+- **Analytics** - System-wide analytics and insights
+- **Impersonation** - Admin can impersonate users
+- **Audit Logs** - Track all system changes
 
-#### Application Fixes
-- **Fixed Checkout page error** - Resolved "Cannot read properties of undefined (reading 'name')" by adding fallback for undefined plans
-- **Fixed Settings page access** - Now accessible to all authenticated users without permission errors
-- All pages now properly check authentication before loading
+#### Checkout System
+- Three-tier pricing structure (Free, Pro, Enterprise)
+- Complete checkout flow with plan summary
+- Payment form UI (Stripe-ready integration)
+- Subscription creation in database
+- Terms and conditions acceptance
+- Automatic profile tier update on subscription
 
-### Security Enhancements
-- All clinic-related queries now bypass RLS recursion using SECURITY DEFINER functions
-- Improved role-based access control across all admin features
-- Enhanced audit logging for all admin actions
+#### Public Pages
+- Professional landing page with hero, features, and pricing sections
+- Public prescription verification page at /verify/:id
+- CMS-editable content for all public sections
 
-## [2.0.0] - 2025-01-20
+#### Multi-Tenancy Foundation
+- Clinic-based data isolation
+- Doctor-level data separation
+- Row Level Security policies for secure data access
+- Separate workspaces for each organization
+
+### Changed
+- **Dashboard routing now respects user roles** - No more mixing of admin/user interfaces
+- Admin users automatically redirected to admin panel
+- Clinic admins redirected to clinic management
+- Navigation structure completely separated by role
+- Authentication flow improved with early role detection
+- Layout system redesigned for role-specific UI
+
+### Security
+- Fixed infinite recursion in RLS policies
+- Added SECURITY DEFINER functions for clinic access (`is_clinic_member`, `is_clinic_owner`)
+- Improved role checking mechanisms across all routes
+- Prevented privilege escalation attacks with proper role validation
+- Enhanced audit logging for admin actions
+
+### Fixed
+- Admin dashboard navigation showing incorrect items
+- Role detection timing causing permission errors
+- Settings page access denied for authenticated users
+- Checkout page crashing with undefined plan
+- RLS policy recursion causing database timeouts
+- Super admin being redirected to regular dashboard
+
+## [2.1.0] - 2025-11-20
 
 ### Added - Enterprise Admin System
 
