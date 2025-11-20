@@ -218,6 +218,7 @@ export type Database = {
           created_at: string | null
           details: string | null
           dose: string | null
+          duration: string | null
           id: string
           item_type: string
           name: string | null
@@ -229,6 +230,7 @@ export type Database = {
           created_at?: string | null
           details?: string | null
           dose?: string | null
+          duration?: string | null
           id?: string
           item_type: string
           name?: string | null
@@ -240,6 +242,7 @@ export type Database = {
           created_at?: string | null
           details?: string | null
           dose?: string | null
+          duration?: string | null
           id?: string
           item_type?: string
           name?: string | null
