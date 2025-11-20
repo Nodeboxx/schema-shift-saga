@@ -31,19 +31,22 @@ const PrescriptionFooter = () => {
   }, []);
 
   return (
-    <footer style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: "10px 15px",
-      background: "#f9f9f9",
-      fontSize: "13px",
-      borderTop: "2px solid #0056b3",
-      position: "relative",
-      width: "100%",
-      boxSizing: "border-box",
-      marginTop: "auto",
-    }}>
+    <footer
+      className="prescription-footer"
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "10px 15px",
+        background: "#f9f9f9",
+        fontSize: "13px",
+        borderTop: "2px solid #0056b3",
+        position: "relative",
+        width: "100%",
+        boxSizing: "border-box",
+        marginTop: "auto",
+      }}
+    >
       <div
         contentEditable
         suppressContentEditableWarning
