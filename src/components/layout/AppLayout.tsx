@@ -52,6 +52,12 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       show: isDoctor || isSuperAdmin || isClinicAdmin
     },
     { 
+      to: '/dashboard?tab=patients', 
+      icon: Users, 
+      label: 'My Patients',
+      show: isDoctor || isSuperAdmin || isClinicAdmin
+    },
+    { 
       to: '/appointments', 
       icon: Calendar, 
       label: 'Appointments',
