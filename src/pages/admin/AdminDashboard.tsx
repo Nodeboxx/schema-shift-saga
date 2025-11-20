@@ -23,12 +23,17 @@ import {
   Cpu,
   ShoppingCart,
   LogOut,
-  Database
+  Database,
+  Package
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminClinics from "@/components/admin/AdminClinics";
 import AdminCMS from "@/components/admin/AdminCMS";
+import AdminHomepageEditor from "@/components/admin/AdminHomepageEditor";
+import AdminPages from "@/components/admin/AdminPages";
+import AdminProducts from "@/components/admin/AdminProducts";
+import AdminSiteSettings from "@/components/admin/AdminSiteSettings";
 import { AdminSMTP } from "@/components/admin/AdminSMTP";
 import { AdminEmailTemplates } from "@/components/admin/AdminEmailTemplates";
 import { AdminNotifications } from "@/components/admin/AdminNotifications";
@@ -58,10 +63,13 @@ const AdminDashboard = () => {
     { id: "clinics", label: "Clinics", icon: Building2 },
     { id: "appointments", label: "Appointments", icon: Calendar },
     { id: "orders", label: "Orders & Billing", icon: ShoppingCart },
+    { id: "products", label: "Products", icon: Package },
     { id: "import", label: "Import Data", icon: Database },
     { id: "api", label: "API Settings", icon: Cpu },
-    { id: "cms", label: "CMS Editor", icon: Globe },
-    { id: "smtp", label: "SMTP Settings", icon: Settings },
+    { id: "homepage", label: "Homepage Editor", icon: Globe },
+    { id: "pages", label: "Pages", icon: FileText },
+    { id: "site-settings", label: "Header & Footer", icon: Settings },
+    { id: "smtp", label: "SMTP Settings", icon: Mail },
     { id: "templates", label: "Email Templates", icon: Mail },
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "analytics", label: "Analytics", icon: BarChart3 },
@@ -252,6 +260,7 @@ const AdminDashboard = () => {
             {activeTab === "clinics" && <AdminClinics />}
             {activeTab === "appointments" && <AdminAppointments />}
             {activeTab === "orders" && <AdminOrders />}
+            {activeTab === "products" && <AdminProducts />}
             {activeTab === "import" && (
               <Card className="p-6">
                 <iframe
@@ -262,6 +271,9 @@ const AdminDashboard = () => {
               </Card>
             )}
             {activeTab === "api" && <AdminAPISettings />}
+            {activeTab === "homepage" && <AdminHomepageEditor />}
+            {activeTab === "pages" && <AdminPages />}
+            {activeTab === "site-settings" && <AdminSiteSettings />}
             {activeTab === "cms" && <AdminCMS />}
             {activeTab === "smtp" && <AdminSMTP />}
             {activeTab === "templates" && <AdminEmailTemplates />}
