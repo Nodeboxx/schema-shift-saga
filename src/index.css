@@ -151,17 +151,19 @@ All colors MUST be HSL.
 
   .prescription-page {
     width: 210mm !important;
-    height: 297mm !important;
     min-height: 297mm !important;
-    max-height: 297mm !important;
     margin: 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
     border: none !important;
     page-break-after: always;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+  
+  .prescription-page header {
+    page-break-inside: avoid !important;
+    page-break-after: avoid !important;
   }
 
   .prescription-page:last-of-type {
