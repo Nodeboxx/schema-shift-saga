@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,8 +31,11 @@ const Register = () => {
   const [signupStep, setSignupStep] = useState<"details" | "plan">("details");
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  
+  const redirectUrl = searchParams.get('redirect') || '/dashboard';
 
   useEffect(() => {
     loadPlans();
@@ -75,7 +78,13 @@ const Register = () => {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        navigate("/login");
+        navigate("/register");
+        return;
+      }
+
+      // Check if there's a redirect URL
+      if (redirectUrl && redirectUrl !== '/dashboard') {
+        navigate(redirectUrl);
         return;
       }
 
@@ -122,13 +131,15 @@ const Register = () => {
 
     setLoading(true);
 
-    const redirectUrl = `${window.location.origin}/dashboard`;
+    const signupRedirectUrl = searchParams.get('redirect') 
+      ? `${window.location.origin}${searchParams.get('redirect')}`
+      : `${window.location.origin}/dashboard`;
 
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
+        emailRedirectTo: signupRedirectUrl,
         data: {
           full_name: fullName,
           selected_plan: selectedPlan,
