@@ -40,7 +40,7 @@ const PrescriptionBody = ({ data, setData, pageIndex = 0, itemsPerPage = 100 }: 
     <div
       style={{
         display: "flex",
-        flexGrow: 1,
+        flex: "1 1 auto",
         overflow: "visible",
         position: "relative",
         cursor: isDragging ? "col-resize" : "default",
