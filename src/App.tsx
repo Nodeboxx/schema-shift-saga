@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
+import LandingPage from "./pages/public/LandingPage";
+import PublicVerifyPrescription from "./pages/public/PublicVerifyPrescription";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -27,7 +29,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -40,7 +43,7 @@ const App = () => (
             <Route path="/checkout/:plan" element={<Checkout />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/clinic" element={<ClinicDashboard />} />
-            <Route path="/verify/:id" element={<VerifyPrescription />} />
+            <Route path="/verify/:id" element={<PublicVerifyPrescription />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
