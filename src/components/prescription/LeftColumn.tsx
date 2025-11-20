@@ -119,6 +119,12 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
     .filter((s) => s.enabled)
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
+  // Check for standard sections
+  const hasCCSection = enabledSections.some(s => s.id === "cc");
+  const hasDXSection = enabledSections.some(s => s.id === "dx");
+  const hasADVSection = enabledSections.some(s => s.id === "adv");
+  const hasFollowUpSection = enabledSections.some(s => s.id === "followup");
+
   return (
     <div style={{
       flexBasis: `${width}%`,
@@ -132,64 +138,69 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       flexDirection: "column",
       overflow: "visible",
     }}>
+      {/* Always render Chief Complaints if enabled */}
+      {hasCCSection && (
+        <div key="cc">
+          <h4 style={{
+            fontSize: "10px",
+            fontWeight: 700,
+            color: "#0056b3",
+            borderBottom: "1px solid #aaa",
+            paddingBottom: "1px",
+            marginTop: "6px",
+            marginBottom: "3px",
+          }}>
+            {enabledSections.find(s => s.id === "cc")?.title || "Presenting Complains:"}
+          </h4>
+          <div
+            ref={ccRef}
+            contentEditable
+            suppressContentEditableWarning
+            onInput={(e) => {
+              const content = e.currentTarget.innerHTML;
+              if (!content.trim() || content.trim() === "<br>") {
+                e.currentTarget.innerHTML = "• ";
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(e.currentTarget);
+                range.collapse(false);
+                sel?.removeAllRanges();
+                sel?.addRange(range);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                document.execCommand("insertHTML", false, "<br>• ");
+              }
+            }}
+            onBlur={(e) => handleContentChange("ccText", e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: data?.ccText || "• " }}
+            style={{
+              fontSize: "9px",
+              lineHeight: "1.4",
+              display: "block",
+              overflow: "visible",
+              height: "auto",
+              minHeight: "14px",
+              marginBottom: "8px",
+              padding: "2px",
+              border: "1px solid transparent",
+            }}
+          />
+        </div>
+      )}
+
+      {/* Render custom template sections (excluding standard ones) */}
       {enabledSections.map((section) => {
-        if (section.id === "cc") {
-          return (
-            <div key="cc">
-              <h4 style={{
-                fontSize: "10px",
-                fontWeight: 700,
-                color: "#0056b3",
-                borderBottom: "1px solid #aaa",
-                paddingBottom: "1px",
-                marginTop: "6px",
-                marginBottom: "3px",
-              }}>
-                {section.title}
-              </h4>
-              <div
-                ref={ccRef}
-                contentEditable
-                suppressContentEditableWarning
-                onInput={(e) => {
-                  const content = e.currentTarget.innerHTML;
-                  if (!content.trim() || content.trim() === '<br>') {
-                    e.currentTarget.innerHTML = '• ';
-                    const range = document.createRange();
-                    const sel = window.getSelection();
-                    range.selectNodeContents(e.currentTarget);
-                    range.collapse(false);
-                    sel?.removeAllRanges();
-                    sel?.addRange(range);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    document.execCommand('insertHTML', false, '<br>• ');
-                  }
-                }}
-                onBlur={(e) => handleContentChange("ccText", e.currentTarget.innerHTML)}
-                dangerouslySetInnerHTML={{ __html: data?.ccText || "• " }}
-                style={{
-                  fontSize: "9px",
-                  lineHeight: "1.4",
-                  display: "block",
-                  overflow: "visible",
-                  height: "auto",
-                  minHeight: "14px",
-                  marginBottom: "8px",
-                  padding: "2px",
-                  border: "1px solid transparent",
-                }}
-              />
-            </div>
-          );
+        // Skip standard sections - they're handled separately
+        if (section.id === "cc" || section.id === "oe" || section.id === "dx" || section.id === "adv" || section.id === "followup") {
+          return null;
         }
 
+        // Handle sections with fields (like Past History, CVS Examination, etc.)
         if (section.fields && section.fields.length > 0) {
-          const sectionValues =
-            sectionFieldValues[section.id] || (section.id === "ph" ? phFields : {});
+          const sectionValues = sectionFieldValues[section.id] || {};
 
           return (
             <div key={section.id}>
@@ -241,297 +252,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           );
         }
 
-        if (section.id === "oe") {
-          return (
-            <div key="oe">
-              <h4 style={{
-                fontSize: "10px",
-                fontWeight: 700,
-                color: "#0056b3",
-                borderBottom: "1px solid #aaa",
-                paddingBottom: "1px",
-                marginTop: "6px",
-                marginBottom: "3px",
-              }}>
-                {section.title}
-              </h4>
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "1px 4px",
-                marginTop: "3px",
-                marginBottom: "8px",
-              }}>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>BP (S/D)</label>
-                  <span style={{ display: "flex", alignItems: "center" }}>
-                    <div
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) => handleVitalEdit("bp_s", e.currentTarget.textContent || "")}
-                      style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden", width: "30px" }}
-                    >
-                      {vitals.bp_s}
-                    </div>
-                    <span style={{ fontSize: "9px", margin: "0 2px" }}>/</span>
-                    <div
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) => handleVitalEdit("bp_d", e.currentTarget.textContent || "")}
-                      style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden", width: "30px" }}
-                    >
-                      {vitals.bp_d}
-                    </div>
-                  </span>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Pulse</label>
-                  <div
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) => handleVitalEdit("pulse", e.currentTarget.textContent || "")}
-                    style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
-                  >
-                    {vitals.pulse}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Temp</label>
-                  <div
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) => handleVitalEdit("temp", e.currentTarget.textContent || "")}
-                    style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
-                  >
-                    {vitals.temp}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>SpO2</label>
-                  <div
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) => handleVitalEdit("spo2", e.currentTarget.textContent || "")}
-                    style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
-                  >
-                    {vitals.spo2}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Anemia</label>
-                  <div
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) => handleVitalEdit("anemia", e.currentTarget.textContent || "")}
-                    style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
-                  >
-                    {vitals.anemia}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Jaundice</label>
-                  <div
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) => handleVitalEdit("jaundice", e.currentTarget.textContent || "")}
-                    style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
-                  >
-                    {vitals.jaundice}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        }
-
-        if (section.id === "dx") {
-          return (
-            <div key="dx">
-              <h4 style={{
-                fontSize: "10px",
-                fontWeight: 700,
-                color: "#0056b3",
-                borderBottom: "1px solid #aaa",
-                paddingBottom: "1px",
-                marginTop: "6px",
-                marginBottom: "3px",
-              }}>
-                {section.title}
-              </h4>
-              <div
-                ref={dxRef}
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={(e) => handleContentChange("dxText", e.currentTarget.innerHTML)}
-                dangerouslySetInnerHTML={{ __html: data?.dxText || "" }}
-                style={{
-                  fontSize: "9px",
-                  lineHeight: "1.4",
-                  display: "block",
-                  overflow: "visible",
-                  height: "auto",
-                  minHeight: "14px",
-                  marginBottom: "8px",
-                  padding: "2px",
-                  border: "1px solid transparent",
-                }}
-              />
-            </div>
-          );
-        }
-
-        if (section.id === "adv") {
-          return (
-            <div key="adv">
-              <h4 style={{
-                fontSize: "10px",
-                fontWeight: 700,
-                color: "#0056b3",
-                borderBottom: "1px solid #aaa",
-                paddingBottom: "1px",
-                marginTop: "6px",
-                marginBottom: "3px",
-              }}>
-                {section.title}
-              </h4>
-              <div
-                ref={advRef}
-                contentEditable
-                suppressContentEditableWarning
-                onInput={(e) => {
-                  const content = e.currentTarget.textContent || "";
-                  const htmlContent = e.currentTarget.innerHTML;
-                  
-                  if (!content.trim() || htmlContent.trim() === '<br>') {
-                    e.currentTarget.innerHTML = '• ';
-                    const range = document.createRange();
-                    const sel = window.getSelection();
-                    range.selectNodeContents(e.currentTarget);
-                    range.collapse(false);
-                    sel?.removeAllRanges();
-                    sel?.addRange(range);
-                    return;
-                  }
-                  
-                  if (content.endsWith("..")) {
-                    const beforeDots = content.slice(0, -2);
-                    const lastWord = beforeDots.split(/[\s\n]/).pop() || "";
-                    if (lastWord) {
-                      const upperWord = lastWord.toUpperCase();
-                      const newContent = beforeDots.slice(0, -lastWord.length) + "." + upperWord + " ";
-                      e.currentTarget.textContent = newContent;
-                      
-                      const range = document.createRange();
-                      const sel = window.getSelection();
-                      range.selectNodeContents(e.currentTarget);
-                      range.collapse(false);
-                      sel?.removeAllRanges();
-                      sel?.addRange(range);
-                    }
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    document.execCommand('insertHTML', false, '<br>• ');
-                  }
-                }}
-                onBlur={(e) => handleContentChange("advText", e.currentTarget.innerHTML)}
-                dangerouslySetInnerHTML={{ __html: data?.advText || "• " }}
-                style={{
-                  fontSize: "9px",
-                  lineHeight: "1.4",
-                  display: "block",
-                  overflow: "visible",
-                  height: "auto",
-                  minHeight: "14px",
-                  marginBottom: "8px",
-                  padding: "2px",
-                  border: "1px solid transparent",
-                }}
-              />
-            </div>
-          );
-        }
-
-        if (section.id === "instructions") {
-          return (
-            <div key="instructions">
-              <h4 style={{
-                fontSize: "10px",
-                fontWeight: 700,
-                color: "#0056b3",
-                borderBottom: "1px solid #aaa",
-                paddingBottom: "1px",
-                marginTop: "6px",
-                marginBottom: "3px",
-              }}>
-                {section.title}
-              </h4>
-              <div
-                ref={instructionsRef}
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={(e) => handleContentChange("instructionsText", e.currentTarget.innerHTML)}
-                dangerouslySetInnerHTML={{ __html: data?.instructionsText || "" }}
-                style={{
-                  fontSize: "9px",
-                  lineHeight: "1.4",
-                  display: "block",
-                  overflow: "visible",
-                  height: "auto",
-                  minHeight: "14px",
-                  marginBottom: "8px",
-                  padding: "2px",
-                  border: "1px solid transparent",
-                }}
-              />
-            </div>
-          );
-        }
-
-        if (section.id === "followup") {
-          return (
-            <div key="followup">
-              <h4 style={{
-                fontSize: "10px",
-                fontWeight: 700,
-                color: "#0056b3",
-                borderBottom: "1px solid #aaa",
-                paddingBottom: "1px",
-                marginTop: "6px",
-                marginBottom: "3px",
-              }}>
-                {section.title}
-              </h4>
-              <div
-                ref={followUpRef}
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={(e) => handleContentChange("followUpText", e.currentTarget.innerHTML)}
-                dangerouslySetInnerHTML={{ __html: data?.followUpText || "" }}
-                style={{
-                  fontSize: "9px",
-                  lineHeight: "1.4",
-                  display: "block",
-                  overflow: "visible",
-                  height: "auto",
-                  minHeight: "14px",
-                  marginBottom: "8px",
-                  padding: "2px",
-                  border: "1px solid transparent",
-                }}
-              />
-            </div>
-          );
-        }
-
-        // Generic fallback for sections without a specific handler
+        // Generic fallback for custom rich-text sections
         return (
           <div key={section.id}>
             <h4
@@ -571,6 +292,254 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           </div>
         );
       })}
+
+      {/* FIXED: Always render On Examination section with standard vitals */}
+      <div key="oe">
+        <h4 style={{
+          fontSize: "10px",
+          fontWeight: 700,
+          color: "#0056b3",
+          borderBottom: "1px solid #aaa",
+          paddingBottom: "1px",
+          marginTop: "6px",
+          marginBottom: "3px",
+        }}>
+          On Examination:
+        </h4>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "1px 4px",
+          marginTop: "3px",
+          marginBottom: "8px",
+        }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>BP (S/D)</label>
+            <span style={{ display: "flex", alignItems: "center" }}>
+              <div
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => handleVitalEdit("bp_s", e.currentTarget.textContent || "")}
+                style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden", width: "30px" }}
+              >
+                {vitals.bp_s}
+              </div>
+              <span style={{ fontSize: "9px", margin: "0 2px" }}>/</span>
+              <div
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => handleVitalEdit("bp_d", e.currentTarget.textContent || "")}
+                style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden", width: "30px" }}
+              >
+                {vitals.bp_d}
+              </div>
+            </span>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Pulse</label>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleVitalEdit("pulse", e.currentTarget.textContent || "")}
+              style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
+            >
+              {vitals.pulse}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Temp</label>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleVitalEdit("temp", e.currentTarget.textContent || "")}
+              style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
+            >
+              {vitals.temp}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>SpO2</label>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleVitalEdit("spo2", e.currentTarget.textContent || "")}
+              style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
+            >
+              {vitals.spo2}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Anemia</label>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleVitalEdit("anemia", e.currentTarget.textContent || "")}
+              style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
+            >
+              {vitals.anemia}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", marginBottom: "-2px" }}>Jaundice</label>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleVitalEdit("jaundice", e.currentTarget.textContent || "")}
+              style={{ fontSize: "9px", fontWeight: 500, borderBottom: "1px solid #ddd", minHeight: "14px", height: "16px", overflow: "hidden" }}
+            >
+              {vitals.jaundice}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Always render Diagnosis if enabled */}
+      {hasDXSection && (
+        <div key="dx">
+          <h4 style={{
+            fontSize: "10px",
+            fontWeight: 700,
+            color: "#0056b3",
+            borderBottom: "1px solid #aaa",
+            paddingBottom: "1px",
+            marginTop: "6px",
+            marginBottom: "3px",
+          }}>
+            {enabledSections.find(s => s.id === "dx")?.title || "Diagnosis:"}
+          </h4>
+          <div
+            ref={dxRef}
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleContentChange("dxText", e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: data?.dxText || "" }}
+            style={{
+              fontSize: "9px",
+              lineHeight: "1.4",
+              display: "block",
+              overflow: "visible",
+              height: "auto",
+              minHeight: "14px",
+              marginBottom: "8px",
+              padding: "2px",
+              border: "1px solid transparent",
+            }}
+          />
+        </div>
+      )}
+
+      {/* Always render Advice/Management if enabled */}
+      {hasADVSection && (
+        <div key="adv">
+          <h4 style={{
+            fontSize: "10px",
+            fontWeight: 700,
+            color: "#0056b3",
+            borderBottom: "1px solid #aaa",
+            paddingBottom: "1px",
+            marginTop: "6px",
+            marginBottom: "3px",
+          }}>
+            {enabledSections.find(s => s.id === "adv")?.title || "Advice:"}
+          </h4>
+          <div
+            ref={advRef}
+            contentEditable
+            suppressContentEditableWarning
+            onInput={(e) => {
+              const content = e.currentTarget.textContent || "";
+              const htmlContent = e.currentTarget.innerHTML;
+              
+              if (!content.trim() || htmlContent.trim() === "<br>") {
+                e.currentTarget.innerHTML = "• ";
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(e.currentTarget);
+                range.collapse(false);
+                sel?.removeAllRanges();
+                sel?.addRange(range);
+                return;
+              }
+              
+              if (content.endsWith("..")) {
+                const beforeDots = content.slice(0, -2);
+                const lastWord = beforeDots.split(/[\s\n]/).pop() || "";
+                if (lastWord) {
+                  const upperWord = lastWord.toUpperCase();
+                  const newContent = beforeDots.slice(0, -lastWord.length) + "." + upperWord + " ";
+                  e.currentTarget.textContent = newContent;
+                  
+                  const range = document.createRange();
+                  const sel = window.getSelection();
+                  range.selectNodeContents(e.currentTarget);
+                  range.collapse(false);
+                  sel?.removeAllRanges();
+                  sel?.addRange(range);
+                }
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                document.execCommand("insertHTML", false, "<br>• ");
+              }
+            }}
+            onBlur={(e) => handleContentChange("advText", e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: data?.advText || "• " }}
+            style={{
+              fontSize: "9px",
+              lineHeight: "1.4",
+              display: "block",
+              overflow: "visible",
+              height: "auto",
+              minHeight: "14px",
+              marginBottom: "8px",
+              padding: "2px",
+              border: "1px solid transparent",
+            }}
+          />
+        </div>
+      )}
+
+      {/* Always render Follow Up if enabled */}
+      {hasFollowUpSection && (
+        <div key="followup">
+          <h4 style={{
+            fontSize: "10px",
+            fontWeight: 700,
+            color: "#0056b3",
+            borderBottom: "1px solid #aaa",
+            paddingBottom: "1px",
+            marginTop: "6px",
+            marginBottom: "3px",
+          }}>
+            {enabledSections.find(s => s.id === "followup")?.title || "Follow Up:"}
+          </h4>
+          <div
+            ref={followUpRef}
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleContentChange("followUpText", e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: data?.followUpText || "" }}
+            style={{
+              fontSize: "9px",
+              lineHeight: "1.4",
+              display: "block",
+              overflow: "visible",
+              height: "auto",
+              minHeight: "14px",
+              marginBottom: "8px",
+              padding: "2px",
+              border: "1px solid transparent",
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };
