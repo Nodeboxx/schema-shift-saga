@@ -4,8 +4,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import RichTextToolbar from "@/components/RichTextToolbar";
 import {
   Table,
   TableBody,
@@ -19,10 +19,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Edit, Trash2, Eye, Save } from "lucide-react";
+import { Edit, Eye, Save } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Page {
   id: string;
@@ -40,6 +40,7 @@ const AdminPages = () => {
   const [loading, setLoading] = useState(true);
   const [editingPage, setEditingPage] = useState<Page | null>(null);
   const [open, setOpen] = useState(false);
+  const [jsonView, setJsonView] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,17 +67,9 @@ const AdminPages = () => {
     }
   };
 
-  const createPage = () => {
-    setEditingPage({
-      id: "",
-      title: "",
-      slug: "",
-      content: { html: "" },
-      meta_title: "",
-      meta_description: "",
-      is_published: false,
-      created_at: ""
-    });
+  const openEditor = (page: Page) => {
+    setEditingPage(page);
+    setJsonView(JSON.stringify(page.content, null, 2));
     setOpen(true);
   };
 
@@ -84,37 +77,23 @@ const AdminPages = () => {
     if (!editingPage) return;
 
     try {
-      if (editingPage.id) {
-        // Update existing
-        const { error } = await supabase
-          .from("custom_pages")
-          .update({
-            title: editingPage.title,
-            slug: editingPage.slug,
-            content: editingPage.content,
-            meta_title: editingPage.meta_title,
-            meta_description: editingPage.meta_description,
-            is_published: editingPage.is_published,
-            updated_at: new Date().toISOString()
-          })
-          .eq("id", editingPage.id);
+      // Parse JSON view to update content
+      const parsedContent = JSON.parse(jsonView);
 
-        if (error) throw error;
-      } else {
-        // Create new
-        const { error } = await supabase
-          .from("custom_pages")
-          .insert({
-            title: editingPage.title,
-            slug: editingPage.slug,
-            content: editingPage.content,
-            meta_title: editingPage.meta_title,
-            meta_description: editingPage.meta_description,
-            is_published: editingPage.is_published
-          });
+      const { error } = await supabase
+        .from("custom_pages")
+        .update({
+          title: editingPage.title,
+          slug: editingPage.slug,
+          content: parsedContent,
+          meta_title: editingPage.meta_title,
+          meta_description: editingPage.meta_description,
+          is_published: editingPage.is_published,
+          updated_at: new Date().toISOString()
+        })
+        .eq("id", editingPage.id);
 
-        if (error) throw error;
-      }
+      if (error) throw error;
 
       toast({
         title: "Success",
@@ -123,32 +102,6 @@ const AdminPages = () => {
 
       setOpen(false);
       setEditingPage(null);
-      loadPages();
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  };
-
-  const deletePage = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this page?")) return;
-
-    try {
-      const { error } = await supabase
-        .from("custom_pages")
-        .delete()
-        .eq("id", id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Page deleted"
-      });
-
       loadPages();
     } catch (error: any) {
       toast({
@@ -196,160 +149,178 @@ const AdminPages = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold">Page Management</h2>
-          <p className="text-muted-foreground">Create and manage custom pages</p>
+          <p className="text-muted-foreground">
+            Edit your website pages (About Us, Contact, Privacy Policy, Terms of Service)
+          </p>
         </div>
-        <Button onClick={createPage}>
-          <Plus className="h-4 w-4 mr-2" />
-          New Page
-        </Button>
       </div>
 
       <Card>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Slug</TableHead>
+              <TableHead>Page</TableHead>
+              <TableHead>URL</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>Last Updated</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pages.map((page) => (
-              <TableRow key={page.id}>
-                <TableCell className="font-medium">{page.title}</TableCell>
-                <TableCell>
-                  <code className="text-xs bg-muted px-2 py-1 rounded">/{page.slug}</code>
-                </TableCell>
-                <TableCell>
-                  <Switch
-                    checked={page.is_published}
-                    onCheckedChange={() => togglePublish(page)}
-                  />
-                </TableCell>
-                <TableCell>{new Date(page.created_at).toLocaleDateString()}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => window.open(`/${page.slug}`, "_blank")}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => {
-                        setEditingPage(page);
-                        setOpen(true);
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => deletePage(page.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+            {pages.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  No pages found
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              pages.map((page) => (
+                <TableRow key={page.id}>
+                  <TableCell className="font-medium">{page.title}</TableCell>
+                  <TableCell>
+                    <code className="text-xs bg-muted px-2 py-1 rounded">/{page.slug}</code>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={page.is_published}
+                        onCheckedChange={() => togglePublish(page)}
+                      />
+                      <span className="text-sm">
+                        {page.is_published ? "Published" : "Draft"}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(page.created_at).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => window.open(`/${page.slug}`, "_blank")}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => openEditor(page)}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingPage?.id ? "Edit Page" : "Create Page"}</DialogTitle>
+            <DialogTitle>Edit Page: {editingPage?.title}</DialogTitle>
           </DialogHeader>
 
           {editingPage && (
-            <div className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Title</Label>
-                  <Input
-                    value={editingPage.title}
-                    onChange={(e) => setEditingPage({ ...editingPage, title: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>Slug (URL)</Label>
-                  <Input
-                    value={editingPage.slug}
-                    onChange={(e) => setEditingPage({ ...editingPage, slug: e.target.value })}
-                    placeholder="about-us"
-                  />
-                </div>
-              </div>
+            <Tabs defaultValue="visual" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="visual">Visual Editor</TabsTrigger>
+                <TabsTrigger value="json">JSON Editor</TabsTrigger>
+              </TabsList>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div>
-                  <Label>Meta Title (SEO)</Label>
-                  <Input
-                    value={editingPage.meta_title || ""}
-                    onChange={(e) => setEditingPage({ ...editingPage, meta_title: e.target.value })}
-                  />
+              <TabsContent value="visual" className="space-y-4 mt-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label>Page Title</Label>
+                    <Input
+                      value={editingPage.title}
+                      onChange={(e) => setEditingPage({ ...editingPage, title: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>URL Slug</Label>
+                    <Input
+                      value={editingPage.slug}
+                      onChange={(e) => setEditingPage({ ...editingPage, slug: e.target.value })}
+                      disabled
+                      className="bg-muted"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label>Meta Description (SEO)</Label>
-                  <Input
-                    value={editingPage.meta_description || ""}
-                    onChange={(e) => setEditingPage({ ...editingPage, meta_description: e.target.value })}
-                  />
-                </div>
-              </div>
 
-              <div>
-                <Label>Content</Label>
-                <div className="border rounded-lg">
-                  <RichTextToolbar
-                    onCommand={(cmd, value) => {
-                      console.log("Command:", cmd, value);
-                    }}
-                    className="border-b p-2"
-                  />
-                  <textarea
-                    value={editingPage.content.html || ""}
-                    onChange={(e) =>
-                      setEditingPage({
-                        ...editingPage,
-                        content: { ...editingPage.content, html: e.target.value }
-                      })
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <Label>Meta Title (SEO)</Label>
+                    <Input
+                      value={editingPage.meta_title || ""}
+                      onChange={(e) => setEditingPage({ ...editingPage, meta_title: e.target.value })}
+                      placeholder="SEO title for search engines"
+                    />
+                  </div>
+                  <div>
+                    <Label>Meta Description (SEO)</Label>
+                    <Input
+                      value={editingPage.meta_description || ""}
+                      onChange={(e) => setEditingPage({ ...editingPage, meta_description: e.target.value })}
+                      placeholder="SEO description for search engines"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-4 border rounded-lg bg-muted/50">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    💡 <strong>Tip:</strong> For advanced editing of page content (text, sections, etc.),
+                    use the JSON Editor tab. The content is stored as structured data.
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Current page type: <code className="bg-background px-2 py-0.5 rounded">
+                      {editingPage.content?.type || "N/A"}
+                    </code>
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={editingPage.is_published}
+                    onCheckedChange={(checked) =>
+                      setEditingPage({ ...editingPage, is_published: checked })
                     }
-                    className="w-full min-h-[300px] p-4 font-mono text-sm focus:outline-none"
-                    placeholder="Enter HTML content..."
+                  />
+                  <Label>Publish this page</Label>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="json" className="space-y-4 mt-4">
+                <div>
+                  <Label>Content JSON</Label>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Edit the page content structure directly in JSON format
+                  </p>
+                  <Textarea
+                    value={jsonView}
+                    onChange={(e) => setJsonView(e.target.value)}
+                    className="font-mono text-sm min-h-[500px]"
+                    placeholder="Page content as JSON..."
                   />
                 </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={editingPage.is_published}
-                  onCheckedChange={(checked) =>
-                    setEditingPage({ ...editingPage, is_published: checked })
-                  }
-                />
-                <Label>Published</Label>
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={savePage}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Save Page
-                </Button>
-              </div>
-            </div>
+              </TabsContent>
+            </Tabs>
           )}
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={savePage}>
+              <Save className="h-4 w-4 mr-2" />
+              Save Changes
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

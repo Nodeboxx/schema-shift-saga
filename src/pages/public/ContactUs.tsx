@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,17 +8,40 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Mail, Phone, MapPin, Send } from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
+import { supabase } from "@/integrations/supabase/client";
 
 const ContactUs = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [content, setContent] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
     message: ""
   });
+
+  useEffect(() => {
+    loadContent();
+  }, []);
+
+  const loadContent = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("custom_pages")
+        .select("content")
+        .eq("slug", "contact")
+        .single();
+
+      if (error) throw error;
+      if (data?.content) {
+        setContent(data.content);
+      }
+    } catch (error: any) {
+      console.error("Error loading content:", error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +58,16 @@ const ContactUs = () => {
     }, 1000);
   };
 
+  if (!content) {
+    return (
+      <PublicLayout>
+        <div className="container mx-auto px-6 py-12 text-center">
+          <p>Loading...</p>
+        </div>
+      </PublicLayout>
+    );
+  }
+
   return (
     <PublicLayout>
       <div className="container mx-auto px-6 py-12">
@@ -49,9 +82,9 @@ const ContactUs = () => {
 
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold mb-4">Contact Us</h1>
+            <h1 className="text-5xl font-bold mb-4">{content.header?.heading}</h1>
             <p className="text-xl text-muted-foreground">
-              Have questions? We'd love to hear from you.
+              {content.header?.subtitle}
             </p>
           </div>
 
@@ -115,9 +148,10 @@ const ContactUs = () => {
                     <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Email Us</h3>
-                    <p className="text-muted-foreground mb-1">support@healthscribe.com</p>
-                    <p className="text-muted-foreground">sales@healthscribe.com</p>
+                    <h3 className="text-lg font-semibold mb-2">{content.contactInfo?.email?.title}</h3>
+                    {content.contactInfo?.email?.emails?.map((email: string, idx: number) => (
+                      <p key={idx} className="text-muted-foreground mb-1">{email}</p>
+                    ))}
                   </div>
                 </div>
               </Card>
@@ -128,9 +162,9 @@ const ContactUs = () => {
                     <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Call Us</h3>
-                    <p className="text-muted-foreground mb-1">+1 (555) 123-4567</p>
-                    <p className="text-sm text-muted-foreground">Mon-Fri 9AM-6PM EST</p>
+                    <h3 className="text-lg font-semibold mb-2">{content.contactInfo?.phone?.title}</h3>
+                    <p className="text-muted-foreground mb-1">{content.contactInfo?.phone?.number}</p>
+                    <p className="text-sm text-muted-foreground">{content.contactInfo?.phone?.hours}</p>
                   </div>
                 </div>
               </Card>
@@ -141,21 +175,21 @@ const ContactUs = () => {
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">Visit Us</h3>
-                    <p className="text-muted-foreground mb-1">Healthcare Technology Center</p>
-                    <p className="text-muted-foreground mb-1">Medical District</p>
-                    <p className="text-muted-foreground">Innovation Quarter</p>
+                    <h3 className="text-lg font-semibold mb-2">{content.contactInfo?.address?.title}</h3>
+                    {content.contactInfo?.address?.lines?.map((line: string, idx: number) => (
+                      <p key={idx} className="text-muted-foreground mb-1">{line}</p>
+                    ))}
                   </div>
                 </div>
               </Card>
 
               <Card className="p-6 bg-gradient-to-br from-primary/10 to-purple-500/10">
-                <h3 className="text-lg font-semibold mb-3">Enterprise Solutions</h3>
+                <h3 className="text-lg font-semibold mb-3">{content.enterprise?.title}</h3>
                 <p className="text-muted-foreground mb-4">
-                  Looking for custom solutions for your healthcare organization?
+                  {content.enterprise?.description}
                 </p>
                 <Button variant="outline" className="w-full">
-                  Contact Sales Team
+                  {content.enterprise?.buttonText}
                 </Button>
               </Card>
             </div>
