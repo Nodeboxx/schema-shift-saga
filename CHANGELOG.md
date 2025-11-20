@@ -2,6 +2,33 @@
 
 All notable changes to the MedEx Prescription SaaS platform.
 
+## [2.1.0] - 2025-01-20
+
+### Fixed - Critical RLS and Navigation Issues
+
+#### Database Security Fixes
+- **Fixed infinite recursion in RLS policies** for `clinics` and `clinic_members` tables
+- Created `is_clinic_member()` and `is_clinic_owner()` SECURITY DEFINER functions
+- Rebuilt all clinic-related RLS policies to use security definer functions
+- Fixed appointments RLS policy to prevent recursive queries
+- All RLS policies now properly use server-side validation
+
+#### Admin Panel Fixes
+- **Fixed Admin Dashboard Overview tab** - Now shows proper overview content instead of duplicating Analytics
+- **Fixed navigation visibility** - Super admins now see ALL features (Dashboard, Prescriptions, Appointments, Import Data, Admin Panel, Clinic Management, Settings)
+- Admin panel tabs now display correct content in each section
+- Removed duplicate analytics display from Overview tab
+
+#### Application Fixes
+- **Fixed Checkout page error** - Resolved "Cannot read properties of undefined (reading 'name')" by adding fallback for undefined plans
+- **Fixed Settings page access** - Now accessible to all authenticated users without permission errors
+- All pages now properly check authentication before loading
+
+### Security Enhancements
+- All clinic-related queries now bypass RLS recursion using SECURITY DEFINER functions
+- Improved role-based access control across all admin features
+- Enhanced audit logging for all admin actions
+
 ## [2.0.0] - 2025-01-20
 
 ### Added - Enterprise Admin System
