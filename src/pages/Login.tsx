@@ -4,76 +4,52 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Home } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    if (isSignUp) {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`,
-        },
-      });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      if (error) {
-        toast({
-          title: "Signup Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success!",
-          description: "Account created. You can now log in.",
-        });
-        setIsSignUp(false);
-      }
+    if (error) {
+      toast({
+        title: "Login Failed",
+        description: error.message,
+        variant: "destructive",
+      });
     } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // After successful login, determine role-based redirect
+      const { data: { user } } = await supabase.auth.getUser();
 
-      if (error) {
-        toast({
-          title: "Login Failed",
-          description: error.message,
-          variant: "destructive",
-        });
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+
+      const roleList = (roles || []).map((r: any) => r.role);
+
+      if (roleList.includes("super_admin")) {
+        navigate("/admin");
+      } else if (roleList.includes("clinic_admin")) {
+        navigate("/clinic");
       } else {
-        // After successful login, determine role-based redirect
-        const { data: { user } } = await supabase.auth.getUser();
-
-        if (!user) {
-          navigate("/login");
-          return;
-        }
-
-        const { data: roles } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id);
-
-        const roleList = (roles || []).map((r: any) => r.role);
-
-        if (roleList.includes("super_admin")) {
-          navigate("/admin");
-        } else if (roleList.includes("clinic_admin")) {
-          navigate("/clinic");
-        } else {
-          navigate("/dashboard");
-        }
+        navigate("/dashboard");
       }
     }
     setLoading(false);
@@ -101,12 +77,12 @@ const Login = () => {
         minWidth: "400px",
       }}>
         <h2 style={{ marginTop: 0, color: "#333" }}>
-          {isSignUp ? "Create Account" : "Doctor's Login"}
+          Doctor's Login
         </h2>
         <p style={{ color: "#666" }}>
-          {isSignUp ? "Sign up to get started" : "Please enter credentials to edit."}
+          Please enter credentials to edit.
         </p>
-        <form onSubmit={handleAuth} style={{ marginTop: "20px" }}>
+        <form onSubmit={handleLogin} style={{ marginTop: "20px" }}>
           <Input
             type="email"
             placeholder="Email"
@@ -130,24 +106,26 @@ const Login = () => {
               width: "100%",
               padding: "10px",
               backgroundColor: "#0056b3",
-              marginBottom: "10px",
+              marginBottom: "15px",
             }}
           >
-            {loading ? (isSignUp ? "Creating..." : "Logging in...") : (isSignUp ? "Sign Up" : "Login")}
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
-        <button
-          onClick={() => setIsSignUp(!isSignUp)}
+        <Button
+          variant="outline"
+          onClick={() => navigate("/")}
           style={{
-            background: "none",
-            border: "none",
-            color: "#0056b3",
-            cursor: "pointer",
-            textDecoration: "underline",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
           }}
         >
-          {isSignUp ? "Already have an account? Login" : "Need an account? Sign up"}
-        </button>
+          <Home className="w-4 h-4" />
+          Go to Homepage
+        </Button>
       </div>
     </div>
   );
