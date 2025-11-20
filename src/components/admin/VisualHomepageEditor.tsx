@@ -174,6 +174,9 @@ const VisualHomepageEditor = () => {
   const SortableSection = ({ section }: { section: Section }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: section.id });
     const isEditing = editingId === section.id;
+    const [jsonValue, setJsonValue] = useState<string>(
+      JSON.stringify(section.content ?? {}, null, 2)
+    );
 
     return (
       <div
@@ -270,19 +273,26 @@ const VisualHomepageEditor = () => {
               <div>
                 <label className="text-sm font-medium mb-2 block">Content (JSON)</label>
                 <textarea
-                  value={JSON.stringify(section.content, null, 2)}
-                  onChange={(e) => {
-                    try {
-                      const parsed = JSON.parse(e.target.value);
-                      updateSection(section.id, { content: parsed });
-                    } catch (err) {
-                      // Invalid JSON, don't update
-                    }
-                  }}
+                  value={jsonValue}
+                  onChange={(e) => setJsonValue(e.target.value)}
                   className="w-full min-h-[200px] p-4 border rounded-md font-mono text-sm"
                 />
               </div>
-              <Button onClick={() => saveSection(section)}>
+              <Button
+                onClick={async () => {
+                  try {
+                    const parsed = JSON.parse(jsonValue);
+                    updateSection(section.id, { content: parsed });
+                    await saveSection({ ...section, content: parsed });
+                  } catch (err) {
+                    toast({
+                      title: "Invalid JSON",
+                      description: "Please fix the JSON before saving.",
+                      variant: "destructive",
+                    });
+                  }
+                }}
+              >
                 <Save className="w-4 h-4 mr-2" />
                 Save
               </Button>
