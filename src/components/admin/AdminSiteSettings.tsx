@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, Plus, Trash2 } from "lucide-react";
+import { Save, Plus, Trash2, Upload, Image as ImageIcon } from "lucide-react";
 
 interface HeaderSettings {
   logo: string;
@@ -35,6 +35,11 @@ const AdminSiteSettings = () => {
     copyright: "",
     social: []
   });
+  const [logo, setLogo] = useState({ url: "", alt: "" });
+  const [favicon, setFavicon] = useState({ url: "/favicon.ico" });
+  const [siteName, setSiteName] = useState({ value: "HealthScribe" });
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [faviconUploading, setFaviconUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -48,7 +53,7 @@ const AdminSiteSettings = () => {
       const { data, error } = await supabase
         .from("site_settings")
         .select("*")
-        .in("key", ["header", "footer"]);
+        .in("key", ["header", "footer", "site_logo", "site_favicon", "site_name"]);
 
       if (error) throw error;
 
@@ -57,6 +62,12 @@ const AdminSiteSettings = () => {
           setHeader(setting.value);
         } else if (setting.key === "footer") {
           setFooter(setting.value);
+        } else if (setting.key === "site_logo") {
+          setLogo(setting.value);
+        } else if (setting.key === "site_favicon") {
+          setFavicon(setting.value);
+        } else if (setting.key === "site_name") {
+          setSiteName(setting.value);
         }
       });
     } catch (error: any) {
@@ -162,6 +173,128 @@ const AdminSiteSettings = () => {
     });
   };
 
+  const uploadLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLogoUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `logo-${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError, data } = await supabase.storage
+        .from('council-logos')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('council-logos')
+        .getPublicUrl(fileName);
+
+      const newLogo = { url: publicUrl, alt: siteName.value };
+      setLogo(newLogo);
+
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert([{
+          key: 'site_logo',
+          value: newLogo as any,
+          updated_at: new Date().toISOString()
+        }], { onConflict: 'key' });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Logo uploaded successfully"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setLogoUploading(false);
+    }
+  };
+
+  const uploadFavicon = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFaviconUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `favicon-${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('council-logos')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('council-logos')
+        .getPublicUrl(fileName);
+
+      const newFavicon = { url: publicUrl };
+      setFavicon(newFavicon);
+
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert([{
+          key: 'site_favicon',
+          value: newFavicon as any,
+          updated_at: new Date().toISOString()
+        }], { onConflict: 'key' });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Favicon uploaded successfully. Note: Browser caching may delay visibility."
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setFaviconUploading(false);
+    }
+  };
+
+  const saveSiteName = async () => {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert([{
+          key: 'site_name',
+          value: siteName as any,
+          updated_at: new Date().toISOString()
+        }], { onConflict: 'key' });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Site name saved"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -177,11 +310,102 @@ const AdminSiteSettings = () => {
         <p className="text-muted-foreground">Manage header, footer, and global settings</p>
       </div>
 
-      <Tabs defaultValue="header" className="w-full">
+      <Tabs defaultValue="general" className="w-full">
         <TabsList>
+          <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="header">Header</TabsTrigger>
           <TabsTrigger value="footer">Footer</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="general" className="space-y-4">
+          <Card className="p-6">
+            <div className="space-y-6">
+              <div>
+                <Label>Site Name</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={siteName.value}
+                    onChange={(e) => setSiteName({ value: e.target.value })}
+                    placeholder="HealthScribe"
+                  />
+                  <Button onClick={saveSiteName} disabled={saving}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <Label>Site Logo</Label>
+                <div className="space-y-3">
+                  {logo.url && (
+                    <div className="border rounded-lg p-4 flex items-center gap-4">
+                      <img src={logo.url} alt={logo.alt} className="h-16 w-auto object-contain" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">Current Logo</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => document.getElementById('logo-upload')?.click()}
+                      disabled={logoUploading}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      {logoUploading ? "Uploading..." : "Upload Logo"}
+                    </Button>
+                    <input
+                      id="logo-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={uploadLogo}
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Recommended: PNG or SVG, max 200px height
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <Label>Favicon</Label>
+                <div className="space-y-3">
+                  {favicon.url && (
+                    <div className="border rounded-lg p-4 flex items-center gap-4">
+                      <img src={favicon.url} alt="Favicon" className="h-8 w-8 object-contain" />
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">Current Favicon</p>
+                        <p className="text-xs text-muted-foreground">{favicon.url}</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => document.getElementById('favicon-upload')?.click()}
+                      disabled={faviconUploading}
+                    >
+                      <ImageIcon className="h-4 w-4 mr-2" />
+                      {faviconUploading ? "Uploading..." : "Upload Favicon"}
+                    </Button>
+                    <input
+                      id="favicon-upload"
+                      type="file"
+                      accept="image/x-icon,image/png,image/svg+xml"
+                      className="hidden"
+                      onChange={uploadFavicon}
+                    />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Recommended: ICO, PNG, or SVG, 32x32px or 64x64px
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="header" className="space-y-4">
           <Card className="p-6">
