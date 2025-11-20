@@ -1,37 +1,17 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { UserPlus, Trash2 } from "lucide-react";
+import { UserPlus, Trash2, Shield } from "lucide-react";
+import { ClinicInviteDialog } from "./ClinicInviteDialog";
 
-interface ClinicMembersProps {
-  clinicId: string;
-}
-
-const ClinicMembers = ({ clinicId }: ClinicMembersProps) => {
-  const [members, setMembers] = useState<any[]>([]);
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("doctor");
-  const [loading, setLoading] = useState(false);
+export const ClinicMembers = ({ clinicId }: { clinicId: string }) => {
   const { toast } = useToast();
+  const [members, setMembers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
   useEffect(() => {
     loadMembers();
@@ -43,45 +23,27 @@ const ClinicMembers = ({ clinicId }: ClinicMembersProps) => {
         .from("clinic_members")
         .select(`
           *,
-          profiles:user_id (full_name, email)
+          profiles:user_id (
+            full_name,
+            email,
+            specialization
+          )
         `)
-        .eq("clinic_id", clinicId);
+        .eq("clinic_id", clinicId)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setMembers(data || []);
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
-    }
-  };
-
-  const inviteMember = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      // In real implementation, would send invite email
-      toast({
-        title: "Invite Sent",
-        description: `Invitation sent to ${email}`
-      });
-      
-      setEmail("");
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast({ title: "Error loading members", description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
   const removeMember = async (memberId: string) => {
+    if (!confirm("Remove this member from the clinic?")) return;
+
     try {
       const { error } = await supabase
         .from("clinic_members")
@@ -90,90 +52,73 @@ const ClinicMembers = ({ clinicId }: ClinicMembersProps) => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Member removed successfully"
-      });
-
+      toast({ title: "Member removed successfully" });
       loadMembers();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
+      toast({ title: "Error removing member", description: error.message, variant: "destructive" });
     }
   };
 
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Team Members</h2>
-
-      <form onSubmit={inviteMember} className="mb-8 space-y-4">
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="doctor@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="role">Role</Label>
-            <Select value={role} onValueChange={setRole}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="doctor">Doctor</SelectItem>
-                <SelectItem value="staff">Staff</SelectItem>
-                <SelectItem value="clinic_admin">Admin</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Team Members</CardTitle>
+          <Button onClick={() => setInviteDialogOpen(true)} size="sm">
+            <UserPlus className="w-4 h-4 mr-2" />
+            Invite Member
+          </Button>
         </div>
-        <Button type="submit" disabled={loading}>
-          <UserPlus className="mr-2 h-4 w-4" />
-          {loading ? "Inviting..." : "Invite Member"}
-        </Button>
-      </form>
+      </CardHeader>
+      <CardContent>
+        {loading ? (
+          <div className="text-center py-8">Loading members...</div>
+        ) : members.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            <UserPlus className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>No team members yet. Invite your first member!</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {members.map((member) => (
+              <div key={member.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Shield className="w-8 h-8 text-primary" />
+                  <div>
+                    <p className="font-semibold">{member.profiles?.full_name || member.profiles?.email}</p>
+                    <p className="text-sm text-muted-foreground">{member.profiles?.email}</p>
+                    {member.profiles?.specialization && (
+                      <p className="text-xs text-muted-foreground">{member.profiles.specialization}</p>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={member.is_active ? "default" : "secondary"}>
+                    {member.role}
+                  </Badge>
+                  <Badge variant={member.is_active ? "default" : "secondary"}>
+                    {member.is_active ? "Active" : "Inactive"}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeMember(member.id)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Joined</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {members.map((member) => (
-            <TableRow key={member.id}>
-              <TableCell>{member.profiles?.full_name || "N/A"}</TableCell>
-              <TableCell>{member.profiles?.email}</TableCell>
-              <TableCell className="capitalize">{member.role}</TableCell>
-              <TableCell>
-                {new Date(member.joined_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeMember(member.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <ClinicInviteDialog
+        open={inviteDialogOpen}
+        onOpenChange={setInviteDialogOpen}
+        clinicId={clinicId}
+        onSuccess={loadMembers}
+      />
     </Card>
   );
 };
