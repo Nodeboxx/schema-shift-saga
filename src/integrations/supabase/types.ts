@@ -836,6 +836,7 @@ export type Database = {
         Row: {
           active_template: string | null
           clinic_id: string | null
+          council_logo_url: string | null
           created_at: string | null
           custom_templates: Json | null
           degree_bn: string | null
@@ -849,6 +850,7 @@ export type Database = {
           left_template_sections: Json | null
           license_number: string | null
           name_bn: string | null
+          registration_number: string | null
           role: Database["public"]["Enums"]["app_role"] | null
           settings: Json | null
           specialization: string | null
@@ -861,6 +863,7 @@ export type Database = {
         Insert: {
           active_template?: string | null
           clinic_id?: string | null
+          council_logo_url?: string | null
           created_at?: string | null
           custom_templates?: Json | null
           degree_bn?: string | null
@@ -874,6 +877,7 @@ export type Database = {
           left_template_sections?: Json | null
           license_number?: string | null
           name_bn?: string | null
+          registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"] | null
           settings?: Json | null
           specialization?: string | null
@@ -886,6 +890,7 @@ export type Database = {
         Update: {
           active_template?: string | null
           clinic_id?: string | null
+          council_logo_url?: string | null
           created_at?: string | null
           custom_templates?: Json | null
           degree_bn?: string | null
@@ -899,6 +904,7 @@ export type Database = {
           left_template_sections?: Json | null
           license_number?: string | null
           name_bn?: string | null
+          registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"] | null
           settings?: Json | null
           specialization?: string | null

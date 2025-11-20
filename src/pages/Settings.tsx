@@ -120,6 +120,8 @@ const Settings = () => {
     name_bn: "",
     degree_en: "",
     degree_bn: "",
+    council_logo_url: "",
+    registration_number: "",
     footer_left: "",
     footer_right: "",
     left_template_sections: [] as any[],
@@ -161,6 +163,8 @@ const Settings = () => {
         name_bn: data.name_bn || "",
         degree_en: data.degree_en || "",
         degree_bn: data.degree_bn || "",
+        council_logo_url: data.council_logo_url || "",
+        registration_number: data.registration_number || "",
         footer_left: data.footer_left || "",
         footer_right: data.footer_right || "",
         left_template_sections: Array.isArray(data.left_template_sections) ? data.left_template_sections : [],
@@ -243,6 +247,8 @@ const Settings = () => {
           name_bn: profile.name_bn,
           degree_en: profile.degree_en,
           degree_bn: profile.degree_bn,
+          council_logo_url: profile.council_logo_url,
+          registration_number: profile.registration_number,
           footer_left: profile.footer_left,
           footer_right: profile.footer_right,
         })
@@ -393,6 +399,49 @@ const Settings = () => {
                   <p className="text-xs text-muted-foreground mt-1">
                     Use &lt;br/&gt; for line breaks
                   </p>
+                </div>
+
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4">Medical Council Registration (Optional)</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="council_logo_url">Medical Council Logo URL</Label>
+                      <Input
+                        id="council_logo_url"
+                        value={profile.council_logo_url}
+                        onChange={(e) => setProfile({ ...profile, council_logo_url: e.target.value })}
+                        placeholder="https://example.com/council-logo.png"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Upload your logo to a hosting service and paste the URL here (e.g., Bangladesh Medical & Dental Council)
+                      </p>
+                      {profile.council_logo_url && (
+                        <div className="mt-3 p-4 border rounded-lg bg-muted/50 flex items-center justify-center">
+                          <img 
+                            src={profile.council_logo_url} 
+                            alt="Medical Council Logo" 
+                            className="max-h-24 object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="registration_number">Registration Number</Label>
+                      <Input
+                        id="registration_number"
+                        value={profile.registration_number}
+                        onChange={(e) => setProfile({ ...profile, registration_number: e.target.value })}
+                        placeholder="e.g., BMDC Reg No: A-57477"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Your medical council registration number (will appear below the logo on prescriptions)
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <div>
