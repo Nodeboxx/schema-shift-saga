@@ -216,13 +216,5 @@ All colors MUST be HSL.
     width: 100% !important;
     max-width: 100% !important;
     min-height: auto !important;
-    transform: scale(0.95);
-    transform-origin: top center;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .prescription-page {
-    transform: scale(0.85);
   }
 }
