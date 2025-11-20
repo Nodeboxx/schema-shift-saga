@@ -177,7 +177,7 @@ All colors MUST be HSL.
   .prescription-page > div:first-of-type {
     display: block;
     position: fixed;
-    top: 100px;
+    top: 130px;
     left: 0;
     right: 0;
     width: 210mm;
@@ -198,8 +198,8 @@ All colors MUST be HSL.
   
   /* Add proper spacing for content to avoid overlap with fixed elements */
   .prescription-page > div:nth-of-type(2) {
-    margin-top: 170px !important;
-    margin-bottom: 60px !important;
+    margin-top: 210px !important;
+    margin-bottom: 80px !important;
   }
 
   .prescription-page:last-of-type {
