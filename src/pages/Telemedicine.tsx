@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -176,17 +177,18 @@ const Telemedicine = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Telemedicine</h1>
-          <p className="text-muted-foreground">Manage your virtual consultations</p>
+    <AppLayout>
+      <div className="container mx-auto p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Telemedicine</h1>
+            <p className="text-muted-foreground">Manage your virtual consultations</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Video className="h-5 w-5 text-primary" />
+            <span className="text-sm font-medium">Virtual Consultations</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Video className="h-5 w-5 text-primary" />
-          <span className="text-sm font-medium">Virtual Consultations</span>
-        </div>
-      </div>
 
       <Tabs defaultValue="active" className="space-y-6">
         <TabsList>
@@ -306,6 +308,7 @@ const Telemedicine = () => {
         </TabsContent>
       </Tabs>
     </div>
+    </AppLayout>
   );
 };
 
