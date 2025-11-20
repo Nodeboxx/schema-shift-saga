@@ -41,10 +41,12 @@ const PrescriptionFooter = () => {
         background: "#f9f9f9",
         fontSize: "13px",
         borderTop: "2px solid #0056b3",
-        position: "relative",
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
         width: "100%",
         boxSizing: "border-box",
-        marginTop: "auto",
       }}
     >
       <div
