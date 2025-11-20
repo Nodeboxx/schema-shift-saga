@@ -21,6 +21,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PublicAppointmentBooking } from "@/components/public/PublicAppointmentBooking";
 import { ProductsSection } from "@/components/public/ProductsSection";
 import { PublicLayout } from "@/components/layout/PublicLayout";
+import { PricingSection } from "@/components/public/PricingSection";
 
 const iconMap: Record<string, any> = {
   FileText, Users, Calendar, Activity, Shield, Microscope, Stethoscope, Pill
@@ -79,6 +80,7 @@ const CMSLandingPage = () => {
   const hero = getSection('hero');
   const features = getSection('features');
   const pricing = getSection('pricing');
+  const pricingPlans = getSection('pricing_plans');
   const booking = getSection('booking');
 
   return (
@@ -207,10 +209,15 @@ const CMSLandingPage = () => {
         </section>
       )}
 
+      {/* Pricing Plans Section */}
+      {pricingPlans && pricingPlans.content && (
+        <PricingSection content={pricingPlans.content as any} />
+      )}
+
       {/* Products Section */}
       <ProductsSection />
 
-      {/* Pricing Section */}
+      {/* Legacy Pricing Section */}
       {pricing && (
         <section className="py-20 bg-muted/30" id="pricing">
           <div className="container mx-auto px-6">
