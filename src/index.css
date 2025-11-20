@@ -157,7 +157,8 @@ All colors MUST be HSL.
     box-shadow: none !important;
     border: none !important;
     page-break-inside: avoid;
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
     overflow: visible !important;
     position: relative !important;
   }
@@ -168,12 +169,21 @@ All colors MUST be HSL.
     background: white;
     padding: 10px 15px !important;
     margin: 0 !important;
+    flex-shrink: 0;
   }
   
   /* Patient info bar - remove extra spacing */
   .prescription-page header + div {
     margin: 0 !important;
     padding: 6px 10px !important;
+    flex-shrink: 0;
+  }
+
+  /* Body should grow to fill space */
+  .prescription-page > div:nth-child(3) {
+    flex: 1 !important;
+    overflow: visible !important;
+    margin: 0 !important;
   }
   
   /* Make footer stick to bottom of A4 page */
@@ -185,17 +195,7 @@ All colors MUST be HSL.
     right: 0;
     background: white;
     border-top: 1px solid #e0e0e0;
-  }
-  
-  /* Remove any extra margins from all children */
-  .prescription-page > * {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-  
-  /* Body content should start immediately */
-  .prescription-page > div {
-    margin: 0 !important;
+    flex-shrink: 0;
   }
 
   .prescription-page {
