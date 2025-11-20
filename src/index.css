@@ -195,4 +195,9 @@ All colors MUST be HSL.
   .print\\:hidden {
     display: none !important;
   }
+  
+  /* Hide page number indicators */
+  .prescription-page .absolute {
+    display: none !important;
+  }
 }
