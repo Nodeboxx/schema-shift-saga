@@ -9,62 +9,80 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Check, ArrowLeft } from "lucide-react";
 
+interface PricingPlan {
+  id: string;
+  name: string;
+  price: number;
+  currency: string;
+  period: string;
+  description: string;
+  features: string[];
+  yearlyPrice: number;
+}
+
 const Checkout = () => {
   const { plan = 'free' } = useParams<{ plan: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [loadingPlan, setLoadingPlan] = useState(true);
   const [agreed, setAgreed] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bkash' | 'wire'>('card');
+  const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
   const billingCycle = searchParams.get('billing') || 'monthly';
 
-  const planDetails: Record<string, any> = {
-    free: {
-      name: "Free",
-      price: 0,
-      period: "forever",
-      features: [
-        "5 prescriptions/month",
-        "Basic templates",
-        "Patient records",
-        "Email support"
-      ]
-    },
-    pro: {
-      name: "Pro",
-      price: 29,
-      period: "per month",
-      features: [
-        "Unlimited prescriptions",
-        "Advanced templates",
-        "Voice typing",
-        "Priority support",
-        "Custom branding",
-        "Analytics dashboard"
-      ]
-    },
-    enterprise: {
-      name: "Enterprise",
-      price: 99,
-      period: "per month",
-      features: [
-        "Everything in Pro",
-        "Multi-doctor clinics",
-        "Team collaboration",
-        "API access",
-        "Dedicated support",
-        "Custom integrations"
-      ]
+  useEffect(() => {
+    loadPlanDetails();
+  }, [plan]);
+
+  const loadPlanDetails = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("cms_sections")
+        .select("content")
+        .eq("section_name", "pricing_plans")
+        .single();
+
+      if (error) throw error;
+
+      if (data?.content) {
+        const content = data.content as any;
+        const plans = content.plans || [];
+        const planDetails = plans.find((p: PricingPlan) => p.id === plan);
+        
+        if (planDetails) {
+          setSelectedPlan(planDetails);
+        }
+      }
+    } catch (error: any) {
+      console.error("Error loading plan:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load plan details",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingPlan(false);
     }
   };
 
-  const selectedPlan = planDetails[plan || "free"] || planDetails.free;
   const isYearly = billingCycle === 'yearly';
   
-  // Adjust price for yearly billing
-  const displayPrice = isYearly ? selectedPlan.price * 10 : selectedPlan.price; // 10 months price for yearly
-  const displayPeriod = isYearly ? 'per year' : selectedPlan.period;
+  if (loadingPlan || !selectedPlan) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading plan details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Get display price based on billing cycle
+  const displayPrice = isYearly ? selectedPlan.yearlyPrice : selectedPlan.price;
+  const displayPeriod = isYearly ? 'year' : selectedPlan.period;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,13 +169,16 @@ const Checkout = () => {
             <div className="mb-6">
               <h3 className="text-xl font-semibold mb-2">{selectedPlan.name}</h3>
               <div className="text-3xl font-bold">
-                ${displayPrice}
+                {selectedPlan.currency}{displayPrice}
                 <span className="text-lg text-muted-foreground">/{displayPeriod}</span>
               </div>
-              {isYearly && (
+              {isYearly && selectedPlan.yearlyPrice < selectedPlan.price * 12 && (
                 <p className="text-sm text-emerald-600 font-medium mt-2">
-                  💰 Save 2 months with yearly billing
+                  💰 Save {selectedPlan.currency}{(selectedPlan.price * 12) - selectedPlan.yearlyPrice} with yearly billing
                 </p>
+              )}
+              {selectedPlan.description && (
+                <p className="text-sm text-muted-foreground mt-2">{selectedPlan.description}</p>
               )}
             </div>
             
@@ -173,7 +194,7 @@ const Checkout = () => {
             <div className="border-t pt-4">
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span>${displayPrice}</span>
+                <span>{selectedPlan.currency}{displayPrice}</span>
               </div>
               <p className="text-xs text-muted-foreground mt-2">
                 Billing cycle: {billingCycle}
@@ -259,7 +280,7 @@ const Checkout = () => {
                      <p className="text-sm mb-2 font-medium">bKash Payment Instructions:</p>
                      <ol className="text-sm space-y-1 list-decimal list-inside">
                        <li>Send money to: 01XXX-XXXXXX</li>
-                       <li>Enter amount: ${displayPrice}</li>
+                       <li>Enter amount: {selectedPlan.currency}{displayPrice}</li>
                        <li>Copy the transaction ID</li>
                        <li>Paste it above and submit</li>
                      </ol>
@@ -284,7 +305,7 @@ const Checkout = () => {
                       <span className="font-medium">SWIFT/BIC:</span> EXAMPLEBDXXX
                     </div>
                      <div>
-                       <span className="font-medium">Amount:</span> ${displayPrice}
+                       <span className="font-medium">Amount:</span> {selectedPlan.currency}{displayPrice}
                      </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
@@ -308,7 +329,7 @@ const Checkout = () => {
                 {loading ? "Processing..." : (
                   paymentMethod === 'wire' 
                     ? 'Complete Subscription' 
-                    : `Pay $${displayPrice}/${displayPeriod}`
+                    : `Pay ${selectedPlan.currency}${displayPrice}/${displayPeriod}`
                 )}
               </Button>
 
