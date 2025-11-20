@@ -55,12 +55,6 @@ const Dashboard = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  useEffect(() => {
-    // Super admins should always see the admin panel, not the doctor dashboard
-    if (isSuperAdmin) {
-      navigate("/admin");
-    }
-  }, [isSuperAdmin, navigate]);
 
   const loadPrescriptions = async (userId: string) => {
     const { data, error } = await supabase

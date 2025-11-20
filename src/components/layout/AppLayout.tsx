@@ -40,19 +40,19 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       to: '/prescription', 
       icon: FileText, 
       label: 'Prescriptions',
-      show: isDoctor 
+      show: isDoctor || isSuperAdmin || isClinicAdmin
     },
     { 
       to: '/appointments', 
       icon: Calendar, 
       label: 'Appointments',
-      show: isDoctor 
+      show: isDoctor || isSuperAdmin || isClinicAdmin
     },
     { 
       to: '/import-data', 
       icon: Database, 
       label: 'Import Data',
-      show: isDoctor 
+      show: isDoctor || isSuperAdmin || isClinicAdmin
     },
     { 
       to: '/admin', 
@@ -64,7 +64,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       to: '/clinic', 
       icon: Building2, 
       label: 'Clinic Management',
-      show: isClinicAdmin 
+      show: isClinicAdmin || isSuperAdmin
     },
     { 
       to: '/settings', 
