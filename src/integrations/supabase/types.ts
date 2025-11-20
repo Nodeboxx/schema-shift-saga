@@ -495,6 +495,123 @@ export type Database = {
           },
         ]
       }
+      health_advice: {
+        Row: {
+          advice_type: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          journey_id: string | null
+          message: string
+          patient_id: string
+          priority: string | null
+          read_at: string | null
+          scheduled_for: string | null
+          sent_at: string | null
+          status: string | null
+          title: string
+        }
+        Insert: {
+          advice_type?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          journey_id?: string | null
+          message: string
+          patient_id: string
+          priority?: string | null
+          read_at?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string | null
+          title: string
+        }
+        Update: {
+          advice_type?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          journey_id?: string | null
+          message?: string
+          patient_id?: string
+          priority?: string | null
+          read_at?: string | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_advice_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "health_advice_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "patient_journeys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "health_advice_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      health_milestones: {
+        Row: {
+          completed_date: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          journey_id: string
+          progress_percentage: number | null
+          status: string | null
+          target_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          completed_date?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          journey_id: string
+          progress_percentage?: number | null
+          status?: string | null
+          target_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          completed_date?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          journey_id?: string
+          progress_percentage?: number | null
+          status?: string | null
+          target_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "health_milestones_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "patient_journeys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       impersonation_sessions: {
         Row: {
           admin_user_id: string
@@ -650,6 +767,60 @@ export type Database = {
             columns: ["clinic_id"]
             isOneToOne: false
             referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_journeys: {
+        Row: {
+          condition_name: string
+          created_at: string | null
+          diagnosis_date: string
+          doctor_id: string
+          id: string
+          notes: string | null
+          patient_id: string
+          status: string | null
+          treatment_plan: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          condition_name: string
+          created_at?: string | null
+          diagnosis_date: string
+          doctor_id: string
+          id?: string
+          notes?: string | null
+          patient_id: string
+          status?: string | null
+          treatment_plan?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          condition_name?: string
+          created_at?: string | null
+          diagnosis_date?: string
+          doctor_id?: string
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          status?: string | null
+          treatment_plan?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_journeys_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_journeys_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
             referencedColumns: ["id"]
           },
         ]
@@ -1172,6 +1343,122 @@ export type Database = {
             columns: ["clinic_id"]
             isOneToOne: false
             referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questionnaire_responses: {
+        Row: {
+          appointment_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          journey_id: string | null
+          patient_id: string
+          responses: Json
+          template_id: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          journey_id?: string | null
+          patient_id: string
+          responses?: Json
+          template_id: string
+        }
+        Update: {
+          appointment_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          journey_id?: string | null
+          patient_id?: string
+          responses?: Json
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questionnaire_responses_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questionnaire_responses_journey_id_fkey"
+            columns: ["journey_id"]
+            isOneToOne: false
+            referencedRelation: "patient_journeys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questionnaire_responses_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questionnaire_responses_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "questionnaire_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questionnaire_templates: {
+        Row: {
+          category: string | null
+          clinic_id: string | null
+          created_at: string | null
+          description: string | null
+          doctor_id: string | null
+          id: string
+          is_active: boolean | null
+          questions: Json
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          clinic_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          doctor_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          questions?: Json
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          clinic_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          doctor_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          questions?: Json
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questionnaire_templates_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questionnaire_templates_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
