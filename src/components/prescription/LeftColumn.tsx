@@ -5,9 +5,10 @@ interface LeftColumnProps {
   width: number;
   data?: any;
   setData?: (data: any) => void;
+  templateSections?: any[];
 }
 
-const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
+const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps) => {
   const ccRef = useRef<HTMLDivElement>(null);
   const dxRef = useRef<HTMLDivElement>(null);
   const advRef = useRef<HTMLDivElement>(null);
@@ -16,6 +17,13 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
   const [template, setTemplate] = useState<any[]>([]);
 
   useEffect(() => {
+    // Prefer template sections passed from parent (per-prescription)
+    if (templateSections && Array.isArray(templateSections)) {
+      setTemplate(templateSections);
+      return;
+    }
+
+    // Fallback: load from user profile
     const loadTemplate = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -32,7 +40,7 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
     };
 
     loadTemplate();
-  }, []);
+  }, [templateSections]);
 
   const vitals = data?.vitals || {
     bp_s: "",
@@ -44,7 +52,12 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
     jaundice: "",
   };
 
+  // Values for template fields (per-section)
+  const sectionFieldValues = data?.sectionFieldValues || {};
+  // Legacy support for previous Past History implementation
   const phFields = data?.phFields || {};
+  // Generic rich-text content for custom sections without fields
+  const customSectionContent = data?.customSectionContent || {};
 
   const handleVitalEdit = (field: string, value: string) => {
     if (setData) {
@@ -55,19 +68,51 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
     }
   };
 
-  const handlePHFieldEdit = (fieldLabel: string, value: string) => {
-    if (setData) {
-      setData({
-        ...data,
-        phFields: { ...phFields, [fieldLabel]: value },
-      });
+  const handleSectionFieldEdit = (sectionId: string, fieldLabel: string, value: string) => {
+    if (!setData) return;
+
+    const existingSectionValues =
+      sectionFieldValues[sectionId] || (sectionId === "ph" ? phFields : {});
+
+    const newSectionFieldValues = {
+      ...sectionFieldValues,
+      [sectionId]: {
+        ...existingSectionValues,
+        [fieldLabel]: value,
+      },
+    };
+
+    // Keep legacy phFields in sync for existing prescriptions
+    const extra: any = {};
+    if (sectionId === "ph") {
+      extra.phFields = {
+        ...phFields,
+        [fieldLabel]: value,
+      };
     }
+
+    setData({
+      ...data,
+      ...extra,
+      sectionFieldValues: newSectionFieldValues,
+    });
   };
 
   const handleContentChange = (field: string, value: string) => {
     if (setData) {
       setData({ ...data, [field]: value });
     }
+  };
+
+  const handleCustomSectionChange = (sectionId: string, value: string) => {
+    if (!setData) return;
+    setData({
+      ...data,
+      customSectionContent: {
+        ...customSectionContent,
+        [sectionId]: value,
+      },
+    });
   };
 
   const enabledSections = template
@@ -142,9 +187,12 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
           );
         }
 
-        if (section.id === "ph") {
+        if (section.fields && section.fields.length > 0) {
+          const sectionValues =
+            sectionFieldValues[section.id] || (section.id === "ph" ? phFields : {});
+
           return (
-            <div key="ph">
+            <div key={section.id}>
               <h4 style={{
                 fontSize: "10px",
                 fontWeight: 700,
@@ -163,7 +211,7 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
                 marginTop: "3px",
                 marginBottom: "8px",
               }}>
-                {section.fields?.map((field: any, index: number) => (
+                {section.fields.map((field: any, index: number) => (
                   <div key={index} style={{ display: "flex", alignItems: "center", gap: "2px" }}>
                     <label style={{ fontSize: "7px", fontWeight: 600, color: "#333", minWidth: "50px" }}>
                       {field.label}:
@@ -171,7 +219,9 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
                     <div
                       contentEditable
                       suppressContentEditableWarning
-                      onBlur={(e) => handlePHFieldEdit(field.label, e.currentTarget.textContent || "")}
+                      onBlur={(e) =>
+                        handleSectionFieldEdit(section.id, field.label, e.currentTarget.textContent || "")
+                      }
                       style={{
                         fontSize: "7px",
                         fontWeight: 500,
@@ -182,7 +232,7 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
                         flex: 1,
                       }}
                     >
-                      {phFields[field.label] || "____"}
+                      {sectionValues[field.label] || "____"}
                     </div>
                   </div>
                 ))}
@@ -481,7 +531,45 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
           );
         }
 
-        return null;
+        // Generic fallback for sections without a specific handler
+        return (
+          <div key={section.id}>
+            <h4
+              style={{
+                fontSize: "10px",
+                fontWeight: 700,
+                color: "#0056b3",
+                borderBottom: "1px solid #aaa",
+                paddingBottom: "1px",
+                marginTop: "6px",
+                marginBottom: "3px",
+              }}
+            >
+              {section.title}
+            </h4>
+            <div
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) =>
+                handleCustomSectionChange(section.id, e.currentTarget.innerHTML)
+              }
+              dangerouslySetInnerHTML={{
+                __html: customSectionContent[section.id] || "",
+              }}
+              style={{
+                fontSize: "9px",
+                lineHeight: "1.4",
+                display: "block",
+                overflow: "visible",
+                height: "auto",
+                minHeight: "14px",
+                marginBottom: "8px",
+                padding: "2px",
+                border: "1px solid transparent",
+              }}
+            />
+          </div>
+        );
       })}
     </div>
   );

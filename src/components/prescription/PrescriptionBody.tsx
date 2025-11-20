@@ -5,9 +5,10 @@ import RightColumn from "./RightColumn";
 interface PrescriptionBodyProps {
   data?: any;
   setData?: (data: any) => void;
+  templateSections?: any[];
 }
 
-const PrescriptionBody = ({ data, setData }: PrescriptionBodyProps) => {
+const PrescriptionBody = ({ data, setData, templateSections }: PrescriptionBodyProps) => {
   const [leftWidth, setLeftWidth] = useState(30);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -46,7 +47,7 @@ const PrescriptionBody = ({ data, setData }: PrescriptionBodyProps) => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      <LeftColumn width={leftWidth} data={data} setData={setData} />
+      <LeftColumn width={leftWidth} data={data} setData={setData} templateSections={templateSections} />
 
       <div
         onMouseDown={handleMouseDown}

@@ -380,6 +380,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           <PrescriptionBody 
             data={page.id === 1 ? bodyData : pagesData[page.id]}
             setData={page.id === 1 ? setBodyData : (data: any) => setPagesData({ ...pagesData, [page.id]: data })}
+            templateSections={templateSections}
           />
           <PrescriptionFooter />
         </div>
