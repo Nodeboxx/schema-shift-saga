@@ -6,18 +6,114 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, Plus, Trash2, GripVertical, FileText, Check } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, GripVertical, FileText, Check, Wand2 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prescriptionTemplates, getTemplateById } from "@/lib/prescriptionTemplates";
+import CustomTemplateBuilder from "@/components/settings/CustomTemplateBuilder";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+// Sortable Section Component
+const SortableSection = ({ section, index, onUpdate, onRemoveField, onAddField }: any) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: section.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="border rounded-lg p-4 bg-card">
+      <div className="flex items-center gap-3 mb-2">
+        <div {...attributes} {...listeners} className="cursor-move">
+          <GripVertical className="w-5 h-5 text-muted-foreground" />
+        </div>
+        <Checkbox
+          checked={section.enabled}
+          onCheckedChange={(checked) => onUpdate(index, { enabled: checked })}
+        />
+        <Input
+          value={section.title}
+          onChange={(e) => onUpdate(index, { title: e.target.value })}
+          className="flex-1 h-8"
+        />
+      </div>
+
+      {section.fields && section.fields.length > 0 && (
+        <div className="ml-11 mt-3 grid grid-cols-2 gap-2">
+          {section.fields.map((field: any, fieldIndex: number) => (
+            <div key={fieldIndex} className="flex items-center gap-2">
+              <Input
+                value={field.label}
+                onChange={(e) => {
+                  const updatedFields = [...section.fields];
+                  updatedFields[fieldIndex] = { ...field, label: e.target.value };
+                  onUpdate(index, { fields: updatedFields });
+                }}
+                className="h-7 text-xs"
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => onRemoveField(index, fieldIndex)}
+              >
+                <Trash2 className="w-3 h-3" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs"
+            onClick={() => onAddField(index)}
+          >
+            <Plus className="w-3 h-3 mr-1" />
+            Add Field
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Settings = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [customBuilderOpen, setCustomBuilderOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const [profile, setProfile] = useState({
     full_name: "",
@@ -28,6 +124,7 @@ const Settings = () => {
     footer_right: "",
     left_template_sections: [] as any[],
     active_template: "general_medicine",
+    custom_templates: [] as any[],
   });
 
   useEffect(() => {
@@ -68,6 +165,68 @@ const Settings = () => {
         footer_right: data.footer_right || "",
         left_template_sections: Array.isArray(data.left_template_sections) ? data.left_template_sections : [],
         active_template: data.active_template || "general_medicine",
+        custom_templates: Array.isArray(data.custom_templates) ? data.custom_templates : [],
+      });
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = profile.left_template_sections.findIndex((s) => s.id === active.id);
+      const newIndex = profile.left_template_sections.findIndex((s) => s.id === over.id);
+
+      const reordered = arrayMove(profile.left_template_sections, oldIndex, newIndex).map(
+        (section, index) => ({ ...section, order: index })
+      );
+
+      setProfile({ ...profile, left_template_sections: reordered });
+    }
+  };
+
+  const handleSectionUpdate = (index: number, updates: any) => {
+    const updated = [...profile.left_template_sections];
+    updated[index] = { ...updated[index], ...updates };
+    setProfile({ ...profile, left_template_sections: updated });
+  };
+
+  const handleRemoveField = (sectionIndex: number, fieldIndex: number) => {
+    const updated = [...profile.left_template_sections];
+    const fields = updated[sectionIndex].fields.filter((_: any, i: number) => i !== fieldIndex);
+    updated[sectionIndex] = { ...updated[sectionIndex], fields };
+    setProfile({ ...profile, left_template_sections: updated });
+  };
+
+  const handleAddField = (sectionIndex: number) => {
+    const updated = [...profile.left_template_sections];
+    const fields = [...(updated[sectionIndex].fields || []), { label: "New Field", value: "" }];
+    updated[sectionIndex] = { ...updated[sectionIndex], fields };
+    setProfile({ ...profile, left_template_sections: updated });
+  };
+
+  const handleSaveCustomTemplate = async (template: any) => {
+    const customTemplates = [...profile.custom_templates, template];
+    setProfile({ ...profile, custom_templates: customTemplates });
+
+    // Save to database
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ custom_templates: customTemplates })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Custom template saved successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
       });
     }
   };
@@ -274,13 +433,22 @@ const Settings = () => {
           <TabsContent value="templates" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Select Prescription Template</CardTitle>
-                <CardDescription>
-                  Choose a template based on your medical specialty. Each template includes relevant sections and fields.
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Select Prescription Template</CardTitle>
+                    <CardDescription>
+                      Choose a template based on your medical specialty. Each template includes relevant sections and fields.
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => setCustomBuilderOpen(true)} variant="outline">
+                    <Wand2 className="w-4 h-4 mr-2" />
+                    Build Custom Template
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                  {/* Built-in Templates */}
                   {prescriptionTemplates.map((template) => (
                     <Card
                       key={template.id}
@@ -307,6 +475,33 @@ const Settings = () => {
                       </CardContent>
                     </Card>
                   ))}
+
+                  {/* Custom Templates */}
+                  {profile.custom_templates?.map((template) => (
+                    <Card
+                      key={template.id}
+                      className={`cursor-pointer transition-all hover:shadow-lg border-2 ${
+                        profile.active_template === template.id
+                          ? "border-primary bg-primary/5"
+                          : "border-border border-dashed"
+                      }`}
+                      onClick={() => handleTemplateSelect(template.id)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between mb-2">
+                          <Wand2 className="w-8 h-8 text-purple-500" />
+                          {profile.active_template === template.id && (
+                            <Check className="w-5 h-5 text-primary" />
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-lg mb-1">{template.name}</h3>
+                        <p className="text-xs text-muted-foreground mb-1">{template.description}</p>
+                        <p className="text-xs font-medium text-purple-600 mt-2">
+                          Custom • {template.sections?.filter((s: any) => s.enabled).length} sections
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </CardContent>
             </Card>
@@ -319,82 +514,31 @@ const Settings = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {profile.left_template_sections
-                    ?.sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
-                    .map((section: any, index: number) => (
-                      <div key={section.id} className="border rounded-lg p-4 bg-muted/30">
-                        <div className="flex items-center gap-3 mb-2">
-                          <GripVertical className="w-4 h-4 text-muted-foreground" />
-                          <Checkbox
-                            checked={section.enabled}
-                            onCheckedChange={(checked) => {
-                              const updated = [...profile.left_template_sections];
-                              updated[index] = { ...section, enabled: checked };
-                              setProfile({ ...profile, left_template_sections: updated });
-                            }}
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={profile.left_template_sections.map((s) => s.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-3">
+                      {profile.left_template_sections
+                        ?.sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+                        .map((section: any, index: number) => (
+                          <SortableSection
+                            key={section.id}
+                            section={section}
+                            index={index}
+                            onUpdate={handleSectionUpdate}
+                            onRemoveField={handleRemoveField}
+                            onAddField={handleAddField}
                           />
-                          <Input
-                            value={section.title}
-                            onChange={(e) => {
-                              const updated = [...profile.left_template_sections];
-                              updated[index] = { ...section, title: e.target.value };
-                              setProfile({ ...profile, left_template_sections: updated });
-                            }}
-                            className="flex-1 h-8"
-                          />
-                        </div>
-
-                        {/* Fields Editor for sections with fields */}
-                        {section.fields && section.fields.length > 0 && (
-                          <div className="ml-11 mt-3 grid grid-cols-2 gap-2">
-                            {section.fields.map((field: any, fieldIndex: number) => (
-                              <div key={fieldIndex} className="flex items-center gap-2">
-                                <Input
-                                  value={field.label}
-                                  onChange={(e) => {
-                                    const updated = [...profile.left_template_sections];
-                                    const fields = [...section.fields];
-                                    fields[fieldIndex] = { ...field, label: e.target.value };
-                                    updated[index] = { ...section, fields };
-                                    setProfile({ ...profile, left_template_sections: updated });
-                                  }}
-                                  className="h-7 text-xs"
-                                />
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-7 w-7"
-                                  onClick={() => {
-                                    const updated = [...profile.left_template_sections];
-                                    const fields = section.fields.filter((_: any, i: number) => i !== fieldIndex);
-                                    updated[index] = { ...section, fields };
-                                    setProfile({ ...profile, left_template_sections: updated });
-                                  }}
-                                >
-                                  <Trash2 className="w-3 h-3" />
-                                </Button>
-                              </div>
-                            ))}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-7 text-xs"
-                              onClick={() => {
-                                const updated = [...profile.left_template_sections];
-                                const fields = [...(section.fields || []), { label: "New Field", value: "" }];
-                                updated[index] = { ...section, fields };
-                                setProfile({ ...profile, left_template_sections: updated });
-                              }}
-                            >
-                              <Plus className="w-3 h-3 mr-1" />
-                              Add Field
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
 
                 <Button
                   onClick={handleSaveTemplate}
@@ -409,6 +553,12 @@ const Settings = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        <CustomTemplateBuilder
+          open={customBuilderOpen}
+          onOpenChange={setCustomBuilderOpen}
+          onSave={handleSaveCustomTemplate}
+        />
       </div>
     </div>
   );
