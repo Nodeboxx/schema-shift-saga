@@ -151,19 +151,42 @@ All colors MUST be HSL.
 
   .prescription-page {
     width: 210mm !important;
-    min-height: 297mm !important;
+    min-height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
     border: none !important;
-    page-break-after: always;
+    page-break-inside: avoid;
     display: block !important;
     overflow: visible !important;
   }
   
+  /* Make header and footer repeat on every page */
   .prescription-page header {
-    page-break-inside: avoid !important;
-    page-break-after: avoid !important;
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  .prescription-page > footer {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  /* Add space for fixed header and footer */
+  .prescription-page > div:nth-child(2) {
+    margin-top: 140px !important;
+  }
+  
+  .prescription-page > div:last-of-type {
+    margin-bottom: 60px !important;
   }
 
   .prescription-page:last-of-type {
