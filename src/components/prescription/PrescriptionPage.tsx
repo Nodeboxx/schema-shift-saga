@@ -96,6 +96,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
             type: item.item_type,
             name: item.name,
             dose: item.dose,
+            duration: item.duration,
             categoryContent: item.category_content,
             // Restore medicine metadata from parsed details
             ...parsedDetails,
@@ -203,6 +204,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
             name: med.name || "",
             details: JSON.stringify(metadata), // Store metadata as JSON
             dose: med.dose || "",
+            duration: med.duration || "",
             category_content: med.categoryContent || "",
             sort_order: index,
           };
