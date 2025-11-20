@@ -21,19 +21,24 @@ export const useUserRole = () => {
         return;
       }
 
-      // Get user's highest privilege role
-      const { data: roles } = await supabase
+      console.log('Loading roles for user:', user.id, user.email);
+
+      // Get user's highest privilege role from user_roles table
+      const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', user.id)
-        .order('role', { ascending: true });
+        .eq('user_id', user.id);
+
+      console.log('User roles from DB:', roles, 'Error:', rolesError);
 
       if (roles && roles.length > 0) {
         // Priority order: super_admin > clinic_admin > doctor > staff > patient
         const roleHierarchy: UserRole[] = ['super_admin', 'clinic_admin', 'doctor', 'staff', 'patient'];
         const userRole = roleHierarchy.find(r => roles.some(ur => ur.role === r));
+        console.log('Detected role:', userRole);
         setRole(userRole || 'doctor'); // Default to doctor if no role found
       } else {
+        console.log('No roles found, defaulting to doctor');
         setRole('doctor'); // Default role
       }
     } catch (error) {
