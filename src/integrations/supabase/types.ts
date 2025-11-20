@@ -408,6 +408,7 @@ export type Database = {
           footer_right: string | null
           full_name: string | null
           id: string
+          left_template_sections: Json | null
           name_bn: string | null
         }
         Insert: {
@@ -419,6 +420,7 @@ export type Database = {
           footer_right?: string | null
           full_name?: string | null
           id: string
+          left_template_sections?: Json | null
           name_bn?: string | null
         }
         Update: {
@@ -430,6 +432,7 @@ export type Database = {
           footer_right?: string | null
           full_name?: string | null
           id?: string
+          left_template_sections?: Json | null
           name_bn?: string | null
         }
         Relationships: []
