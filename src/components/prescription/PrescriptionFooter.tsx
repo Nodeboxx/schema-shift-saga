@@ -31,7 +31,7 @@ const PrescriptionFooter = () => {
   }, []);
 
   return (
-    <footer style={{
+    <footer className="prescription-footer" style={{
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",

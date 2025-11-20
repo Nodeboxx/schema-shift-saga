@@ -1,17 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Home, LogOut } from "lucide-react";
+import { Home, LogOut, Printer, Send, MessageCircle, Mail } from "lucide-react";
 import RichTextToolbar from "../RichTextToolbar";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface PrescriptionControlsProps {
   prescriptionId?: string;
   userId?: string;
   onRichTextCommand?: (command: string, value?: string) => void;
+  patientName?: string;
+  patientPhone?: string;
 }
 
-const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: PrescriptionControlsProps) => {
+const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone }: PrescriptionControlsProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [headerlessPrint, setHeaderlessPrint] = useState(false);
 
   const handlePrint = () => {
     window.print();
@@ -24,6 +32,25 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: Pre
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/login");
+  };
+
+  const handleWhatsAppShare = () => {
+    const message = `Prescription for ${patientName || 'Patient'}\nView at: ${window.location.origin}/verify/${prescriptionId}`;
+    const whatsappUrl = `https://wa.me/${patientPhone?.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
+  const handleMessengerShare = () => {
+    const url = `${window.location.origin}/verify/${prescriptionId}`;
+    const messengerUrl = `https://www.facebook.com/dialog/send?link=${encodeURIComponent(url)}&app_id=YOUR_APP_ID&redirect_uri=${encodeURIComponent(window.location.origin)}`;
+    window.open(messengerUrl, '_blank');
+  };
+
+  const handleEmailShare = () => {
+    const subject = `Prescription for ${patientName || 'Patient'}`;
+    const body = `Dear Patient,\n\nYour prescription is ready. View it here:\n${window.location.origin}/verify/${prescriptionId}\n\nBest regards,\nYour Healthcare Provider`;
+    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
   };
 
   const handleCommand = (command: string, value?: string) => {
@@ -70,6 +97,14 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: Pre
           button[style*="position: absolute"] {
             display: none !important;
           }
+          ${headerlessPrint ? `
+            .prescription-header {
+              display: none !important;
+            }
+            .prescription-footer {
+              display: none !important;
+            }
+          ` : ''}
         }
       `}</style>
       <div className="no-print" style={{
@@ -86,12 +121,11 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: Pre
         textAlign: "center",
         display: "block",
       }}>
-        <div style={{ display: "block", textAlign: "center", margin: "10px auto" }}>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center", flexWrap: "wrap", margin: "10px auto" }}>
           <Button
             onClick={handleGoHome}
             style={{
               padding: "10px 15px",
-              margin: "0 5px",
               backgroundColor: "#6c757d",
               color: "white",
               fontWeight: 600,
@@ -104,19 +138,71 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand }: Pre
             onClick={handlePrint}
             style={{
               padding: "10px 15px",
-              margin: "0 5px",
               backgroundColor: "#c00",
               color: "white",
               fontWeight: 600,
             }}
           >
-            Print Prescription
+            <Printer className="w-4 h-4 mr-2" />
+            Print
           </Button>
+          
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "0 10px" }}>
+            <Switch 
+              id="headerless" 
+              checked={headerlessPrint}
+              onCheckedChange={setHeaderlessPrint}
+            />
+            <Label htmlFor="headerless" style={{ margin: 0, cursor: "pointer", fontSize: "14px" }}>
+              Header-less Print
+            </Label>
+          </div>
+
+          {prescriptionId && (
+            <>
+              <Button
+                onClick={handleWhatsAppShare}
+                style={{
+                  padding: "10px 15px",
+                  backgroundColor: "#25D366",
+                  color: "white",
+                  fontWeight: 600,
+                }}
+              >
+                <Send className="w-4 h-4 mr-2" />
+                WhatsApp
+              </Button>
+              <Button
+                onClick={handleMessengerShare}
+                style={{
+                  padding: "10px 15px",
+                  backgroundColor: "#0084FF",
+                  color: "white",
+                  fontWeight: 600,
+                }}
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Messenger
+              </Button>
+              <Button
+                onClick={handleEmailShare}
+                style={{
+                  padding: "10px 15px",
+                  backgroundColor: "#EA4335",
+                  color: "white",
+                  fontWeight: 600,
+                }}
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                Email
+              </Button>
+            </>
+          )}
+
           <Button
             onClick={handleLogout}
             style={{
               padding: "10px 15px",
-              margin: "0 5px",
               backgroundColor: "#dc3545",
               color: "white",
               fontWeight: 600,
