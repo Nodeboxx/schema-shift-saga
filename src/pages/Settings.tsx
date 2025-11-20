@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, GripVertical } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const Settings = () => {
   const [user, setUser] = useState<any>(null);
@@ -22,6 +23,7 @@ const Settings = () => {
     degree_bn: "",
     footer_left: "",
     footer_right: "",
+    left_template_sections: [] as any[],
   });
 
   useEffect(() => {
@@ -60,6 +62,7 @@ const Settings = () => {
         degree_bn: data.degree_bn || "",
         footer_left: data.footer_left || "",
         footer_right: data.footer_right || "",
+        left_template_sections: Array.isArray(data.left_template_sections) ? data.left_template_sections : [],
       });
     }
   };
@@ -184,6 +187,91 @@ const Settings = () => {
               placeholder="Phone: +880 123456789&#10;Email: doctor@example.com"
               rows={3}
             />
+          </div>
+
+          {/* Left Column Template Configuration */}
+          <div className="border-t pt-6 mt-6">
+            <h2 className="text-2xl font-semibold mb-4">Left Column Template</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Customize sections for your prescription's left column. Enable/disable sections for different medical specialties.
+            </p>
+
+            <div className="space-y-3">
+              {profile.left_template_sections
+                ?.sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+                .map((section: any, index: number) => (
+                  <div key={section.id} className="border rounded-lg p-4 bg-muted/30">
+                    <div className="flex items-center gap-3 mb-2">
+                      <GripVertical className="w-4 h-4 text-muted-foreground" />
+                      <Checkbox
+                        checked={section.enabled}
+                        onCheckedChange={(checked) => {
+                          const updated = [...profile.left_template_sections];
+                          updated[index] = { ...section, enabled: checked };
+                          setProfile({ ...profile, left_template_sections: updated });
+                        }}
+                      />
+                      <Input
+                        value={section.title}
+                        onChange={(e) => {
+                          const updated = [...profile.left_template_sections];
+                          updated[index] = { ...section, title: e.target.value };
+                          setProfile({ ...profile, left_template_sections: updated });
+                        }}
+                        className="flex-1 h-8"
+                      />
+                    </div>
+
+                    {/* P/H Fields Editor */}
+                    {section.id === "ph" && section.fields && (
+                      <div className="ml-11 mt-3 grid grid-cols-2 gap-2">
+                        {section.fields.map((field: any, fieldIndex: number) => (
+                          <div key={fieldIndex} className="flex items-center gap-2">
+                            <Input
+                              value={field.label}
+                              onChange={(e) => {
+                                const updated = [...profile.left_template_sections];
+                                const fields = [...section.fields];
+                                fields[fieldIndex] = { ...field, label: e.target.value };
+                                updated[index] = { ...section, fields };
+                                setProfile({ ...profile, left_template_sections: updated });
+                              }}
+                              className="h-7 text-xs"
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => {
+                                const updated = [...profile.left_template_sections];
+                                const fields = section.fields.filter((_: any, i: number) => i !== fieldIndex);
+                                updated[index] = { ...section, fields };
+                                setProfile({ ...profile, left_template_sections: updated });
+                              }}
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 text-xs"
+                          onClick={() => {
+                            const updated = [...profile.left_template_sections];
+                            const fields = [...(section.fields || []), { label: "New Field", value: "" }];
+                            updated[index] = { ...section, fields };
+                            setProfile({ ...profile, left_template_sections: updated });
+                          }}
+                        >
+                          <Plus className="w-3 h-3 mr-1" />
+                          Add Field
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
           </div>
 
           <Button
