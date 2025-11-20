@@ -39,6 +39,7 @@ const VisualPageEditor = () => {
   const [editingPage, setEditingPage] = useState<Page | null>(null);
   const [open, setOpen] = useState(false);
   const [activeMode, setActiveMode] = useState<"visual" | "code">("visual");
+  const [jsonContent, setJsonContent] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -66,16 +67,19 @@ const VisualPageEditor = () => {
   };
 
   const createPage = () => {
+    const initialContent = { html: "<h1>Page Title</h1><p>Start editing your page content...</p>" };
     setEditingPage({
       id: "",
       title: "New Page",
       slug: "new-page",
-      content: { html: "<h1>Page Title</h1><p>Start editing your page content...</p>" },
+      content: initialContent,
       meta_title: "",
       meta_description: "",
       is_published: false,
-      created_at: ""
+      created_at: "",
     });
+    setJsonContent(JSON.stringify(initialContent, null, 2));
+    setActiveMode("visual");
     setOpen(true);
   };
 
@@ -83,17 +87,32 @@ const VisualPageEditor = () => {
     if (!editingPage) return;
 
     try {
+      let contentToSave = editingPage.content;
+
+      if (activeMode === "code") {
+        try {
+          contentToSave = JSON.parse(jsonContent);
+        } catch (err) {
+          toast({
+            title: "Invalid JSON",
+            description: "Please fix the JSON in the Code tab before saving.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
       if (editingPage.id) {
         const { error } = await supabase
           .from("custom_pages")
           .update({
             title: editingPage.title,
             slug: editingPage.slug,
-            content: editingPage.content,
+            content: contentToSave,
             meta_title: editingPage.meta_title,
             meta_description: editingPage.meta_description,
             is_published: editingPage.is_published,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq("id", editingPage.id);
 
@@ -104,10 +123,10 @@ const VisualPageEditor = () => {
           .insert({
             title: editingPage.title,
             slug: editingPage.slug,
-            content: editingPage.content,
+            content: contentToSave,
             meta_title: editingPage.meta_title,
             meta_description: editingPage.meta_description,
-            is_published: editingPage.is_published
+            is_published: editingPage.is_published,
           });
 
         if (error) throw error;
@@ -115,7 +134,7 @@ const VisualPageEditor = () => {
 
       toast({
         title: "Saved",
-        description: "Page saved successfully"
+        description: "Page saved successfully",
       });
 
       setOpen(false);
@@ -125,7 +144,7 @@ const VisualPageEditor = () => {
       toast({
         title: "Error",
         description: error.message,
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -240,6 +259,8 @@ const VisualPageEditor = () => {
                       variant="ghost"
                       onClick={() => {
                         setEditingPage(page);
+                        setJsonContent(JSON.stringify(page.content ?? {}, null, 2));
+                        setActiveMode("visual");
                         setOpen(true);
                       }}
                     >
@@ -342,16 +363,10 @@ const VisualPageEditor = () => {
                 <div className="space-y-4">
                   <label className="text-sm font-medium">Content (JSON)</label>
                   <textarea
-                    value={JSON.stringify(editingPage.content, null, 2)}
-                    onChange={(e) => {
-                      try {
-                        const parsed = JSON.parse(e.target.value);
-                        setEditingPage({ ...editingPage, content: parsed });
-                      } catch (err) {
-                        // Invalid JSON
-                      }
-                    }}
+                    value={jsonContent}
+                    onChange={(e) => setJsonContent(e.target.value)}
                     className="w-full min-h-[400px] p-4 font-mono text-sm border rounded-md"
+                    placeholder="Page content as JSON..."
                   />
                 </div>
               )}
