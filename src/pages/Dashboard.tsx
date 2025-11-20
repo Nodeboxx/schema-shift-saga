@@ -7,6 +7,7 @@ import { Search, FileText, Plus, LogOut, Trash2, Settings as SettingsIcon } from
 import { useToast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/ui/alert-dialog-custom";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SavedPrescription {
   id: string;
@@ -29,6 +30,7 @@ const Dashboard = () => {
   const itemsPerPage = 10;
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isSuperAdmin } = useAuth();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -52,6 +54,13 @@ const Dashboard = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  useEffect(() => {
+    // Super admins should always see the admin panel, not the doctor dashboard
+    if (isSuperAdmin) {
+      navigate("/admin");
+    }
+  }, [isSuperAdmin, navigate]);
 
   const loadPrescriptions = async (userId: string) => {
     const { data, error } = await supabase
