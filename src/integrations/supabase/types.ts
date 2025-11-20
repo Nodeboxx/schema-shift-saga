@@ -301,6 +301,56 @@ export type Database = {
         }
         Relationships: []
       }
+      email_templates: {
+        Row: {
+          body_html: string
+          body_text: string | null
+          category: string | null
+          clinic_id: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          subject: string
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          body_html: string
+          body_text?: string | null
+          category?: string | null
+          clinic_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          subject: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          body_html?: string
+          body_text?: string | null
+          category?: string | null
+          clinic_id?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          subject?: string
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_templates_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       generics: {
         Row: {
           created_at: string | null
@@ -335,6 +385,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      impersonation_sessions: {
+        Row: {
+          admin_user_id: string
+          ended_at: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          started_at: string | null
+          target_user_id: string
+        }
+        Insert: {
+          admin_user_id: string
+          ended_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          started_at?: string | null
+          target_user_id: string
+        }
+        Update: {
+          admin_user_id?: string
+          ended_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          started_at?: string | null
+          target_user_id?: string
+        }
+        Relationships: []
       }
       manufacturers: {
         Row: {
@@ -420,6 +500,47 @@ export type Database = {
             columns: ["manufacturer_id"]
             isOneToOne: false
             referencedRelation: "manufacturers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications_config: {
+        Row: {
+          channel: string
+          clinic_id: string | null
+          created_at: string | null
+          event_type: string
+          id: string
+          is_enabled: boolean | null
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          channel: string
+          clinic_id?: string | null
+          created_at?: string | null
+          event_type: string
+          id?: string
+          is_enabled?: boolean | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          channel?: string
+          clinic_id?: string | null
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          is_enabled?: boolean | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_config_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
         ]
@@ -797,6 +918,89 @@ export type Database = {
           },
         ]
       }
+      role_audit: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          performed_by: string | null
+          role: Database["public"]["Enums"]["app_role"] | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          performed_by?: string | null
+          role?: Database["public"]["Enums"]["app_role"] | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          performed_by?: string | null
+          role?: Database["public"]["Enums"]["app_role"] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      smtp_settings: {
+        Row: {
+          clinic_id: string | null
+          created_at: string | null
+          from_email: string
+          from_name: string | null
+          host: string
+          id: string
+          is_active: boolean | null
+          password_encrypted: string
+          port: number
+          updated_at: string | null
+          use_tls: boolean | null
+          username: string
+        }
+        Insert: {
+          clinic_id?: string | null
+          created_at?: string | null
+          from_email: string
+          from_name?: string | null
+          host: string
+          id?: string
+          is_active?: boolean | null
+          password_encrypted: string
+          port?: number
+          updated_at?: string | null
+          use_tls?: boolean | null
+          username: string
+        }
+        Update: {
+          clinic_id?: string | null
+          created_at?: string | null
+          from_email?: string
+          from_name?: string | null
+          host?: string
+          id?: string
+          is_active?: boolean | null
+          password_encrypted?: string
+          port?: number
+          updated_at?: string | null
+          use_tls?: boolean | null
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smtp_settings_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: true
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           amount: number | null
@@ -862,6 +1066,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      system_metrics: {
+        Row: {
+          id: string
+          metadata: Json | null
+          metric_name: string
+          metric_value: number | null
+          recorded_at: string | null
+        }
+        Insert: {
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          metric_value?: number | null
+          recorded_at?: string | null
+        }
+        Update: {
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          metric_value?: number | null
+          recorded_at?: string | null
+        }
+        Relationships: []
       }
       usage_logs: {
         Row: {
@@ -947,6 +1175,12 @@ export type Database = {
       get_prescription_qr_url: {
         Args: { prescription_id: string }
         Returns: string
+      }
+      get_user_roles: {
+        Args: { target_user_id: string }
+        Returns: {
+          role: Database["public"]["Enums"]["app_role"]
+        }[]
       }
       has_role: {
         Args: {

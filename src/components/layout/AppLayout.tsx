@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { NavLink } from '@/components/NavLink';
-import { useUserRole } from '@/hooks/useUserRole';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   LayoutDashboard, 
@@ -22,7 +22,7 @@ interface AppLayoutProps {
 
 export const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
-  const { role, isSuperAdmin, isClinicAdmin, isDoctor } = useUserRole();
+  const { isSuperAdmin, isClinicAdmin, isDoctor, loading } = useAuth();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -73,6 +73,14 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       show: true 
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-background">
