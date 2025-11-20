@@ -151,7 +151,7 @@ All colors MUST be HSL.
 
   .prescription-page {
     width: 210mm !important;
-    min-height: 297mm !important;
+    height: calc(297mm - 20mm) !important; /* A4 height minus top & bottom @page margins */
     margin: 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
@@ -161,7 +161,7 @@ All colors MUST be HSL.
     overflow: visible !important;
     position: relative !important;
   }
-  
+
   /* Make header at top */
   .prescription-page header {
     display: block;
