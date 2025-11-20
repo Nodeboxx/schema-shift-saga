@@ -72,26 +72,63 @@ const Settings = () => {
     }
   };
 
-  const handleSave = async () => {
+  const handleSaveProfile = async () => {
     if (!user) return;
 
     setSaving(true);
     try {
       const { error } = await supabase
         .from("profiles")
-        .update(profile)
+        .update({
+          full_name: profile.full_name,
+          name_bn: profile.name_bn,
+          degree_en: profile.degree_en,
+          degree_bn: profile.degree_bn,
+          footer_left: profile.footer_left,
+          footer_right: profile.footer_right,
+        })
         .eq("id", user.id);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Profile updated successfully",
+        description: "Profile information updated successfully",
       });
     } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "Failed to update profile",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSaveTemplate = async () => {
+    if (!user) return;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          left_template_sections: profile.left_template_sections,
+          active_template: profile.active_template,
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Template settings updated successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update template settings",
         variant: "destructive",
       });
     } finally {
@@ -222,13 +259,13 @@ const Settings = () => {
                 </div>
 
                 <Button
-                  onClick={handleSave}
+                  onClick={handleSaveProfile}
                   disabled={saving}
                   size="lg"
                   className="w-full gap-2"
                 >
                   <Save className="w-4 h-4" />
-                  {saving ? "Saving..." : "Save Profile"}
+                  {saving ? "Saving..." : "Save Profile Information"}
                 </Button>
               </CardContent>
             </Card>
@@ -360,7 +397,7 @@ const Settings = () => {
                 </div>
 
                 <Button
-                  onClick={handleSave}
+                  onClick={handleSaveTemplate}
                   disabled={saving}
                   size="lg"
                   className="w-full gap-2 mt-6"
