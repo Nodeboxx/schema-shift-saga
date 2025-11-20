@@ -1189,6 +1189,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_clinic_member: {
+        Args: { _clinic_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_clinic_owner: {
+        Args: { _clinic_id: string; _user_id: string }
+        Returns: boolean
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }

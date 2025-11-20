@@ -56,7 +56,7 @@ const Checkout = () => {
     }
   };
 
-  const selectedPlan = planDetails[plan || "free"];
+  const selectedPlan = planDetails[plan || "free"] || planDetails.free;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

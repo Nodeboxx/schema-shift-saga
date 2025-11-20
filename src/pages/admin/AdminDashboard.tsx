@@ -108,7 +108,34 @@ const AdminDashboard = () => {
               <TabsTrigger value="audit">Audit</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview"><AdminAnalytics /></TabsContent>
+            <TabsContent value="overview">
+              <Card className="p-6">
+                <h2 className="text-2xl font-bold mb-6">System Overview</h2>
+                <p className="text-muted-foreground mb-4">
+                  Welcome to the Enterprise Admin Panel. Use the tabs above to manage different aspects of the system.
+                </p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <Card className="p-4">
+                    <h3 className="font-semibold mb-2">Quick Stats</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>• Total registered users: {stats.totalUsers}</li>
+                      <li>• Active clinics: {stats.totalClinics}</li>
+                      <li>• Prescriptions issued: {stats.totalPrescriptions}</li>
+                      <li>• Currently active users: {stats.activeUsers}</li>
+                    </ul>
+                  </Card>
+                  <Card className="p-4">
+                    <h3 className="font-semibold mb-2">Admin Actions</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>• Manage users and roles</li>
+                      <li>• Configure system settings</li>
+                      <li>• Monitor system health</li>
+                      <li>• View audit logs</li>
+                    </ul>
+                  </Card>
+                </div>
+              </Card>
+            </TabsContent>
             <TabsContent value="users"><AdminUsers /></TabsContent>
             <TabsContent value="clinics"><AdminClinics /></TabsContent>
             <TabsContent value="cms"><AdminCMS /></TabsContent>
