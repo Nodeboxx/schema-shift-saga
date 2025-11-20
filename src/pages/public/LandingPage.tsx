@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Check, ArrowRight, Shield, Users, FileText, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { PublicAppointmentBooking } from "@/components/public/PublicAppointmentBooking";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -210,6 +211,19 @@ const LandingPage = () => {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Appointment Booking Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <h2 className="text-4xl font-bold text-center mb-4">
+            Book an Appointment
+          </h2>
+          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+            Schedule your visit with our experienced medical professionals. Choose your preferred doctor, date, and time.
+          </p>
+          <PublicAppointmentBooking />
         </div>
       </section>
 
