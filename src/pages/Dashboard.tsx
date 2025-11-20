@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Search, FileText, Plus, LogOut, Trash2, Settings as SettingsIcon, Calendar } from "lucide-react";
+import { Search, FileText, Plus, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/ui/alert-dialog-custom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/contexts/AuthContext";
 import { AppointmentCalendar } from "@/components/appointments/AppointmentCalendar";
+import { AppLayout } from "@/components/layout/AppLayout";
 
 interface SavedPrescription {
   id: string;
@@ -25,14 +26,12 @@ const Dashboard = () => {
   const [prescriptions, setPrescriptions] = useState<SavedPrescription[]>([]);
   const [filteredPrescriptions, setFilteredPrescriptions] = useState<SavedPrescription[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPrescription, setSelectedPrescription] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [prescriptionToDelete, setPrescriptionToDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isSuperAdmin } = useAuth();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -56,7 +55,6 @@ const Dashboard = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
-
 
   const loadPrescriptions = async (userId: string) => {
     const { data, error } = await supabase
@@ -97,11 +95,6 @@ const Dashboard = () => {
 
   const handleOpenPrescription = (id: string) => {
     navigate(`/prescription/${id}`);
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
   };
 
   const handleDeleteClick = (id: string, e: React.MouseEvent) => {
@@ -149,45 +142,28 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-8">
-        <div className="max-w-7xl mx-auto">
+      <AppLayout>
+        <div className="p-8">
           <Skeleton className="h-12 w-64 mb-8" />
-          <div className="bg-card rounded-lg shadow-lg p-6">
-            <Skeleton className="h-10 w-full mb-6" />
-            <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton key={i} className="h-20 w-full" />
-              ))}
-            </div>
-          </div>
+          <Skeleton className="h-64 w-full mb-6" />
+          <Skeleton className="h-96 w-full" />
         </div>
-      </div>
+      </AppLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto">
+    <AppLayout>
+      <div className="p-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-foreground">Dashboard</h1>
-          <div className="flex gap-2">
-            <Button onClick={handleCreateNew} size="lg" className="gap-2">
-              <Plus className="w-5 h-5" />
-              New Prescription
-            </Button>
-            <Button onClick={() => navigate("/appointments")} size="lg" variant="outline" className="gap-2">
-              <Calendar className="w-5 h-5" />
-              Appointments
-            </Button>
-            <Button onClick={() => navigate("/settings")} size="lg" variant="outline" className="gap-2">
-              <SettingsIcon className="w-5 h-5" />
-              Settings
-            </Button>
-            <Button onClick={handleLogout} size="lg" variant="outline" className="gap-2">
-              <LogOut className="w-5 h-5" />
-              Logout
-            </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Welcome back to your medical practice</p>
           </div>
+          <Button onClick={handleCreateNew} size="lg" className="gap-2">
+            <Plus className="w-5 h-5" />
+            New Prescription
+          </Button>
         </div>
 
         {/* Appointments Section */}
@@ -197,7 +173,10 @@ const Dashboard = () => {
 
         {/* Prescriptions Section */}
         <Card className="p-6">
-          <h2 className="text-2xl font-bold mb-6">Recent Prescriptions</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Recent Prescriptions</h2>
+          </div>
+
           <div className="flex items-center gap-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
@@ -302,7 +281,7 @@ const Dashboard = () => {
         cancelText="Cancel"
         variant="destructive"
       />
-    </div>
+    </AppLayout>
   );
 };
 
