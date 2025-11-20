@@ -83,11 +83,16 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
     "Lato",
   ];
 
-  // Font sizes from 8 to 300
+  // Font sizes from 1 to 300
   const generateFontSizes = () => {
     const sizes = [];
-    for (let i = 8; i <= 72; i += 2) sizes.push(i);
+    // 1-20: every 1px
+    for (let i = 1; i <= 20; i++) sizes.push(i);
+    // 21-72: every 2px
+    for (let i = 22; i <= 72; i += 2) sizes.push(i);
+    // 76-200: every 4px
     for (let i = 76; i <= 200; i += 4) sizes.push(i);
+    // 208-300: every 8px
     for (let i = 208; i <= 300; i += 8) sizes.push(i);
     return sizes;
   };

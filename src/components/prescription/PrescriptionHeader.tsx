@@ -14,6 +14,8 @@ interface PrescriptionHeaderProps {
 
 const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderProps) => {
   const [loading, setLoading] = useState(true);
+  const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
+  const [registrationNumber, setRegistrationNumber] = useState<string>("");
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -40,6 +42,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderPro
           docNameBN: data.name_bn || "ডাঃ [আপনার নাম]",
           docDegreeBN: data.degree_bn || "এম.বি.বি.এস<br/>অভিজ্ঞ চিকিৎসক",
         });
+        setCouncilLogoUrl(data.council_logo_url || "");
+        setRegistrationNumber(data.registration_number || "");
       }
       setLoading(false);
     };
@@ -71,51 +75,93 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderPro
       >
         {doctorInfo.bismillah}
       </div>
-      <div style={{ float: "left", width: "48%", fontSize: "13px", lineHeight: "1.5" }}>
-        <h2
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => handleEdit("docNameEN", e.currentTarget.textContent || "")}
-          style={{
-            fontSize: "24px",
-            fontWeight: 700,
-            color: "#0056b3",
-            margin: 0,
-          }}
-        >
-          {doctorInfo.docNameEN}
-        </h2>
-        <div
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
-          dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
-          style={{ margin: 0 }}
-        />
+      
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
+        {/* Left Column - English */}
+        <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5" }}>
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("docNameEN", e.currentTarget.textContent || "")}
+            style={{
+              fontSize: "24px",
+              fontWeight: 700,
+              color: "#0056b3",
+              margin: 0,
+            }}
+          >
+            {doctorInfo.docNameEN}
+          </h2>
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
+            dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
+            style={{ margin: 0 }}
+          />
+        </div>
+
+        {/* Center Column - Medical Council Logo */}
+        {councilLogoUrl && (
+          <div style={{ 
+            flex: "0 0 auto", 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "5px 15px"
+          }}>
+            <img 
+              src={councilLogoUrl} 
+              alt="Medical Council Logo"
+              style={{
+                maxHeight: "80px",
+                maxWidth: "120px",
+                objectFit: "contain",
+                marginBottom: "5px"
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            {registrationNumber && (
+              <div style={{
+                fontSize: "11px",
+                fontWeight: 600,
+                color: "#333",
+                textAlign: "center",
+                whiteSpace: "nowrap"
+              }}>
+                {registrationNumber}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Right Column - Bengali */}
+        <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("docNameBN", e.currentTarget.textContent || "")}
+            style={{
+              fontSize: "24px",
+              fontWeight: 700,
+              color: "#0056b3",
+              margin: 0,
+            }}
+          >
+            {doctorInfo.docNameBN}
+          </h2>
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
+            dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
+            style={{ margin: 0 }}
+          />
+        </div>
       </div>
-      <div style={{ float: "right", width: "48%", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
-        <h2
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => handleEdit("docNameBN", e.currentTarget.textContent || "")}
-          style={{
-            fontSize: "24px",
-            fontWeight: 700,
-            color: "#0056b3",
-            margin: 0,
-          }}
-        >
-          {doctorInfo.docNameBN}
-        </h2>
-        <div
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
-          dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
-          style={{ margin: 0 }}
-        />
-      </div>
-      <div style={{ clear: "both" }} />
     </header>
   );
 };
