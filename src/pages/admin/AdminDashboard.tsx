@@ -21,7 +21,8 @@ import {
   Calendar,
   Globe,
   Cpu,
-  ShoppingCart
+  ShoppingCart,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AdminUsers from "@/components/admin/AdminUsers";
@@ -97,14 +98,14 @@ const AdminDashboard = () => {
     <AdminGuard requireSuperAdmin={true}>
       <div className="flex min-h-screen w-full bg-background">
         {/* Left Sidebar */}
-        <aside className="w-64 border-r border-border bg-card">
+        <aside className="w-64 border-r border-border bg-card flex flex-col">
           <div className="flex h-16 items-center border-b border-border px-6">
             <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
               Admin Panel
             </h1>
           </div>
           
-          <nav className="space-y-1 p-4">
+          <nav className="flex-1 overflow-y-auto p-4 space-y-1">
             {menuItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -125,13 +126,25 @@ const AdminDashboard = () => {
             })}
           </nav>
 
-          <div className="absolute bottom-4 left-4 right-4">
+          <div className="p-4 border-t border-border space-y-2">
             <Button 
               variant="outline" 
-              className="w-full"
+              className="w-full justify-start"
               onClick={() => navigate("/dashboard")}
             >
+              <LayoutDashboard className="h-5 w-5 mr-3" />
               Back to Dashboard
+            </Button>
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate("/login");
+              }}
+            >
+              <LogOut className="h-5 w-5 mr-3" />
+              Logout
             </Button>
           </div>
         </aside>
