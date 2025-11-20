@@ -100,9 +100,9 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-4 mb-6 md:mb-8">
           <Button
             onClick={() => navigate("/dashboard")}
             variant="outline"
@@ -110,7 +110,7 @@ const Settings = () => {
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-4xl font-bold text-foreground">Profile Settings</h1>
+          <h1 className="text-2xl md:text-4xl font-bold text-foreground">Profile Settings</h1>
         </div>
 
         <div className="bg-card rounded-lg shadow-lg p-6 space-y-6">
