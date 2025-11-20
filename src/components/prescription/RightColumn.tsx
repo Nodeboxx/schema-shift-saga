@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import MedicineAutocomplete from "./MedicineAutocomplete";
 import DoseSelector from "./DoseSelector";
+import DurationSelector from "./DurationSelector";
 
 interface Medicine {
   id: string;
@@ -8,6 +9,7 @@ interface Medicine {
   name?: string;
   details?: string;
   dose?: string;
+  duration?: string;
   categoryContent?: string;
   generic_name?: string;
   strength?: string;
@@ -37,6 +39,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
             name: "",
             details: "",
             dose: "",
+            duration: "",
           },
         ],
       });
@@ -279,14 +282,23 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                   </div>
                 </div>
 
-                <div className="no-print" style={{ marginBottom: "4px", marginLeft: "18px" }}>
-                  <DoseSelector
-                    value={med.dose || ""}
-                    onChange={(value) => updateMedicine(med.id, "dose", value)}
-                  />
+                <div className="no-print" style={{ marginBottom: "4px", marginLeft: "18px", display: "flex", gap: "8px" }}>
+                  <div style={{ flex: 1 }}>
+                    <DoseSelector
+                      value={med.dose || ""}
+                      onChange={(value) => updateMedicine(med.id, "dose", value)}
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <DurationSelector
+                      value={med.duration || ""}
+                      onChange={(value) => updateMedicine(med.id, "duration", value)}
+                    />
+                  </div>
                 </div>
                 <div style={{ fontSize: "9px", fontWeight: 500, marginBottom: "2px", marginLeft: "18px" }}>
                   {med.dose || "Dosage"}
+                  {med.duration && ` ${med.duration.replace("→ সময়কাল: ", "")}`}
                 </div>
 
                 <div
