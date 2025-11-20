@@ -198,10 +198,14 @@ All colors MUST be HSL.
     margin: 0 !important;
   }
 
+  .prescription-page {
+    page-break-after: always;
+  }
+
   .prescription-page:last-of-type {
     page-break-after: auto;
   }
-  
+
   /* Hide any interactive elements in print */
   .print\\:hidden {
     display: none !important;

@@ -281,7 +281,6 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
             boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
             position: "relative",
             boxSizing: "border-box",
-            pageBreakAfter: "always",
             display: "flex",
             flexDirection: "column",
           }}
@@ -289,8 +288,8 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
           <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
           <PrescriptionBody 
-            data={bodyData} 
-            setData={setBodyData}
+            data={page.id === 1 ? bodyData : undefined}
+            setData={page.id === 1 ? setBodyData : undefined}
           />
           <PrescriptionFooter />
         </div>
