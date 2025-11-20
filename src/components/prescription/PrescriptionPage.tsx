@@ -256,7 +256,6 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
             boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
             position: "relative",
             boxSizing: "border-box",
-            pageBreakAfter: "always",
             display: "flex",
             flexDirection: "column",
           }}

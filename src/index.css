@@ -164,7 +164,7 @@ All colors MUST be HSL.
   }
 
   .prescription-page {
-    width: 210mm !important;
+    width: 200mm !important;
     height: 297mm !important;
     min-height: 297mm !important;
     max-height: 297mm !important;
