@@ -246,9 +246,10 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           key={index}
           className="prescription-page"
           style={{
-            width: "100%",
-            maxWidth: "800px",
-            minHeight: "1120px",
+            width: "210mm",
+            height: "297mm",
+            minHeight: "297mm",
+            maxHeight: "297mm",
             margin: "20px auto",
             backgroundColor: "#ffffff",
             border: "1px solid #aaa",
