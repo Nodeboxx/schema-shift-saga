@@ -122,9 +122,9 @@ All colors MUST be HSL.
     display: inline !important;
   }
   
-  /* Remove page margins */
+  /* Set page margins to reserve space for header and footer */
   @page {
-    margin: 0;
+    margin: 100px 15mm 50px 15mm;
     size: A4 portrait;
   }
   
@@ -169,6 +169,8 @@ All colors MUST be HSL.
     left: 0;
     right: 0;
     z-index: 1000;
+    background: white;
+    padding: 10mm 15mm;
   }
   
   .prescription-page > footer {
@@ -178,6 +180,18 @@ All colors MUST be HSL.
     left: 0;
     right: 0;
     z-index: 1000;
+    background: white;
+    padding: 5mm 15mm;
+    border-top: 1px solid #e0e0e0;
+  }
+  
+  /* Reserve space for fixed header and footer */
+  .prescription-page > div:first-child {
+    margin-top: 100px;
+  }
+  
+  .prescription-page {
+    padding-bottom: 50px !important;
   }
 
   .prescription-page:last-of-type {
