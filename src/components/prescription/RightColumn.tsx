@@ -320,16 +320,33 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
       <div className="no-print" style={{ 
         marginTop: "auto",
         paddingTop: "20px",
-        display: "flex", 
+        display: "flex",
+        flexWrap: "wrap",
         gap: "10px",
         borderTop: "2px solid #e0e0e0",
         paddingBottom: "10px",
         flexShrink: 0,
+        position: "sticky",
+        bottom: 0,
+        backgroundColor: "#fff",
+        zIndex: 10,
       }}>
-        <Button onClick={addMedicine} variant="outline" className="add-medicine-btn" size="sm">
+        <Button 
+          onClick={addMedicine} 
+          variant="outline" 
+          className="add-medicine-btn" 
+          size="sm"
+          style={{ flex: "1 1 auto", minWidth: "120px" }}
+        >
           + Add Medicine
         </Button>
-        <Button onClick={addCategory} variant="outline" className="add-medicine-btn" size="sm">
+        <Button 
+          onClick={addCategory} 
+          variant="outline" 
+          className="add-medicine-btn" 
+          size="sm"
+          style={{ flex: "1 1 auto", minWidth: "120px" }}
+        >
           + Add Category
         </Button>
       </div>
