@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Phone, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 
 interface Doctor {
   id: string;
@@ -80,14 +81,17 @@ const FindDoctors = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
+      <PublicLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </PublicLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <PublicLayout>
+      <div className="bg-gradient-to-b from-background to-muted/20">
       {/* Header */}
       <div className="bg-primary text-primary-foreground py-16">
         <div className="container mx-auto px-4">
@@ -207,6 +211,7 @@ const FindDoctors = () => {
         )}
       </div>
     </div>
+    </PublicLayout>
   );
 };
 

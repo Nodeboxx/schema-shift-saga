@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthProvider } from "./contexts/AuthContext";
 import { RoleRedirect } from "./components/guards/RoleRedirect";
-import LandingPage from "./pages/public/LandingPage";
+import CMSLandingPage from "./pages/public/CMSLandingPage";
 import PublicVerifyPrescription from "./pages/public/PublicVerifyPrescription";
 import TermsOfService from "./pages/public/TermsOfService";
 import PrivacyPolicy from "./pages/public/PrivacyPolicy";
@@ -39,7 +39,7 @@ const App = () => (
           <BrowserRouter>
             <RoleRedirect />
             <Routes>
-              <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={<CMSLandingPage />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/about" element={<AboutUs />} />

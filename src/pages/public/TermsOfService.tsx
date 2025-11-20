@@ -2,12 +2,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, FileText } from "lucide-react";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 
 const TermsOfService = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <PublicLayout>
       <div className="container mx-auto px-6 py-12 max-w-4xl">
         <Button 
           variant="ghost" 
@@ -146,7 +147,7 @@ const TermsOfService = () => {
           </div>
         </Card>
       </div>
-    </div>
+    </PublicLayout>
   );
 };
 

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Mail, Phone, MapPin, Send } from "lucide-react";
+import { PublicLayout } from "@/components/layout/PublicLayout";
 
 const ContactUs = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <PublicLayout>
       <div className="container mx-auto px-6 py-12">
         <Button 
           variant="ghost" 
@@ -161,7 +162,7 @@ const ContactUs = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PublicLayout>
   );
 };
 
