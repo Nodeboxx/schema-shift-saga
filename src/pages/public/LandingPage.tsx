@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PublicAppointmentBooking } from "@/components/public/PublicAppointmentBooking";
+import { ProductsSection } from "@/components/public/ProductsSection";
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -301,8 +302,11 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Products Section */}
+      <ProductsSection />
+
       {/* Pricing Section */}
-      <section className="py-20" id="pricing">
+      <section className="py-20 bg-muted/30" id="pricing">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -368,7 +372,7 @@ const LandingPage = () => {
       </section>
 
       {/* Appointment Booking Section */}
-      <section id="booking" className="py-20 bg-muted/30">
+      <section id="booking" className="py-20 bg-background">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -413,9 +417,9 @@ const LandingPage = () => {
             <div>
               <h4 className="font-semibold mb-4 text-lg">Company</h4>
               <ul className="space-y-3 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">About Us</a></li>
+                <li><a href="/about" className="hover:text-foreground transition-colors">About Us</a></li>
                 <li><a href="#" className="hover:text-foreground transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Contact</a></li>
+                <li><a href="/contact" className="hover:text-foreground transition-colors">Contact</a></li>
                 <li><a href="#" className="hover:text-foreground transition-colors">Blog</a></li>
               </ul>
             </div>
@@ -425,8 +429,8 @@ const LandingPage = () => {
               <ul className="space-y-3 text-sm text-muted-foreground">
                 <li><a href="#" className="hover:text-foreground transition-colors">Documentation</a></li>
                 <li><a href="#" className="hover:text-foreground transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Terms of Service</a></li>
+                <li><a href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</a></li>
+                <li><a href="/terms" className="hover:text-foreground transition-colors">Terms of Service</a></li>
               </ul>
             </div>
           </div>
