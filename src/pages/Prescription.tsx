@@ -72,24 +72,10 @@ const Prescription = () => {
   return (
     <div
       className="prescription-root"
-      style={{ 
-        fontFamily: "'Kalpurush', 'SolaimanLipi', 'Arial', sans-serif", 
-        backgroundColor: "#e0e0e0", 
-        margin: 0, 
-        paddingTop: "100px",
-        minHeight: "100vh",
-      }}
+      style={{ fontFamily: "'Kalpurush', 'SolaimanLipi', 'Arial', sans-serif", backgroundColor: "#e0e0e0", margin: 0, paddingTop: "100px" }}
     >
       <PrescriptionControls prescriptionId={id} userId={user?.id} />
-      <div 
-        id="page-wrapper" 
-        className="prescription-page-wrapper" 
-        style={{ 
-          display: "block", 
-          paddingTop: "160px",
-          padding: "160px 16px 16px 16px",
-        }}
-      >
+      <div id="page-wrapper" className="prescription-page-wrapper" style={{ display: "block", paddingTop: "160px" }}>
         <PrescriptionPage prescriptionData={prescriptionData} userId={user?.id} />
       </div>
     </div>

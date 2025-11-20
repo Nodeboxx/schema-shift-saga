@@ -161,23 +161,22 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
-          <h1 className="text-2xl md:text-4xl font-bold text-foreground">Prescription Dashboard</h1>
-          <div className="flex flex-wrap gap-2">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-foreground">Prescription Dashboard</h1>
+          <div className="flex gap-2">
             <Button onClick={handleCreateNew} size="lg" className="gap-2">
               <Plus className="w-5 h-5" />
-              <span className="hidden sm:inline">Create New</span>
-              <span className="sm:hidden">New</span>
+              Create New
             </Button>
             <Button onClick={() => navigate("/settings")} size="lg" variant="outline" className="gap-2">
               <SettingsIcon className="w-5 h-5" />
-              <span className="hidden sm:inline">Settings</span>
+              Settings
             </Button>
             <Button onClick={handleLogout} size="lg" variant="outline" className="gap-2">
               <LogOut className="w-5 h-5" />
-              <span className="hidden sm:inline">Logout</span>
+              Logout
             </Button>
           </div>
         </div>

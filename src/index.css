@@ -106,14 +106,6 @@ All colors MUST be HSL.
 
 /* Print-specific styles */
 @media print {
-  /* Critical: Prevent extra pages */
-  html, body {
-    height: 100%;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-  }
-
   /* Hide voice input buttons */
   button[class*="VoiceInputButton"],
   button:has(svg[class*="lucide-mic"]) {
@@ -130,41 +122,35 @@ All colors MUST be HSL.
     display: inline !important;
   }
   
-  /* Remove page margins and set exact A4 size */
+  /* Remove page margins */
   @page {
     margin: 0;
-    padding: 0;
     size: A4 portrait;
   }
   
   body {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
-    overflow: hidden !important;
+    margin: 0;
+    padding: 0;
+    background: white;
   }
 
   #root {
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
+    margin: 0;
+    padding: 0;
   }
 
   .prescription-root {
     padding-top: 0 !important;
     margin: 0 !important;
     background: white !important;
-    overflow: hidden !important;
   }
 
   .prescription-page-wrapper {
     padding-top: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
   }
 
   .prescription-page {
-    width: 200mm !important;
+    width: 210mm !important;
     height: 297mm !important;
     min-height: 297mm !important;
     max-height: 297mm !important;
@@ -173,48 +159,17 @@ All colors MUST be HSL.
     box-shadow: none !important;
     border: none !important;
     page-break-after: always;
-    page-break-inside: avoid;
-    break-inside: avoid;
-    display: block !important;
-    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
     overflow: hidden !important;
   }
 
   .prescription-page:last-of-type {
     page-break-after: auto;
   }
-
-  /* Prevent page breaks within critical sections */
-  .prescription-page header,
-  .prescription-page footer {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
   
   /* Hide any interactive elements in print */
   .print\\:hidden {
     display: none !important;
-  }
-  
-  /* Hide page number indicators */
-  .prescription-page .absolute {
-    display: none !important;
-  }
-}
-
-/* Mobile responsive styles */
-@media screen and (max-width: 768px) {
-  .prescription-root {
-    padding-top: 60px !important;
-  }
-
-  .prescription-page-wrapper {
-    padding: 80px 8px 16px 8px !important;
-  }
-
-  .prescription-page {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-height: auto !important;
   }
 }

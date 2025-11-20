@@ -20,20 +20,17 @@ interface RightColumnProps {
   width: number;
   data?: any;
   setData?: (data: any) => void;
-  pageIndex: number;
-  itemsPerPage: number;
 }
 
-const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightColumnProps) => {
-  const allMedicines: Medicine[] = data?.medicines || [];
-  const startIndex = pageIndex * itemsPerPage;
-  const medicines = allMedicines.slice(startIndex, startIndex + itemsPerPage);
+const RightColumn = ({ width, data, setData }: RightColumnProps) => {
+  const medicines: Medicine[] = data?.medicines || [];
+
   const addMedicine = () => {
     if (setData) {
       setData({
         ...data,
         medicines: [
-          ...allMedicines,
+          ...medicines,
           {
             id: Date.now().toString(),
             type: "medicine",
@@ -51,7 +48,7 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
       setData({
         ...data,
         medicines: [
-          ...allMedicines,
+          ...medicines,
           {
             id: Date.now().toString(),
             type: "category",
@@ -66,7 +63,7 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
     if (setData) {
       setData({
         ...data,
-        medicines: allMedicines.filter((m) => m.id !== id),
+        medicines: medicines.filter((m) => m.id !== id),
       });
     }
   };
@@ -75,7 +72,7 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
     if (setData) {
       setData({
         ...data,
-        medicines: allMedicines.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
+        medicines: medicines.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
       });
     }
   };
@@ -84,7 +81,7 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
     if (setData) {
       setData({
         ...data,
-        medicines: allMedicines.map((m) => (m.id === id ? { ...m, ...updates } : m)),
+        medicines: medicines.map((m) => (m.id === id ? { ...m, ...updates } : m)),
       });
     }
   };
@@ -100,7 +97,6 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
       display: "flex",
       flexDirection: "column",
       overflow: "visible",
-      height: "100%",
     }}>
       <h1 style={{
         fontFamily: "'Times New Roman', Times, serif",
@@ -118,7 +114,7 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
         paddingLeft: "5px",
         fontSize: "10px",
         lineHeight: "1.3",
-        flex: "1 1 auto",
+        flexGrow: 1,
         overflow: "visible",
         minHeight: "100px",
       }}>
@@ -126,7 +122,7 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
           <div
             key={med.id}
             style={{
-              marginBottom: medicines.length > 10 ? "3px" : "5px", // Dynamic spacing
+              marginBottom: "5px",
               paddingLeft: "6px",
               paddingRight: "30px",
               position: "relative",
@@ -317,36 +313,11 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
         ))}
       </div>
 
-      <div className="no-print" style={{ 
-        marginTop: "auto",
-        paddingTop: "20px",
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "10px",
-        borderTop: "2px solid #e0e0e0",
-        paddingBottom: "10px",
-        flexShrink: 0,
-        position: "sticky",
-        bottom: 0,
-        backgroundColor: "#fff",
-        zIndex: 10,
-      }}>
-        <Button 
-          onClick={addMedicine} 
-          variant="outline" 
-          className="add-medicine-btn" 
-          size="sm"
-          style={{ flex: "1 1 auto", minWidth: "120px" }}
-        >
+      <div className="no-print" style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+        <Button onClick={addMedicine} variant="outline" className="add-medicine-btn">
           + Add Medicine
         </Button>
-        <Button 
-          onClick={addCategory} 
-          variant="outline" 
-          className="add-medicine-btn" 
-          size="sm"
-          style={{ flex: "1 1 auto", minWidth: "120px" }}
-        >
+        <Button onClick={addCategory} variant="outline" className="add-medicine-btn">
           + Add Category
         </Button>
       </div>

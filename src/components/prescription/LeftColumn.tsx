@@ -51,7 +51,6 @@ const LeftColumn = ({ width, data, setData }: LeftColumnProps) => {
       display: "flex",
       flexDirection: "column",
       overflow: "visible",
-      height: "100%",
     }}>
       <h4 style={{
         fontSize: "10px",
