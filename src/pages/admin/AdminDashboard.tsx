@@ -31,6 +31,8 @@ import AdminUsers from "@/components/admin/AdminUsers";
 import AdminClinics from "@/components/admin/AdminClinics";
 import AdminCMS from "@/components/admin/AdminCMS";
 import AdminHomepageEditor from "@/components/admin/AdminHomepageEditor";
+import AdminDoctors from "@/components/admin/AdminDoctors";
+import AdminHeaderFooter from "@/components/admin/AdminHeaderFooter";
 import AdminPages from "@/components/admin/AdminPages";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminSiteSettings from "@/components/admin/AdminSiteSettings";
@@ -61,6 +63,7 @@ const AdminDashboard = () => {
     { id: "overview", label: "Overview", icon: LayoutDashboard },
     { id: "users", label: "Users", icon: Users },
     { id: "clinics", label: "Clinics", icon: Building2 },
+    { id: "doctors", label: "Doctors", icon: Users },
     { id: "appointments", label: "Appointments", icon: Calendar },
     { id: "orders", label: "Orders & Billing", icon: ShoppingCart },
     { id: "products", label: "Products", icon: Package },
@@ -68,7 +71,8 @@ const AdminDashboard = () => {
     { id: "api", label: "API Settings", icon: Cpu },
     { id: "homepage", label: "Homepage Editor", icon: Globe },
     { id: "pages", label: "Pages", icon: FileText },
-    { id: "site-settings", label: "Header & Footer", icon: Settings },
+    { id: "header-footer", label: "Header & Footer", icon: Settings },
+    { id: "site-settings", label: "Site Settings", icon: Settings },
     { id: "smtp", label: "SMTP Settings", icon: Mail },
     { id: "templates", label: "Email Templates", icon: Mail },
     { id: "notifications", label: "Notifications", icon: Bell },
@@ -271,7 +275,9 @@ const AdminDashboard = () => {
               </Card>
             )}
             {activeTab === "api" && <AdminAPISettings />}
-            {activeTab === "homepage" && <AdminHomepageEditor />}
+          {activeTab === "homepage" && <AdminHomepageEditor />}
+          {activeTab === "doctors" && <AdminDoctors />}
+          {activeTab === "header-footer" && <AdminHeaderFooter />}
             {activeTab === "pages" && <AdminPages />}
             {activeTab === "site-settings" && <AdminSiteSettings />}
             {activeTab === "cms" && <AdminCMS />}

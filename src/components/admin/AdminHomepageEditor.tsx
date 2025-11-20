@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,10 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RichTextToolbar from "@/components/RichTextToolbar";
-import { Save, Eye, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Save, Eye, Plus, Trash2, ArrowUp, ArrowDown, GripVertical } from "lucide-react";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Section {
   id: string;
@@ -160,43 +163,45 @@ const AdminHomepageEditor = () => {
     }
   };
 
-  const moveSection = async (sectionId: string, direction: 'up' | 'down') => {
-    const currentIndex = sections.findIndex(s => s.id === sectionId);
-    if (
-      (direction === 'up' && currentIndex === 0) ||
-      (direction === 'down' && currentIndex === sections.length - 1)
-    ) {
-      return;
-    }
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-    const newSections = [...sections];
-    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-    [newSections[currentIndex], newSections[targetIndex]] = 
-      [newSections[targetIndex], newSections[currentIndex]];
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
 
-    setSections(newSections);
+    if (over && active.id !== over.id) {
+      const oldIndex = sections.findIndex(s => s.id === active.id);
+      const newIndex = sections.findIndex(s => s.id === over.id);
 
-    // Update order in database
-    try {
-      await Promise.all(
-        newSections.map((section, idx) =>
-          supabase
-            .from("cms_sections")
-            .update({ display_order: idx })
-            .eq("id", section.id)
-        )
-      );
+      const newSections = arrayMove(sections, oldIndex, newIndex);
+      setSections(newSections);
 
-      toast({
-        title: "Success",
-        description: "Section order updated"
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
+      // Update order in database
+      try {
+        await Promise.all(
+          newSections.map((section, idx) =>
+            supabase
+              .from("cms_sections")
+              .update({ display_order: idx })
+              .eq("id", section.id)
+          )
+        );
+
+        toast({
+          title: "Success",
+          description: "Section order updated",
+        });
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -208,77 +213,58 @@ const AdminHomepageEditor = () => {
     );
   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold">Homepage Editor</h2>
-          <p className="text-muted-foreground">Visual editor for your landing page</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => window.open("/", "_blank")}>
-            <Eye className="h-4 w-4 mr-2" />
-            Preview
-          </Button>
-          <Button onClick={addNewSection}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Section
-          </Button>
-        </div>
-      </div>
+  const SortableSection = ({ section, index }: { section: Section; index: number }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+    } = useSortable({ id: section.id });
 
-      <div className="space-y-4">
-        {sections.map((section, index) => (
-          <Card key={section.id} className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <Input
-                  value={section.title}
-                  onChange={(e) => {
-                    const newSections = [...sections];
-                    newSections[index].title = e.target.value;
-                    setSections(newSections);
-                  }}
-                  className="font-semibold text-lg max-w-xs"
-                />
-                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                  {section.type}
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => moveSection(section.id, 'up')}
-                  disabled={index === 0}
-                >
-                  <ArrowUp className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => moveSection(section.id, 'down')}
-                  disabled={index === sections.length - 1}
-                >
-                  <ArrowDown className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => saveSection(section)}
-                  disabled={saving}
-                >
-                  <Save className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => deleteSection(section.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <Card ref={setNodeRef} style={style} className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div {...attributes} {...listeners} className="cursor-move">
+              <GripVertical className="h-5 w-5 text-muted-foreground" />
             </div>
+            <Input
+              value={section.title}
+              onChange={(e) => {
+                const newSections = [...sections];
+                newSections[index].title = e.target.value;
+                setSections(newSections);
+              }}
+              className="font-semibold text-lg max-w-xs"
+            />
+            <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+              {section.type}
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => saveSection(section)}
+              disabled={saving}
+            >
+              <Save className="h-4 w-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => deleteSection(section.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
 
             <div className="space-y-4">
               {/* Common fields for all sections */}
@@ -331,10 +317,39 @@ const AdminHomepageEditor = () => {
               )}
             </div>
           </Card>
-        ))}
-      </div>
-    </div>
-  );
-};
+        );
+      };
+
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-bold">Homepage Editor</h2>
+              <p className="text-muted-foreground">Drag and drop to reorder sections</p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => window.open("/", "_blank")}>
+                <Eye className="h-4 w-4 mr-2" />
+                Preview
+              </Button>
+              <Button onClick={addNewSection}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Section
+              </Button>
+            </div>
+          </div>
+
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
+              <div className="space-y-4">
+                {sections.map((section, index) => (
+                  <SortableSection key={section.id} section={section} index={index} />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </div>
+      );
+    };
 
 export default AdminHomepageEditor;

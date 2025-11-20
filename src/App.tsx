@@ -12,6 +12,7 @@ import TermsOfService from "./pages/public/TermsOfService";
 import PrivacyPolicy from "./pages/public/PrivacyPolicy";
 import AboutUs from "./pages/public/AboutUs";
 import ContactUs from "./pages/public/ContactUs";
+import FindDoctors from "./pages/public/FindDoctors";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -41,8 +42,9 @@ const App = () => (
               <Route path="/" element={<LandingPage />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/about" element={<AboutUs />} />
-              <Route path="/contact" element={<ContactUs />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/find-doctors" element={<FindDoctors />} />
               <Route path="/home" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Login />} />
