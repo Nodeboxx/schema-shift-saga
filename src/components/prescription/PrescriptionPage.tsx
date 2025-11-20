@@ -17,6 +17,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   const { toast } = useToast();
   const [pages, setPages] = useState([{ id: 1 }]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [pagesData, setPagesData] = useState<Record<number, any>>({ 1: {} });
 
   const [doctorInfo, setDoctorInfo] = useState({
     bismillah: "بسم الله الرحمن الرحيم",
@@ -233,6 +234,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   const addPage = () => {
     const newPageId = pages.length + 1;
     setPages([...pages, { id: newPageId }]);
+    setPagesData({ ...pagesData, [newPageId]: {} });
     setCurrentPage(newPageId);
   };
 
@@ -290,8 +292,8 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
           <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
           <PrescriptionBody 
-            data={page.id === 1 ? bodyData : undefined}
-            setData={page.id === 1 ? setBodyData : undefined}
+            data={page.id === 1 ? bodyData : pagesData[page.id]}
+            setData={page.id === 1 ? setBodyData : (data: any) => setPagesData({ ...pagesData, [page.id]: data })}
           />
           <PrescriptionFooter />
         </div>
