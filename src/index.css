@@ -162,10 +162,18 @@ All colors MUST be HSL.
     position: relative !important;
   }
 
-  /* Make header at top */
+  /* Make header at top with minimal spacing */
   .prescription-page header {
     display: block;
     background: white;
+    padding: 10px 15px !important;
+    margin: 0 !important;
+  }
+  
+  /* Patient info bar - remove extra spacing */
+  .prescription-page header + div {
+    margin: 0 !important;
+    padding: 6px 10px !important;
   }
   
   /* Make footer stick to bottom of A4 page */
@@ -179,13 +187,15 @@ All colors MUST be HSL.
     border-top: 1px solid #e0e0e0;
   }
   
-  /* Remove any extra margins that push content down */
-  .prescription-page > div:first-child {
+  /* Remove any extra margins from all children */
+  .prescription-page > * {
     margin-top: 0 !important;
+    margin-bottom: 0 !important;
   }
   
-  .prescription-page > div:nth-child(2) {
-    margin-top: 0 !important;
+  /* Body content should start immediately */
+  .prescription-page > div {
+    margin: 0 !important;
   }
 
   .prescription-page:last-of-type {
