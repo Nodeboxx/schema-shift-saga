@@ -11,6 +11,7 @@ import { ReportsTab } from "@/components/dashboard/ReportsTab";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalPrescriptions: 0,
@@ -19,6 +20,13 @@ const Dashboard = () => {
 
   useEffect(() => {
     loadStats();
+    
+    // Check URL params for tab
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab) {
+      setActiveTab(tab);
+    }
   }, []);
 
   const loadStats = async () => {
@@ -49,7 +57,7 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="patients">My Patients</TabsTrigger>
