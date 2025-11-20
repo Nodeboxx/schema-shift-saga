@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import PrescriptionHeader from "./PrescriptionHeader";
@@ -17,8 +17,6 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   const { toast } = useToast();
   const [pages, setPages] = useState([{ id: 1 }]);
   const [currentPage, setCurrentPage] = useState(1);
-  const pageRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
-  const contentCheckInterval = useRef<NodeJS.Timeout | null>(null);
 
   const [doctorInfo, setDoctorInfo] = useState({
     bismillah: "بسم الله الرحمن الرحيم",
@@ -42,41 +40,6 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   });
 
   const [bodyData, setBodyData] = useState<any>({});
-
-  // Auto-pagination: Check for overflow and add pages automatically
-  useEffect(() => {
-    const checkContentOverflow = () => {
-      const lastPage = pages[pages.length - 1];
-      const lastPageRef = pageRefs.current[lastPage.id];
-      
-      if (lastPageRef) {
-        const bodyElement = lastPageRef.querySelector('[data-prescription-body]') as HTMLElement;
-        if (bodyElement) {
-          const bodyHeight = bodyElement.scrollHeight;
-          // A4 page height is approximately 1120px at 800px width
-          // Trigger new page if content exceeds 1000px (leaving room for header/footer)
-          if (bodyHeight > 1000 && pages.length < 10) { // Max 10 pages for safety
-            console.log(`Content overflow detected: ${bodyHeight}px > 1000px. Adding new page.`);
-            const newPageId = pages.length + 1;
-            setPages(prev => [...prev, { id: newPageId }]);
-            toast({
-              title: "New Page Added",
-              description: `Content exceeded page limit. Page ${newPageId} created automatically.`,
-            });
-          }
-        }
-      }
-    };
-
-    // Check periodically for overflow (every 2 seconds)
-    contentCheckInterval.current = setInterval(checkContentOverflow, 2000);
-
-    return () => {
-      if (contentCheckInterval.current) {
-        clearInterval(contentCheckInterval.current);
-      }
-    };
-  }, [pages, bodyData, toast]);
 
   useEffect(() => {
     if (prescriptionData) {
@@ -311,7 +274,6 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
       {pages.map((page, index) => (
         <div
           key={page.id}
-          ref={(el) => (pageRefs.current[page.id] = el)}
           className="prescription-page"
           onClick={() => setCurrentPage(page.id)}
           style={{
@@ -337,12 +299,10 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           
           <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
           <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
-          <div data-prescription-body>
-            <PrescriptionBody 
-              data={bodyData} 
-              setData={setBodyData}
-            />
-          </div>
+          <PrescriptionBody 
+            data={bodyData} 
+            setData={setBodyData}
+          />
           <PrescriptionFooter />
         </div>
       ))}
