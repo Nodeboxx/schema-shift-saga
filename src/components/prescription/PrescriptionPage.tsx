@@ -268,12 +268,14 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           
           <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
           <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
-          <PrescriptionBody 
-            data={bodyData} 
-            setData={setBodyData}
-            pageIndex={index}
-            itemsPerPage={MEDICINES_PER_PAGE}
-          />
+          <div style={{ flex: "1 1 auto", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            <PrescriptionBody 
+              data={bodyData} 
+              setData={setBodyData}
+              pageIndex={index}
+              itemsPerPage={MEDICINES_PER_PAGE}
+            />
+          </div>
           <PrescriptionFooter />
         </div>
       ))}
