@@ -28,6 +28,7 @@ import ClinicDashboard from "./pages/clinic/ClinicDashboard";
 import VerifyPrescription from "./pages/VerifyPrescription";
 import Questionnaires from "./pages/Questionnaires";
 import Notifications from "./pages/Notifications";
+import Telemedicine from "./pages/Telemedicine";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ const App = () => (
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/questionnaires" element={<Questionnaires />} />
               <Route path="/notifications" element={<Notifications />} />
+              <Route path="/telemedicine" element={<Telemedicine />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/import-data" element={<DataImport />} />
               <Route path="/checkout/:plan" element={<Checkout />} />
