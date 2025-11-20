@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,11 +11,38 @@ import { Check, ArrowLeft } from "lucide-react";
 
 const Checkout = () => {
   const { plan = 'free' } = useParams<{ plan: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bkash' | 'wire'>('card');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const billingCycle = searchParams.get('billing') || 'monthly';
+
+  useEffect(() => {
+    checkAuthentication();
+  }, []);
+
+  const checkAuthentication = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        // Redirect to register with return URL
+        navigate(`/register?redirect=/checkout/${plan}&billing=${billingCycle}`);
+        return;
+      }
+      
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Auth check error:', error);
+      navigate(`/register?redirect=/checkout/${plan}&billing=${billingCycle}`);
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
 
   const planDetails: Record<string, any> = {
     free: {
@@ -58,6 +85,26 @@ const Checkout = () => {
   };
 
   const selectedPlan = planDetails[plan || "free"] || planDetails.free;
+  const isYearly = billingCycle === 'yearly';
+  
+  // Adjust price for yearly billing
+  const displayPrice = isYearly ? selectedPlan.price * 10 : selectedPlan.price; // 10 months price for yearly
+  const displayPeriod = isYearly ? 'per year' : selectedPlan.period;
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,8 +135,8 @@ const Checkout = () => {
           user_id: user.id,
           tier: plan as any,
           status: "active",
-          amount: selectedPlan.price,
-          billing_cycle: "monthly"
+          amount: displayPrice,
+          billing_cycle: billingCycle
         });
 
       if (error) throw error;
@@ -139,9 +186,14 @@ const Checkout = () => {
             <div className="mb-6">
               <h3 className="text-xl font-semibold mb-2">{selectedPlan.name}</h3>
               <div className="text-3xl font-bold">
-                ${selectedPlan.price}
-                <span className="text-lg text-muted-foreground">/{selectedPlan.period}</span>
+                ${displayPrice}
+                <span className="text-lg text-muted-foreground">/{displayPeriod}</span>
               </div>
+              {isYearly && (
+                <p className="text-sm text-emerald-600 font-medium mt-2">
+                  💰 Save 2 months with yearly billing
+                </p>
+              )}
             </div>
             
             <div className="space-y-3 mb-6">
@@ -156,8 +208,11 @@ const Checkout = () => {
             <div className="border-t pt-4">
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
-                <span>${selectedPlan.price}</span>
+                <span>${displayPrice}</span>
               </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Billing cycle: {billingCycle}
+              </p>
             </div>
           </Card>
 
@@ -227,23 +282,23 @@ const Checkout = () => {
 
               {paymentMethod === 'bkash' && (
                 <>
-                  <div>
-                    <Label htmlFor="bkash_number">bKash Number</Label>
-                    <Input id="bkash_number" placeholder="01XXXXXXXXX" required />
-                  </div>
-                  <div>
-                    <Label htmlFor="transaction_id">Transaction ID</Label>
-                    <Input id="transaction_id" placeholder="ABCD1234567" required />
-                  </div>
-                  <div className="bg-muted p-4 rounded-lg">
-                    <p className="text-sm mb-2 font-medium">bKash Payment Instructions:</p>
-                    <ol className="text-sm space-y-1 list-decimal list-inside">
-                      <li>Send money to: 01XXX-XXXXXX</li>
-                      <li>Enter amount: ${selectedPlan.price}</li>
-                      <li>Copy the transaction ID</li>
-                      <li>Paste it above and submit</li>
-                    </ol>
-                  </div>
+                   <div>
+                     <Label htmlFor="bkash_number">bKash Number</Label>
+                     <Input id="bkash_number" placeholder="01XXXXXXXXX" required />
+                   </div>
+                   <div>
+                     <Label htmlFor="transaction_id">Transaction ID</Label>
+                     <Input id="transaction_id" placeholder="ABCD1234567" required />
+                   </div>
+                   <div className="bg-muted p-4 rounded-lg">
+                     <p className="text-sm mb-2 font-medium">bKash Payment Instructions:</p>
+                     <ol className="text-sm space-y-1 list-decimal list-inside">
+                       <li>Send money to: 01XXX-XXXXXX</li>
+                       <li>Enter amount: ${displayPrice}</li>
+                       <li>Copy the transaction ID</li>
+                       <li>Paste it above and submit</li>
+                     </ol>
+                   </div>
                 </>
               )}
 
@@ -263,9 +318,9 @@ const Checkout = () => {
                     <div>
                       <span className="font-medium">SWIFT/BIC:</span> EXAMPLEBDXXX
                     </div>
-                    <div>
-                      <span className="font-medium">Amount:</span> ${selectedPlan.price}
-                    </div>
+                     <div>
+                       <span className="font-medium">Amount:</span> ${displayPrice}
+                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
                     After transfer, please email the receipt to billing@medscribe.com
@@ -288,7 +343,7 @@ const Checkout = () => {
                 {loading ? "Processing..." : (
                   paymentMethod === 'wire' 
                     ? 'Complete Subscription' 
-                    : `Pay $${selectedPlan.price}/${selectedPlan.period}`
+                    : `Pay $${displayPrice}/${displayPeriod}`
                 )}
               </Button>
 

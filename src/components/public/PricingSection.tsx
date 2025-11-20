@@ -148,7 +148,7 @@ export const PricingSection = ({ content }: PricingSectionProps) => {
                     plan.featured && "bg-primary hover:bg-primary/90"
                   )}
                   variant={plan.featured ? "default" : "outline"}
-                  onClick={() => navigate(plan.buttonUrl || "/register")}
+                  onClick={() => navigate(`/checkout/${plan.id}?billing=${isYearly ? 'yearly' : 'monthly'}`)}
                 >
                   Get Started
                 </Button>
