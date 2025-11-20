@@ -22,7 +22,7 @@ const Login = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/prescription`,
+          emailRedirectTo: `${window.location.origin}/dashboard`,
         },
       });
 
@@ -52,7 +52,28 @@ const Login = () => {
           variant: "destructive",
         });
       } else {
-        navigate("/prescription");
+        // After successful login, determine role-based redirect
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user) {
+          navigate("/login");
+          return;
+        }
+
+        const { data: roles } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id);
+
+        const roleList = (roles || []).map((r: any) => r.role);
+
+        if (roleList.includes("super_admin")) {
+          navigate("/admin");
+        } else if (roleList.includes("clinic_admin")) {
+          navigate("/clinic");
+        } else {
+          navigate("/dashboard");
+        }
       }
     }
     setLoading(false);
