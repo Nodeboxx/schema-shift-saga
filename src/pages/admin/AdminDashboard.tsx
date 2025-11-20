@@ -30,10 +30,10 @@ import { cn } from "@/lib/utils";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminClinics from "@/components/admin/AdminClinics";
 import AdminCMS from "@/components/admin/AdminCMS";
-import AdminHomepageEditor from "@/components/admin/AdminHomepageEditor";
+import VisualHomepageEditor from "@/components/admin/VisualHomepageEditor";
 import AdminDoctors from "@/components/admin/AdminDoctors";
-import AdminHeaderFooter from "@/components/admin/AdminHeaderFooter";
-import AdminPages from "@/components/admin/AdminPages";
+import VisualHeaderFooterEditor from "@/components/admin/VisualHeaderFooterEditor";
+import VisualPageEditor from "@/components/admin/VisualPageEditor";
 import AdminProducts from "@/components/admin/AdminProducts";
 import AdminSiteSettings from "@/components/admin/AdminSiteSettings";
 import { AdminSMTP } from "@/components/admin/AdminSMTP";
@@ -275,10 +275,10 @@ const AdminDashboard = () => {
               </Card>
             )}
             {activeTab === "api" && <AdminAPISettings />}
-          {activeTab === "homepage" && <AdminHomepageEditor />}
+          {activeTab === "homepage" && <VisualHomepageEditor />}
           {activeTab === "doctors" && <AdminDoctors />}
-          {activeTab === "header-footer" && <AdminHeaderFooter />}
-            {activeTab === "pages" && <AdminPages />}
+          {activeTab === "header-footer" && <VisualHeaderFooterEditor />}
+            {activeTab === "pages" && <VisualPageEditor />}
             {activeTab === "site-settings" && <AdminSiteSettings />}
             {activeTab === "cms" && <AdminCMS />}
             {activeTab === "smtp" && <AdminSMTP />}
