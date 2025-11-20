@@ -19,7 +19,9 @@ import {
   UserCog,
   Shield,
   Calendar,
-  Globe
+  Globe,
+  Cpu,
+  ShoppingCart
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AdminUsers from "@/components/admin/AdminUsers";
@@ -32,6 +34,8 @@ import { AdminAnalytics } from "@/components/admin/AdminAnalytics";
 import { AdminImpersonate } from "@/components/admin/AdminImpersonate";
 import { AdminAuditLogs } from "@/components/admin/AdminAuditLogs";
 import { AdminAppointments } from "@/components/admin/AdminAppointments";
+import { AdminAPISettings } from "@/components/admin/AdminAPISettings";
+import { AdminOrders } from "@/components/admin/AdminOrders";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -51,6 +55,8 @@ const AdminDashboard = () => {
     { id: "users", label: "Users", icon: Users },
     { id: "clinics", label: "Clinics", icon: Building2 },
     { id: "appointments", label: "Appointments", icon: Calendar },
+    { id: "orders", label: "Orders & Billing", icon: ShoppingCart },
+    { id: "api", label: "API Settings", icon: Cpu },
     { id: "cms", label: "CMS Editor", icon: Globe },
     { id: "smtp", label: "SMTP Settings", icon: Settings },
     { id: "templates", label: "Email Templates", icon: Mail },
@@ -230,6 +236,8 @@ const AdminDashboard = () => {
             {activeTab === "users" && <AdminUsers />}
             {activeTab === "clinics" && <AdminClinics />}
             {activeTab === "appointments" && <AdminAppointments />}
+            {activeTab === "orders" && <AdminOrders />}
+            {activeTab === "api" && <AdminAPISettings />}
             {activeTab === "cms" && <AdminCMS />}
             {activeTab === "smtp" && <AdminSMTP />}
             {activeTab === "templates" && <AdminEmailTemplates />}
