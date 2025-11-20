@@ -179,15 +179,6 @@ All colors MUST be HSL.
     right: 0;
     z-index: 1000;
   }
-  
-  /* Add space for fixed header and footer */
-  .prescription-page > div:nth-child(2) {
-    margin-top: 140px !important;
-  }
-  
-  .prescription-page > div:last-of-type {
-    margin-bottom: 60px !important;
-  }
 
   .prescription-page:last-of-type {
     page-break-after: auto;
