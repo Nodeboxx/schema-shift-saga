@@ -159,18 +159,22 @@ All colors MUST be HSL.
     page-break-inside: avoid;
     display: block !important;
     overflow: visible !important;
+    position: relative !important;
   }
   
-  /* Make header and footer repeat on every page */
+  /* Make header at top */
   .prescription-page header {
     display: block;
-    position: running(header);
     background: white;
   }
   
+  /* Make footer stick to bottom of A4 page */
   .prescription-page > footer {
     display: block;
-    position: running(footer);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: white;
     border-top: 1px solid #e0e0e0;
   }
