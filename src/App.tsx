@@ -26,6 +26,7 @@ import Analytics from "./pages/Analytics";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ClinicDashboard from "./pages/clinic/ClinicDashboard";
 import VerifyPrescription from "./pages/VerifyPrescription";
+import Questionnaires from "./pages/Questionnaires";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/prescriptions" element={<PrescriptionList />} />
               <Route path="/appointments" element={<Appointments />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/questionnaires" element={<Questionnaires />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/import-data" element={<DataImport />} />
               <Route path="/checkout/:plan" element={<Checkout />} />
