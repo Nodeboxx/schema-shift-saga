@@ -20,17 +20,20 @@ interface RightColumnProps {
   width: number;
   data?: any;
   setData?: (data: any) => void;
+  pageIndex: number;
+  itemsPerPage: number;
 }
 
-const RightColumn = ({ width, data, setData }: RightColumnProps) => {
-  const medicines: Medicine[] = data?.medicines || [];
-
+const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightColumnProps) => {
+  const allMedicines: Medicine[] = data?.medicines || [];
+  const startIndex = pageIndex * itemsPerPage;
+  const medicines = allMedicines.slice(startIndex, startIndex + itemsPerPage);
   const addMedicine = () => {
     if (setData) {
       setData({
         ...data,
         medicines: [
-          ...medicines,
+          ...allMedicines,
           {
             id: Date.now().toString(),
             type: "medicine",
@@ -48,7 +51,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
       setData({
         ...data,
         medicines: [
-          ...medicines,
+          ...allMedicines,
           {
             id: Date.now().toString(),
             type: "category",
@@ -63,7 +66,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
     if (setData) {
       setData({
         ...data,
-        medicines: medicines.filter((m) => m.id !== id),
+        medicines: allMedicines.filter((m) => m.id !== id),
       });
     }
   };
@@ -72,7 +75,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
     if (setData) {
       setData({
         ...data,
-        medicines: medicines.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
+        medicines: allMedicines.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
       });
     }
   };
@@ -81,7 +84,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
     if (setData) {
       setData({
         ...data,
-        medicines: medicines.map((m) => (m.id === id ? { ...m, ...updates } : m)),
+        medicines: allMedicines.map((m) => (m.id === id ? { ...m, ...updates } : m)),
       });
     }
   };
