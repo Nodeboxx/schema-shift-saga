@@ -6,17 +6,17 @@ import PatientInfoBar from "./PatientInfoBar";
 import PrescriptionBody from "./PrescriptionBody";
 import PrescriptionFooter from "./PrescriptionFooter";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+// Icons removed: pages now auto-paginated based on medicines
 
 interface PrescriptionPageProps {
   prescriptionData?: any;
   userId?: string;
 }
 
+const MEDICINES_PER_PAGE = 10;
+
 const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) => {
   const { toast } = useToast();
-  const [pages, setPages] = useState([{ id: 1 }]);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const [doctorInfo, setDoctorInfo] = useState({
     bismillah: "بسم الله الرحمن الرحيم",
@@ -40,6 +40,9 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   });
 
   const [bodyData, setBodyData] = useState<any>({});
+
+  const medicinesCount = bodyData.medicines?.length || 0;
+  const totalPages = Math.max(1, Math.ceil(medicinesCount / MEDICINES_PER_PAGE));
 
   useEffect(() => {
     if (prescriptionData) {
@@ -152,7 +155,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         oe_spo2: bodyData.vitals?.spo2,
         oe_anemia: bodyData.vitals?.anemia,
         oe_jaundice: bodyData.vitals?.jaundice,
-        page_count: pages.length,
+        page_count: totalPages,
       };
 
       let prescriptionId = prescriptionData?.id;
@@ -228,63 +231,27 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
     }
   };
 
-  const addPage = () => {
-    const newPageId = pages.length + 1;
-    setPages([...pages, { id: newPageId }]);
-    setCurrentPage(newPageId);
-  };
-
-  const removePage = (pageId: number) => {
-    if (pages.length === 1) {
-      toast({
-        title: "Cannot remove",
-        description: "At least one page is required",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setPages(pages.filter(p => p.id !== pageId));
-    if (currentPage === pageId) {
-      setCurrentPage(pages[0].id);
-    }
-  };
-
   return (
     <>
-      <div className="no-print flex gap-2 justify-center mb-4">
+      <div className="no-print flex gap-2 justify-center mb-4 items-center">
         <Button onClick={handleSave} size="lg">
           Save Prescription
         </Button>
-        <Button onClick={addPage} variant="outline" size="lg" className="add-medicine-btn">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Page
-        </Button>
-        {pages.length > 1 && (
-          <Button onClick={() => removePage(currentPage)} variant="destructive" size="lg">
-            <Trash2 className="w-4 h-4 mr-2" />
-            Remove Page
-          </Button>
-        )}
         <div className="text-sm font-medium px-4 py-2 bg-gray-100 rounded-md">
-          Page {currentPage} of {pages.length}
+          Pages: {totalPages}
         </div>
       </div>
-
-      {pages.map((page, index) => (
+      {Array.from({ length: totalPages }, (_, index) => (
         <div
-          key={page.id}
+          key={index}
           className="prescription-page"
-          onClick={() => setCurrentPage(page.id)}
           style={{
             width: "800px",
             minHeight: "1120px",
             margin: "20px auto",
             backgroundColor: "#ffffff",
-            border: currentPage === page.id ? "2px solid #0056b3" : "1px solid #aaa",
-            boxShadow: currentPage === page.id 
-              ? "0 0 20px rgba(0, 86, 179, 0.3)" 
-              : "0 0 15px rgba(0, 0, 0, 0.1)",
+            border: "1px solid #aaa",
+            boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
             position: "relative",
             boxSizing: "border-box",
             pageBreakAfter: "always",
@@ -294,7 +261,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         >
           {/* Page Number Indicator */}
           <div className="no-print absolute top-2 right-2 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
-            Page {index + 1}
+            Page {index + 1} of {totalPages}
           </div>
           
           <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
@@ -302,6 +269,8 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
           <PrescriptionBody 
             data={bodyData} 
             setData={setBodyData}
+            pageIndex={index}
+            itemsPerPage={MEDICINES_PER_PAGE}
           />
           <PrescriptionFooter />
         </div>

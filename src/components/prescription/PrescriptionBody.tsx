@@ -5,9 +5,11 @@ import RightColumn from "./RightColumn";
 interface PrescriptionBodyProps {
   data?: any;
   setData?: (data: any) => void;
+  pageIndex?: number;
+  itemsPerPage?: number;
 }
 
-const PrescriptionBody = ({ data, setData }: PrescriptionBodyProps) => {
+const PrescriptionBody = ({ data, setData, pageIndex = 0, itemsPerPage = 100 }: PrescriptionBodyProps) => {
   const [leftWidth, setLeftWidth] = useState(30);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -61,7 +63,13 @@ const PrescriptionBody = ({ data, setData }: PrescriptionBodyProps) => {
         }}
       />
 
-      <RightColumn width={100 - leftWidth} data={data} setData={setData} />
+      <RightColumn
+        width={100 - leftWidth}
+        data={data}
+        setData={setData}
+        pageIndex={pageIndex}
+        itemsPerPage={itemsPerPage}
+      />
     </div>
   );
 };
