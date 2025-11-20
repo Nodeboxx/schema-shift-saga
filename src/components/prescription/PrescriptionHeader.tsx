@@ -55,7 +55,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderPro
   };
 
   return (
-    <header style={{
+    <header className="prescription-header" style={{
       padding: "15px",
       borderBottom: "3px solid #0056b3",
       overflow: "hidden",

@@ -74,7 +74,12 @@ const Prescription = () => {
       className="prescription-root"
       style={{ fontFamily: "'Kalpurush', 'SolaimanLipi', 'Arial', sans-serif", backgroundColor: "#e0e0e0", margin: 0, paddingTop: "100px" }}
     >
-      <PrescriptionControls prescriptionId={id} userId={user?.id} />
+      <PrescriptionControls 
+        prescriptionId={id} 
+        userId={user?.id} 
+        patientName={prescriptionData?.patient_name}
+        patientPhone={prescriptionData?.patient?.phone}
+      />
       <div id="page-wrapper" className="prescription-page-wrapper" style={{ display: "block", paddingTop: "160px" }}>
         <PrescriptionPage prescriptionData={prescriptionData} userId={user?.id} />
       </div>
