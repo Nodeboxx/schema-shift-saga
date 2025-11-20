@@ -23,18 +23,38 @@ export const AdminAuditLogs = () => {
 
   const loadLogs = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: logs, error } = await supabase
         .from('role_audit')
-        .select(`
-          *,
-          user:user_id(email, full_name),
-          performer:performed_by(email, full_name)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
 
       if (error) throw error;
-      setLogs(data || []);
+      
+      // Fetch user details separately to avoid foreign key issues
+      if (logs && logs.length > 0) {
+        const userIds = [...new Set([
+          ...logs.map(l => l.user_id).filter(Boolean),
+          ...logs.map(l => l.performed_by).filter(Boolean)
+        ])];
+        
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, email, full_name')
+          .in('id', userIds);
+        
+        const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+        
+        const enrichedLogs = logs.map(log => ({
+          ...log,
+          user: log.user_id ? profileMap.get(log.user_id) : null,
+          performer: log.performed_by ? profileMap.get(log.performed_by) : null
+        }));
+        
+        setLogs(enrichedLogs);
+      } else {
+        setLogs([]);
+      }
     } catch (error: any) {
       toast({
         title: 'Error',
