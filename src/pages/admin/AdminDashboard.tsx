@@ -22,7 +22,8 @@ import {
   Globe,
   Cpu,
   ShoppingCart,
-  LogOut
+  LogOut,
+  Database
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AdminUsers from "@/components/admin/AdminUsers";
@@ -57,6 +58,7 @@ const AdminDashboard = () => {
     { id: "clinics", label: "Clinics", icon: Building2 },
     { id: "appointments", label: "Appointments", icon: Calendar },
     { id: "orders", label: "Orders & Billing", icon: ShoppingCart },
+    { id: "import", label: "Import Data", icon: Database },
     { id: "api", label: "API Settings", icon: Cpu },
     { id: "cms", label: "CMS Editor", icon: Globe },
     { id: "smtp", label: "SMTP Settings", icon: Settings },
@@ -250,6 +252,15 @@ const AdminDashboard = () => {
             {activeTab === "clinics" && <AdminClinics />}
             {activeTab === "appointments" && <AdminAppointments />}
             {activeTab === "orders" && <AdminOrders />}
+            {activeTab === "import" && (
+              <Card className="p-6">
+                <iframe
+                  src="/import-data"
+                  className="w-full h-[800px] border-0 rounded-lg"
+                  title="Data Import"
+                />
+              </Card>
+            )}
             {activeTab === "api" && <AdminAPISettings />}
             {activeTab === "cms" && <AdminCMS />}
             {activeTab === "smtp" && <AdminSMTP />}
