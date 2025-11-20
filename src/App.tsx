@@ -22,6 +22,7 @@ import DataImport from "./pages/DataImport";
 import Settings from "./pages/Settings";
 import Checkout from "./pages/Checkout";
 import Appointments from "./pages/Appointments";
+import Analytics from "./pages/Analytics";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ClinicDashboard from "./pages/clinic/ClinicDashboard";
 import VerifyPrescription from "./pages/VerifyPrescription";
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/prescription/:id" element={<Prescription />} />
               <Route path="/prescriptions" element={<PrescriptionList />} />
               <Route path="/appointments" element={<Appointments />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/import-data" element={<DataImport />} />
               <Route path="/checkout/:plan" element={<Checkout />} />
