@@ -120,12 +120,13 @@ const RightColumn = ({ width, data, setData, pageIndex, itemsPerPage }: RightCol
         flexGrow: 1,
         overflow: "visible",
         minHeight: "100px",
+        maxHeight: "calc(100vh - 400px)", // Dynamic height to fit within page
       }}>
         {medicines.map((med) => (
           <div
             key={med.id}
             style={{
-              marginBottom: "5px",
+              marginBottom: medicines.length > 10 ? "3px" : "5px", // Dynamic spacing
               paddingLeft: "6px",
               paddingRight: "30px",
               position: "relative",

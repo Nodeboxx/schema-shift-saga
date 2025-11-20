@@ -201,3 +201,28 @@ All colors MUST be HSL.
     display: none !important;
   }
 }
+
+/* Mobile responsive styles */
+@media screen and (max-width: 768px) {
+  .prescription-root {
+    padding-top: 60px !important;
+  }
+
+  .prescription-page-wrapper {
+    padding: 80px 8px 16px 8px !important;
+  }
+
+  .prescription-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    transform: scale(0.95);
+    transform-origin: top center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .prescription-page {
+    transform: scale(0.85);
+  }
+}
