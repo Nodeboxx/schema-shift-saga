@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_cache: {
+        Row: {
+          clinic_id: string | null
+          created_at: string | null
+          doctor_id: string | null
+          id: string
+          metric_name: string
+          metric_value: Json
+          period_end: string
+          period_start: string
+        }
+        Insert: {
+          clinic_id?: string | null
+          created_at?: string | null
+          doctor_id?: string | null
+          id?: string
+          metric_name: string
+          metric_value: Json
+          period_end: string
+          period_start: string
+        }
+        Update: {
+          clinic_id?: string | null
+          created_at?: string | null
+          doctor_id?: string | null
+          id?: string
+          metric_name?: string
+          metric_value?: Json
+          period_end?: string
+          period_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_cache_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_cache_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointment_history: {
         Row: {
           action: string
@@ -1769,7 +1817,55 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      appointment_analytics: {
+        Row: {
+          appointment_count: number | null
+          cancelled_count: number | null
+          completed_count: number | null
+          date: string | null
+          doctor_id: string | null
+          unique_patients: number | null
+          walk_in_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      patient_demographics: {
+        Row: {
+          avg_age: number | null
+          doctor_id: string | null
+          female_count: number | null
+          male_count: number | null
+          patients_with_blood_group: number | null
+          total_patients: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patients_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prescription_analytics: {
+        Row: {
+          avg_pages: number | null
+          date: string | null
+          doctor_id: string | null
+          prescription_count: number | null
+          unique_patients: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       assign_user_role: {

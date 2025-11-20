@@ -13,7 +13,8 @@ import {
   Shield, 
   Building2,
   LogOut,
-  Database
+  Database,
+  BarChart3
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -52,6 +53,12 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       to: '/appointments', 
       icon: Calendar, 
       label: 'Appointments',
+      show: isDoctor || isSuperAdmin || isClinicAdmin
+    },
+    { 
+      to: '/analytics', 
+      icon: BarChart3, 
+      label: 'Analytics',
       show: isDoctor || isSuperAdmin || isClinicAdmin
     },
     { 
