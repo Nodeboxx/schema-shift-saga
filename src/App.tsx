@@ -14,6 +14,7 @@ import Checkout from "./pages/Checkout";
 import Appointments from "./pages/Appointments";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ClinicDashboard from "./pages/clinic/ClinicDashboard";
+import VerifyPrescription from "./pages/VerifyPrescription";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/checkout/:plan" element={<Checkout />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/clinic" element={<ClinicDashboard />} />
+            <Route path="/verify/:id" element={<VerifyPrescription />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
