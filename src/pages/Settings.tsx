@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prescriptionTemplates, getTemplateById } from "@/lib/prescriptionTemplates";
 import CustomTemplateBuilder from "@/components/settings/CustomTemplateBuilder";
+import LogoUploader from "@/components/settings/LogoUploader";
 import {
   DndContext,
   closestCenter,
@@ -403,31 +404,11 @@ const Settings = () => {
 
                 <div className="border-t pt-6">
                   <h3 className="text-lg font-semibold mb-4">Medical Council Registration (Optional)</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="council_logo_url">Medical Council Logo URL</Label>
-                      <Input
-                        id="council_logo_url"
-                        value={profile.council_logo_url}
-                        onChange={(e) => setProfile({ ...profile, council_logo_url: e.target.value })}
-                        placeholder="https://example.com/council-logo.png"
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Upload your logo to a hosting service and paste the URL here (e.g., Bangladesh Medical & Dental Council)
-                      </p>
-                      {profile.council_logo_url && (
-                        <div className="mt-3 p-4 border rounded-lg bg-muted/50 flex items-center justify-center">
-                          <img 
-                            src={profile.council_logo_url} 
-                            alt="Medical Council Logo" 
-                            className="max-h-24 object-contain"
-                            onError={(e) => {
-                              e.currentTarget.style.display = 'none';
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
+                  <div className="space-y-6">
+                    <LogoUploader
+                      currentLogoUrl={profile.council_logo_url}
+                      onUploadComplete={(url) => setProfile({ ...profile, council_logo_url: url })}
+                    />
 
                     <div>
                       <Label htmlFor="registration_number">Registration Number</Label>
