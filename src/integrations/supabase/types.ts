@@ -981,21 +981,32 @@ export type Database = {
       profiles: {
         Row: {
           active_template: string | null
+          address: string | null
+          available_days: string[] | null
+          available_hours: string | null
+          avatar_url: string | null
+          bio: string | null
           clinic_id: string | null
+          consultation_fee: number | null
           council_logo_url: string | null
           created_at: string | null
           custom_templates: Json | null
           degree_bn: string | null
           degree_en: string | null
+          designation: string | null
+          display_order: number | null
           email: string
           footer_left: string | null
           footer_right: string | null
           full_name: string | null
           id: string
           is_active: boolean | null
+          is_featured: boolean | null
           left_template_sections: Json | null
           license_number: string | null
           name_bn: string | null
+          phone: string | null
+          qualifications: string | null
           registration_number: string | null
           role: Database["public"]["Enums"]["app_role"] | null
           settings: Json | null
@@ -1008,21 +1019,32 @@ export type Database = {
         }
         Insert: {
           active_template?: string | null
+          address?: string | null
+          available_days?: string[] | null
+          available_hours?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           clinic_id?: string | null
+          consultation_fee?: number | null
           council_logo_url?: string | null
           created_at?: string | null
           custom_templates?: Json | null
           degree_bn?: string | null
           degree_en?: string | null
+          designation?: string | null
+          display_order?: number | null
           email: string
           footer_left?: string | null
           footer_right?: string | null
           full_name?: string | null
           id: string
           is_active?: boolean | null
+          is_featured?: boolean | null
           left_template_sections?: Json | null
           license_number?: string | null
           name_bn?: string | null
+          phone?: string | null
+          qualifications?: string | null
           registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"] | null
           settings?: Json | null
@@ -1035,21 +1057,32 @@ export type Database = {
         }
         Update: {
           active_template?: string | null
+          address?: string | null
+          available_days?: string[] | null
+          available_hours?: string | null
+          avatar_url?: string | null
+          bio?: string | null
           clinic_id?: string | null
+          consultation_fee?: number | null
           council_logo_url?: string | null
           created_at?: string | null
           custom_templates?: Json | null
           degree_bn?: string | null
           degree_en?: string | null
+          designation?: string | null
+          display_order?: number | null
           email?: string
           footer_left?: string | null
           footer_right?: string | null
           full_name?: string | null
           id?: string
           is_active?: boolean | null
+          is_featured?: boolean | null
           left_template_sections?: Json | null
           license_number?: string | null
           name_bn?: string | null
+          phone?: string | null
+          qualifications?: string | null
           registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"] | null
           settings?: Json | null
