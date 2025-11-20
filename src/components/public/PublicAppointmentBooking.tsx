@@ -64,26 +64,36 @@ export const PublicAppointmentBooking = () => {
     setLoading(true);
 
     try {
+      // Get current user (if logged in)
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData?.user?.id ?? null;
+
       // Create or find patient record
       let patientId: string;
       
       const { data: existingPatient } = await supabase
         .from("patients")
-        .select("id")
+        .select("id, user_id")
         .eq("name", patientName)
         .eq("doctor_id", selectedDoctor)
-        .single();
+        .maybeSingle();
 
-      if (existingPatient) {
+      if (existingPatient && (!userId || existingPatient.user_id === userId)) {
         patientId = existingPatient.id;
       } else {
+        const insertPayload: any = {
+          name: patientName,
+          doctor_id: selectedDoctor,
+        };
+
+        // When a user is logged in, link the patient to their user id
+        if (userId) {
+          insertPayload.user_id = userId;
+        }
+        
         const { data: newPatient, error: patientError } = await supabase
           .from("patients")
-          .insert({
-            name: patientName,
-            doctor_id: selectedDoctor,
-            user_id: selectedDoctor // Temporary: using doctor's ID until we have proper patient auth
-          })
+          .insert(insertPayload)
           .select()
           .single();
 
