@@ -30,8 +30,13 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
     patientDate: new Date().toLocaleDateString('en-GB'), // dd/mm/yyyy format
     patientName: "",
     patientAge: "",
+    patientAgeYears: "0",
+    patientAgeMonths: "0",
+    patientAgeDays: "0",
     patientSex: "",
     patientWeight: "",
+    patientWeightKg: "0",
+    patientWeightGrams: "0",
   });
 
   const [bodyData, setBodyData] = useState<any>({});
@@ -49,8 +54,13 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         patientDate: formatDateFromDB(prescriptionData.prescription_date),
         patientName: prescriptionData.patient_name || "",
         patientAge: prescriptionData.patient_age || "",
+        patientAgeYears: prescriptionData.patient_age_years?.toString() || "0",
+        patientAgeMonths: prescriptionData.patient_age_months?.toString() || "0",
+        patientAgeDays: prescriptionData.patient_age_days?.toString() || "0",
         patientSex: prescriptionData.patient_sex || "",
         patientWeight: prescriptionData.patient_weight || "",
+        patientWeightKg: prescriptionData.patient_weight_kg?.toString() || "0",
+        patientWeightGrams: prescriptionData.patient_weight_grams?.toString() || "0",
       });
 
       // Load body data (vitals, complaints, etc.)
@@ -122,8 +132,13 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         user_id: userId,
         patient_name: patientInfo.patientName,
         patient_age: patientInfo.patientAge,
+        patient_age_years: parseInt(patientInfo.patientAgeYears) || 0,
+        patient_age_months: parseInt(patientInfo.patientAgeMonths) || 0,
+        patient_age_days: parseInt(patientInfo.patientAgeDays) || 0,
         patient_sex: patientInfo.patientSex,
         patient_weight: patientInfo.patientWeight,
+        patient_weight_kg: parseInt(patientInfo.patientWeightKg) || 0,
+        patient_weight_grams: parseInt(patientInfo.patientWeightGrams) || 0,
         prescription_date: convertDateForDB(patientInfo.patientDate),
         cc_text: bodyData.ccText,
         dx_text: bodyData.dxText,

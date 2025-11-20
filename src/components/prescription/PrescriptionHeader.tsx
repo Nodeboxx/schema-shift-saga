@@ -55,6 +55,9 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderPro
       padding: "15px",
       borderBottom: "3px solid #0056b3",
       overflow: "hidden",
+      position: "relative",
+      zIndex: 1,
+      backgroundColor: "white",
     }}>
       <div
         contentEditable
@@ -112,6 +115,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderPro
           style={{ margin: 0 }}
         />
       </div>
+      <div style={{ clear: "both" }} />
     </header>
   );
 };

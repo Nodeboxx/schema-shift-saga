@@ -117,6 +117,11 @@ All colors MUST be HSL.
     display: none !important;
   }
   
+  /* Show print-only elements */
+  .print\:inline {
+    display: inline !important;
+  }
+  
   /* Remove page margins */
   @page {
     margin: 0;
@@ -126,7 +131,7 @@ All colors MUST be HSL.
   body {
     margin: 0;
     padding: 0;
-    background: hsl(var(--background));
+    background: white;
   }
 
   #root {
@@ -137,7 +142,7 @@ All colors MUST be HSL.
   .prescription-root {
     padding-top: 0 !important;
     margin: 0 !important;
-    background: hsl(var(--background)) !important;
+    background: white !important;
   }
 
   .prescription-page-wrapper {
