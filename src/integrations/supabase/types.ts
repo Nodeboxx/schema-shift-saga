@@ -400,7 +400,9 @@ export type Database = {
       }
       profiles: {
         Row: {
+          active_template: string | null
           created_at: string | null
+          custom_templates: Json | null
           degree_bn: string | null
           degree_en: string | null
           email: string
@@ -412,7 +414,9 @@ export type Database = {
           name_bn: string | null
         }
         Insert: {
+          active_template?: string | null
           created_at?: string | null
+          custom_templates?: Json | null
           degree_bn?: string | null
           degree_en?: string | null
           email: string
@@ -424,7 +428,9 @@ export type Database = {
           name_bn?: string | null
         }
         Update: {
+          active_template?: string | null
           created_at?: string | null
+          custom_templates?: Json | null
           degree_bn?: string | null
           degree_en?: string | null
           email?: string
