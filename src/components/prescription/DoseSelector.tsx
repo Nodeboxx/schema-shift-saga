@@ -14,8 +14,6 @@ interface DosageForm {
 interface DoseSelectorProps {
   value: string;
   onChange: (dose: string) => void;
-  durationValue?: string;
-  onDurationChange?: (duration: string) => void;
 }
 
 const tabletDoses = [

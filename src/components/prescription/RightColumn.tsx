@@ -8,7 +8,6 @@ interface Medicine {
   name?: string;
   details?: string;
   dose?: string;
-  duration?: string;
   categoryContent?: string;
   generic_name?: string;
   strength?: string;
@@ -284,8 +283,6 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                   <DoseSelector
                     value={med.dose || ""}
                     onChange={(value) => updateMedicine(med.id, "dose", value)}
-                    durationValue={med.duration || ""}
-                    onDurationChange={(value) => updateMedicine(med.id, "duration", value)}
                   />
                 </div>
                 <div style={{ fontSize: "9px", fontWeight: 500, marginBottom: "2px", marginLeft: "18px" }}>

@@ -161,28 +161,14 @@ All colors MUST be HSL.
     overflow: visible !important;
   }
   
-  /* Make header, patient info, and footer repeat on every printed page */
+  /* Make header and footer repeat on every page */
   .prescription-page header {
     display: block;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    width: 210mm;
-    background: white;
     z-index: 1000;
-  }
-  
-  /* Patient info bar fixed below header */
-  .prescription-page > div:first-of-type {
-    display: block;
-    position: fixed;
-    top: 130px;
-    left: 0;
-    right: 0;
-    width: 210mm;
-    background: white;
-    z-index: 999;
   }
   
   .prescription-page > footer {
@@ -191,15 +177,7 @@ All colors MUST be HSL.
     bottom: 0;
     left: 0;
     right: 0;
-    width: 210mm;
-    background: white;
     z-index: 1000;
-  }
-  
-  /* Add proper spacing for content to avoid overlap with fixed elements */
-  .prescription-page > div:nth-of-type(2) {
-    margin-top: 210px !important;
-    margin-bottom: 80px !important;
   }
 
   .prescription-page:last-of-type {
