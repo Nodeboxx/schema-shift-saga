@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Phone, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PublicLayout } from "@/components/layout/PublicLayout";
+import maleAvatar from "@/assets/avatar-male-doctor.svg";
+import femaleAvatar from "@/assets/avatar-female-doctor.svg";
 
 interface Doctor {
   id: string;
@@ -19,6 +21,7 @@ interface Doctor {
   consultation_fee: number;
   phone: string;
   address: string;
+  sex: string | null;
 }
 
 const FindDoctors = () => {
@@ -42,7 +45,7 @@ const FindDoctors = () => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("id, full_name, specialization, degree_en, designation, avatar_url, bio, consultation_fee, phone, address, sex")
         .eq("role", "doctor")
         .eq("is_active", true)
         .order("display_order", { ascending: true });
@@ -138,7 +141,7 @@ const FindDoctors = () => {
               <div className="p-6">
                 {/* Doctor Image */}
                 <div className="flex justify-center mb-4">
-                  <div className="w-32 h-32 rounded-full overflow-hidden bg-muted">
+                  <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10 border-2 border-primary/20">
                     {doctor.avatar_url ? (
                       <img 
                         src={doctor.avatar_url} 
@@ -146,9 +149,11 @@ const FindDoctors = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-muted-foreground">
-                        {doctor.full_name?.charAt(0) || "D"}
-                      </div>
+                      <img 
+                        src={doctor.sex === 'female' ? femaleAvatar : maleAvatar}
+                        alt={`${doctor.full_name} - Doctor`}
+                        className="w-full h-full object-contain p-2"
+                      />
                     )}
                   </div>
                 </div>

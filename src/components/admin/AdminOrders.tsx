@@ -62,6 +62,20 @@ export const AdminOrders = () => {
     });
   };
 
+  const mapPlanIdToTier = (planId: string): 'free' | 'pro' | 'enterprise' => {
+    // Map custom plan names to valid subscription tier enum values
+    const lowerPlanId = planId.toLowerCase();
+    
+    if (lowerPlanId.includes('free') || lowerPlanId.includes('basic')) {
+      return 'free';
+    } else if (lowerPlanId.includes('enterprise') || lowerPlanId.includes('lifetime')) {
+      return 'enterprise';
+    } else {
+      // Default to pro for any paid plans
+      return 'pro';
+    }
+  };
+
   const handleApprove = async (orderId: string) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -70,7 +84,7 @@ export const AdminOrders = () => {
       const order = orders.find(o => o.id === orderId);
       if (!order) return;
 
-      const isLifetime = order.plan_id === 'lifetime';
+      const isLifetime = order.plan_id === 'lifetime' || order.plan_name?.toLowerCase().includes('lifetime');
       const endDate = new Date();
       
       if (isLifetime) {
@@ -78,6 +92,9 @@ export const AdminOrders = () => {
       } else {
         endDate.setMonth(endDate.getMonth() + (order.billing_cycle === 'yearly' ? 12 : 1));
       }
+
+      // Map the plan_id to a valid subscription tier
+      const subscriptionTier = mapPlanIdToTier(order.plan_id);
 
       const { error: orderError } = await supabase
         .from("orders")
@@ -95,7 +112,7 @@ export const AdminOrders = () => {
         .insert({
           user_id: order.user_id,
           order_id: orderId,
-          tier: order.plan_id as any,
+          tier: subscriptionTier,
           status: "active",
           amount: order.amount,
           billing_cycle: order.billing_cycle,
@@ -110,7 +127,7 @@ export const AdminOrders = () => {
       await supabase
         .from("profiles")
         .update({
-          subscription_tier: order.plan_id as any,
+          subscription_tier: subscriptionTier,
           subscription_status: "active",
           subscription_start_date: new Date().toISOString(),
           subscription_end_date: endDate.toISOString(),

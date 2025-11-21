@@ -1373,6 +1373,7 @@ export type Database = {
           registration_number: string | null
           role: Database["public"]["Enums"]["app_role"] | null
           settings: Json | null
+          sex: string | null
           specialization: string | null
           subscription_end_date: string | null
           subscription_start_date: string | null
@@ -1414,6 +1415,7 @@ export type Database = {
           registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"] | null
           settings?: Json | null
+          sex?: string | null
           specialization?: string | null
           subscription_end_date?: string | null
           subscription_start_date?: string | null
@@ -1455,6 +1457,7 @@ export type Database = {
           registration_number?: string | null
           role?: Database["public"]["Enums"]["app_role"] | null
           settings?: Json | null
+          sex?: string | null
           specialization?: string | null
           subscription_end_date?: string | null
           subscription_start_date?: string | null
