@@ -105,17 +105,43 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
         return date.toLocaleDateString('en-GB'); // dd/mm/yyyy format
       };
 
+      // Derive age and weight parts with fallbacks for older prescriptions
+      let ageYears = prescriptionData.patient_age_years as number | null;
+      let ageMonths = prescriptionData.patient_age_months as number | null;
+      let ageDays = prescriptionData.patient_age_days as number | null;
+      let ageText = prescriptionData.patient_age || "";
+
+      if ((!ageYears || ageYears === 0) && prescriptionData.patient_age) {
+        const ageMatch = String(prescriptionData.patient_age).match(/(\d+)/);
+        if (ageMatch) {
+          ageYears = parseInt(ageMatch[1], 10);
+          ageText = `${ageYears}y`;
+        }
+      }
+
+      let weightKg = prescriptionData.patient_weight_kg as number | null;
+      let weightGrams = prescriptionData.patient_weight_grams as number | null;
+      let weightText = prescriptionData.patient_weight || "";
+
+      if ((!weightKg || weightKg === 0) && prescriptionData.patient_weight) {
+        const weightMatch = String(prescriptionData.patient_weight).match(/(\d+)/);
+        if (weightMatch) {
+          weightKg = parseInt(weightMatch[1], 10);
+          weightText = `${weightKg}kg`;
+        }
+      }
+
       setPatientInfo({
         patientDate: formatDateFromDB(prescriptionData.prescription_date),
         patientName: prescriptionData.patient_name || "",
-        patientAge: prescriptionData.patient_age || "",
-        patientAgeYears: prescriptionData.patient_age_years?.toString() || "0",
-        patientAgeMonths: prescriptionData.patient_age_months?.toString() || "0",
-        patientAgeDays: prescriptionData.patient_age_days?.toString() || "0",
+        patientAge: ageText || "",
+        patientAgeYears: (ageYears ?? 0).toString(),
+        patientAgeMonths: (ageMonths ?? 0).toString(),
+        patientAgeDays: (ageDays ?? 0).toString(),
         patientSex: prescriptionData.patient_sex || "",
-        patientWeight: prescriptionData.patient_weight || "",
-        patientWeightKg: prescriptionData.patient_weight_kg?.toString() || "0",
-        patientWeightGrams: prescriptionData.patient_weight_grams?.toString() || "0",
+        patientWeight: weightText || "",
+        patientWeightKg: (weightKg ?? 0).toString(),
+        patientWeightGrams: (weightGrams ?? 0).toString(),
       });
 
       // Load body data (vitals, complaints, etc.) including patient contact info
