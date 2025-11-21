@@ -124,7 +124,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
       </div>
 
       <div style={{
-        paddingLeft: "5px",
+        paddingLeft: "15px",
         fontSize: "10px",
         lineHeight: "1.3",
         flexGrow: 1,
@@ -135,8 +135,8 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
           <div
             key={med.id}
             style={{
-              marginBottom: "5px",
-              paddingLeft: "6px",
+              marginBottom: "8px",
+              paddingLeft: "8px",
               paddingRight: "30px",
               position: "relative",
               borderBottom: "1px solid #f0f0f0",
@@ -251,10 +251,10 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                           suppressContentEditableWarning
                           onBlur={(e) => updateMedicine(med.id, "name", e.currentTarget.textContent || "")}
                           style={{ 
-                            fontSize: "11px", 
+                            fontSize: "13px", 
                             fontWeight: 700, 
                             color: "#000", 
-                            minHeight: "14px", 
+                            minHeight: "16px", 
                             outline: "none",
                             padding: "1px"
                           }}
@@ -266,10 +266,10 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                           suppressContentEditableWarning
                           onBlur={(e) => updateMedicine(med.id, "generic_name", e.currentTarget.textContent || "")}
                           style={{ 
-                            fontSize: "9px", 
+                            fontSize: "10px", 
                             color: "#0056b3", 
                             fontWeight: 600, 
-                            minHeight: "12px", 
+                            minHeight: "13px", 
                             outline: "none",
                             padding: "1px"
                           }}
@@ -280,7 +280,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                           contentEditable
                           suppressContentEditableWarning
                           onBlur={(e) => updateMedicine(med.id, "strength", e.currentTarget.textContent || "")}
-                          style={{ outline: "none", padding: "1px", minWidth: "25px", fontSize: "9px", color: "#666" }}
+                          style={{ outline: "none", padding: "1px", minWidth: "25px", fontSize: "10px", color: "#666" }}
                         >
                           {med.strength || "mg"}
                         </span>
