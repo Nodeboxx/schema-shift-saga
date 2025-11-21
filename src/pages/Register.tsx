@@ -231,11 +231,17 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-            Welcome to HealthScribe
-          </h1>
-          <p className="text-muted-foreground">Your complete healthcare management solution</p>
+        <div className="flex justify-between items-start mb-8">
+          <div className="text-center flex-1">
+            <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+              Welcome to HealthScribe
+            </h1>
+            <p className="text-muted-foreground">Your complete healthcare management solution</p>
+          </div>
+          <Button variant="outline" onClick={() => navigate("/")}>
+            <Home className="w-4 h-4 mr-2" />
+            Back to Home
+          </Button>
         </div>
 
         <Card className="overflow-hidden">
