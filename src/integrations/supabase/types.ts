@@ -1303,11 +1303,14 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"] | null
           settings: Json | null
           specialization: string | null
+          subscription_end_date: string | null
+          subscription_start_date: string | null
           subscription_status: string | null
           subscription_tier:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
           trial_ends_at: string | null
+          trial_started_at: string | null
         }
         Insert: {
           active_template?: string | null
@@ -1341,11 +1344,14 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"] | null
           settings?: Json | null
           specialization?: string | null
+          subscription_end_date?: string | null
+          subscription_start_date?: string | null
           subscription_status?: string | null
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
           trial_ends_at?: string | null
+          trial_started_at?: string | null
         }
         Update: {
           active_template?: string | null
@@ -1379,11 +1385,14 @@ export type Database = {
           role?: Database["public"]["Enums"]["app_role"] | null
           settings?: Json | null
           specialization?: string | null
+          subscription_end_date?: string | null
+          subscription_start_date?: string | null
           subscription_status?: string | null
           subscription_tier?:
             | Database["public"]["Enums"]["subscription_tier"]
             | null
           trial_ends_at?: string | null
+          trial_started_at?: string | null
         }
         Relationships: [
           {
@@ -1659,12 +1668,18 @@ export type Database = {
       subscriptions: {
         Row: {
           amount: number | null
+          approved_at: string | null
+          approved_by: string | null
+          auto_renew: boolean | null
           billing_cycle: string | null
           clinic_id: string | null
           created_at: string | null
           currency: string | null
           end_date: string | null
           id: string
+          next_billing_date: string | null
+          payment_method: string | null
+          payment_reference: string | null
           start_date: string | null
           status: string | null
           stripe_customer_id: string | null
@@ -1675,12 +1690,18 @@ export type Database = {
         }
         Insert: {
           amount?: number | null
+          approved_at?: string | null
+          approved_by?: string | null
+          auto_renew?: boolean | null
           billing_cycle?: string | null
           clinic_id?: string | null
           created_at?: string | null
           currency?: string | null
           end_date?: string | null
           id?: string
+          next_billing_date?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
           start_date?: string | null
           status?: string | null
           stripe_customer_id?: string | null
@@ -1691,12 +1712,18 @@ export type Database = {
         }
         Update: {
           amount?: number | null
+          approved_at?: string | null
+          approved_by?: string | null
+          auto_renew?: boolean | null
           billing_cycle?: string | null
           clinic_id?: string | null
           created_at?: string | null
           currency?: string | null
           end_date?: string | null
           id?: string
+          next_billing_date?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
           start_date?: string | null
           status?: string | null
           stripe_customer_id?: string | null
@@ -1706,6 +1733,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "subscriptions_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "subscriptions_clinic_id_fkey"
             columns: ["clinic_id"]

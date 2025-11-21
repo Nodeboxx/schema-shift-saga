@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Check, ArrowLeft } from "lucide-react";
+import { SubscriptionAuth } from "@/components/subscription/SubscriptionAuth";
 
 interface PricingPlan {
   id: string;
@@ -30,11 +31,18 @@ const Checkout = () => {
   const [agreed, setAgreed] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bkash' | 'wire'>('card');
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const billingCycle = searchParams.get('billing') || 'monthly';
 
   useEffect(() => {
     loadPlanDetails();
+    checkAuth();
   }, [plan]);
+
+  const checkAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setIsAuthenticated(!!user);
+  };
 
   const loadPlanDetails = async () => {
     try {
@@ -102,14 +110,18 @@ const Checkout = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        // User not authenticated, redirect to register with return URL
         toast({
-          title: "Login Required",
-          description: "Please login or signup to complete your subscription",
+          title: "Error",
+          description: "Please login first",
+          variant: "destructive",
         });
-        navigate(`/register?redirect=/checkout/${plan}&billing=${billingCycle}`);
         return;
       }
+
+      const formData = new FormData(e.target as HTMLFormElement);
+      
+      // Determine status based on payment method
+      const status = (paymentMethod === 'bkash' || paymentMethod === 'wire') ? 'pending' : 'active';
 
       // Create subscription record
       const { error } = await supabase
@@ -117,25 +129,36 @@ const Checkout = () => {
         .insert({
           user_id: user.id,
           tier: plan as any,
-          status: "active",
+          status: status,
           amount: displayPrice,
-          billing_cycle: billingCycle
+          billing_cycle: billingCycle,
+          payment_method: paymentMethod,
+          payment_reference: formData.get('transaction_id') as string || formData.get('card') as string || 'wire_transfer',
         });
 
       if (error) throw error;
 
-      // Update profile
-      await supabase
-        .from("profiles")
-        .update({
-          subscription_tier: plan as any,
-          subscription_status: "active"
-        })
-        .eq("id", user.id);
+      // Update profile if payment is instant (card)
+      if (status === 'active') {
+        const endDate = new Date();
+        endDate.setMonth(endDate.getMonth() + (billingCycle === 'yearly' ? 12 : 1));
+
+        await supabase
+          .from("profiles")
+          .update({
+            subscription_tier: plan as any,
+            subscription_status: "active",
+            subscription_start_date: new Date().toISOString(),
+            subscription_end_date: endDate.toISOString(),
+          })
+          .eq("id", user.id);
+      }
 
       toast({
         title: "Success!",
-        description: "Your subscription has been activated"
+        description: status === 'pending' 
+          ? "Your order has been submitted for approval" 
+          : "Your subscription has been activated"
       });
 
       navigate("/dashboard");
@@ -163,6 +186,11 @@ const Checkout = () => {
         </Button>
 
         <div className="grid md:grid-cols-2 gap-8">
+          {/* Show Auth if not logged in */}
+          {isAuthenticated === false && (
+            <SubscriptionAuth onAuthSuccess={checkAuth} />
+          )}
+
           {/* Plan Summary */}
           <Card className="p-6">
             <h2 className="text-2xl font-bold mb-6">Plan Summary</h2>
@@ -203,9 +231,10 @@ const Checkout = () => {
           </Card>
 
           {/* Payment Form */}
-          <Card className="p-6">
-            <h2 className="text-2xl font-bold mb-6">Payment Information</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          {isAuthenticated && (
+            <Card className="p-6">
+              <h2 className="text-2xl font-bold mb-6">Payment Information</h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="name">Full Name</Label>
                 <Input id="name" required />
@@ -340,6 +369,7 @@ const Checkout = () => {
               </p>
             </form>
           </Card>
+          )}
         </div>
       </div>
     </div>
