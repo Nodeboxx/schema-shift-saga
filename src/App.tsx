@@ -36,6 +36,7 @@ import VerifyPrescription from "./pages/VerifyPrescription";
 import Questionnaires from "./pages/Questionnaires";
 import Notifications from "./pages/Notifications";
 import Telemedicine from "./pages/Telemedicine";
+import UserGuidePage from "./pages/UserGuidePage";
 import NotFound from "./pages/NotFound";
 import Demo from "./pages/Demo";
 import DemoPrescription from "./pages/DemoPrescription";
@@ -77,6 +78,8 @@ const App = () => (
               <Route path="/questionnaires" element={<Questionnaires />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/telemedicine" element={<Telemedicine />} />
+              <Route path="/patient/telemedicine/:sessionId" element={<PatientTelemedicine />} />
+              <Route path="/user-guide" element={<UserGuidePage />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/import-data" element={<DataImport />} />
               <Route path="/checkout/:plan" element={<Checkout />} />
