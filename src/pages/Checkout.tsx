@@ -120,45 +120,61 @@ const Checkout = () => {
 
       const formData = new FormData(e.target as HTMLFormElement);
       
-      // Determine status based on payment method
-      const status = (paymentMethod === 'bkash' || paymentMethod === 'wire') ? 'pending' : 'active';
-
-      // Create subscription record
-      const { error } = await supabase
-        .from("subscriptions")
+      // Create order record (not subscription yet)
+      const { error: orderError } = await supabase
+        .from("orders")
         .insert({
           user_id: user.id,
-          tier: plan as any,
-          status: status,
+          plan_id: plan,
+          plan_name: selectedPlan.name,
           amount: displayPrice,
+          currency: selectedPlan.currency,
           billing_cycle: billingCycle,
           payment_method: paymentMethod,
           payment_reference: formData.get('transaction_id') as string || formData.get('card') as string || 'wire_transfer',
+          status: (paymentMethod === 'bkash' || paymentMethod === 'wire') ? 'pending' : 'approved',
         });
 
-      if (error) throw error;
+      if (orderError) throw orderError;
 
-      // Update profile if payment is instant (card)
-      if (status === 'active') {
+      // For instant payments (card), auto-approve and create subscription
+      if (paymentMethod !== 'bkash' && paymentMethod !== 'wire') {
+        const isLifetime = plan === 'lifetime';
         const endDate = new Date();
-        endDate.setMonth(endDate.getMonth() + (billingCycle === 'yearly' ? 12 : 1));
+        
+        if (isLifetime) {
+          endDate.setFullYear(endDate.getFullYear() + 100);
+        } else {
+          endDate.setMonth(endDate.getMonth() + (billingCycle === 'yearly' ? 12 : 1));
+        }
 
-        await supabase
-          .from("profiles")
-          .update({
-            subscription_tier: plan as any,
-            subscription_status: "active",
-            subscription_start_date: new Date().toISOString(),
-            subscription_end_date: endDate.toISOString(),
-          })
-          .eq("id", user.id);
+        // Create subscription
+        await supabase.from("subscriptions").insert({
+          user_id: user.id,
+          tier: plan as any,
+          status: 'active',
+          amount: displayPrice,
+          billing_cycle: billingCycle,
+          payment_method: paymentMethod,
+          is_lifetime: isLifetime,
+          start_date: new Date().toISOString(),
+          end_date: endDate.toISOString(),
+        });
+
+        // Update profile
+        await supabase.from("profiles").update({
+          subscription_tier: plan as any,
+          subscription_status: "active",
+          subscription_start_date: new Date().toISOString(),
+          subscription_end_date: endDate.toISOString(),
+        }).eq("id", user.id);
       }
 
       toast({
         title: "Success!",
-        description: status === 'pending' 
-          ? "Your order has been submitted for approval" 
-          : "Your subscription has been activated"
+        description: (paymentMethod === 'bkash' || paymentMethod === 'wire')
+          ? "Your order has been submitted. Admin will review and approve your payment."
+          : "Your subscription has been activated!"
       });
 
       navigate("/dashboard");
