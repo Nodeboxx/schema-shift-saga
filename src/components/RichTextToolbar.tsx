@@ -19,6 +19,9 @@ import {
   Plus,
   AlignHorizontalSpaceAround,
   Baseline,
+  FileText,
+  Download,
+  Image,
 } from "lucide-react";
 import {
   Select,
@@ -35,9 +38,10 @@ import { Slider } from "@/components/ui/slider";
 interface RichTextToolbarProps {
   onCommand: (command: string, value?: string) => void;
   className?: string;
+  contentRef?: React.RefObject<HTMLElement>;
 }
 
-const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
+const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarProps) => {
   const [fontSize, setFontSize] = useState("13");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [textColor, setTextColor] = useState("#000000");
@@ -150,6 +154,82 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
     }
   };
 
+  const handleExportPDF = async () => {
+    if (!contentRef?.current) return;
+    
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const jsPDF = (await import("jspdf")).default;
+      
+      const canvas = await html2canvas(contentRef.current, {
+        scale: 2,
+        useCORS: true,
+      });
+      
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+      
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("prescription.pdf");
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+    }
+  };
+
+  const handleExportDOC = async () => {
+    if (!contentRef?.current) return;
+    
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Prescription</title>
+        </head>
+        <body>
+          ${contentRef.current.innerHTML}
+        </body>
+      </html>
+    `;
+    
+    const blob = new Blob([htmlContent], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "prescription.doc";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportPNG = async () => {
+    if (!contentRef?.current) return;
+    
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      
+      const canvas = await html2canvas(contentRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+      
+      const url = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "prescription.png";
+      link.click();
+    } catch (error) {
+      console.error("Error exporting PNG:", error);
+    }
+  };
+
   const colors = [
     "#000000", "#FFFFFF", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", 
     "#FF00FF", "#00FFFF", "#C0C0C0", "#808080", "#800000", "#808000",
@@ -164,7 +244,7 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
   ];
 
   return (
-    <div className={`flex flex-wrap items-center gap-1 p-3 bg-card border-b border-border shadow-sm ${className}`}>
+    <div className={`flex flex-wrap items-center justify-center gap-1 p-3 bg-card border-b border-border shadow-sm ${className || ''}`}>
       {/* Font Family */}
       <Select value={fontFamily} onValueChange={handleFontFamily}>
         <SelectTrigger className="w-[180px] h-9 text-sm bg-background">
@@ -504,6 +584,42 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
         title="Clear Formatting"
       >
         Clear
+      </Button>
+
+      <div className="h-6 w-px bg-border mx-1" />
+
+      {/* Export Options */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-9 px-3 text-xs hover:bg-muted gap-1"
+        onClick={handleExportPDF}
+        title="Export as PDF"
+      >
+        <FileText className="h-4 w-4" />
+        PDF
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-9 px-3 text-xs hover:bg-muted gap-1"
+        onClick={handleExportDOC}
+        title="Export as DOC"
+      >
+        <Download className="h-4 w-4" />
+        DOC
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-9 px-3 text-xs hover:bg-muted gap-1"
+        onClick={handleExportPNG}
+        title="Export as PNG"
+      >
+        <Image className="h-4 w-4" />
+        PNG
       </Button>
     </div>
   );
