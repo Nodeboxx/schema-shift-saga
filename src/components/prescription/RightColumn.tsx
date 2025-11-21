@@ -6,12 +6,13 @@ import { VoiceContentEditable } from "@/components/voice/VoiceContentEditable";
 
 interface Medicine {
   id: string;
-  type: "medicine" | "category";
+  type: "medicine" | "category" | "text_field";
   name?: string;
   details?: string;
   dose?: string;
   duration?: string;
   categoryContent?: string;
+  textContent?: string;
   generic_name?: string;
   strength?: string;
   manufacturer_name?: string;
@@ -57,6 +58,22 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
             id: Date.now().toString(),
             type: "category",
             categoryContent: "▶️ New Category",
+          },
+        ],
+      });
+    }
+  };
+
+  const addTextField = () => {
+    if (setData) {
+      setData({
+        ...data,
+        medicines: [
+          ...medicines,
+          {
+            id: Date.now().toString(),
+            type: "text_field",
+            textContent: "Enter your text here...",
           },
         ],
       });
@@ -114,12 +131,30 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
         }}>
           Rx
         </h1>
-        <div className="no-print" style={{ display: "flex", gap: "8px" }}>
-          <Button onClick={addMedicine} variant="outline" size="sm" className="add-medicine-btn h-8 text-xs">
+        <div className="no-print" style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          <Button 
+            onClick={addMedicine} 
+            variant="outline" 
+            size="sm" 
+            className="add-medicine-btn h-8 text-xs bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700"
+          >
             + Add Medicine
           </Button>
-          <Button onClick={addCategory} variant="outline" size="sm" className="add-medicine-btn h-8 text-xs">
+          <Button 
+            onClick={addCategory} 
+            variant="outline" 
+            size="sm" 
+            className="add-medicine-btn h-8 text-xs bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700"
+          >
             + Add Category
+          </Button>
+          <Button 
+            onClick={addTextField} 
+            variant="outline" 
+            size="sm" 
+            className="add-medicine-btn h-8 text-xs bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700"
+          >
+            + Add Text Field
           </Button>
         </div>
       </div>
@@ -180,6 +215,24 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                     minHeight: "14px",
                     padding: "2px",
                     border: "1px solid transparent",
+                  }}
+                />
+              </>
+            ) : med.type === "text_field" ? (
+              <>
+                <VoiceContentEditable
+                  value={med.textContent || ""}
+                  onBlur={(value) => updateMedicine(med.id, "textContent", value)}
+                  style={{
+                    fontSize: "10px",
+                    color: "#333",
+                    marginTop: "8px",
+                    marginBottom: "4px",
+                    minHeight: "20px",
+                    padding: "4px",
+                    border: "1px solid #e0e0e0",
+                    borderRadius: "4px",
+                    lineHeight: "1.4",
                   }}
                 />
               </>
