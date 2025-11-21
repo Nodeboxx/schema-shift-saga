@@ -231,44 +231,32 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-5xl">
-        {/* Logo and Header - Centered */}
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-6">
-            <img src={logo} alt="MedDexPro" className="h-16 md:h-20" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Welcome to MedDexPro
-          </h1>
-          <p className="text-sm md:text-base text-muted-foreground">
-            Your complete healthcare management solution
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
+      <div className="w-full max-w-7xl">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <img src={logo} alt="MedDexPro" className="h-12 md:h-14" />
         </div>
 
-        <div className="flex justify-end mb-6">
-          <Button variant="ghost" onClick={() => navigate("/")} className="text-sm">
-            ← Back to Home
+        {/* Back to Home - Top Right */}
+        <div className="absolute top-4 right-4">
+          <Button variant="ghost" onClick={() => navigate("/")} size="sm">
+            ← Home
           </Button>
         </div>
 
-        <Card className="overflow-hidden shadow-xl border border-border/20 bg-card/80 backdrop-blur-xl rounded-3xl">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 p-1.5 h-auto bg-muted/50 m-6 mb-0 rounded-xl">
-              <TabsTrigger value="login" className="text-sm font-medium py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                Login
-              </TabsTrigger>
-              <TabsTrigger value="signup" className="text-sm font-medium py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
-                Sign Up
-              </TabsTrigger>
-            </TabsList>
+        {/* Split Screen Layout */}
+        <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-3xl shadow-2xl overflow-hidden border border-border/40 backdrop-blur-xl">
+          {/* LEFT SIDE - LOGIN */}
+          <div className="p-8 lg:p-12 flex flex-col justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+            <div className="max-w-md mx-auto w-full">
 
-            <TabsContent value="login" className="mt-0">
-              <form onSubmit={handleLogin} className="space-y-5 max-w-md mx-auto px-8 py-8">
-                <div className="text-center mb-6">
-                  <h3 className="text-2xl font-semibold mb-2">Sign In</h3>
-                  <p className="text-muted-foreground text-sm">Access your MedDexPro account</p>
-                </div>
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
+                <p className="text-muted-foreground">Sign in to continue to MedDexPro</p>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-5">
 
                 <div className="space-y-1.5">
                   <Label htmlFor="login-email" className="text-sm font-medium">Email Address</Label>
@@ -279,7 +267,7 @@ const Register = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="h-10 rounded-lg"
+                    className="h-11 rounded-xl"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -296,10 +284,10 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="h-10 rounded-lg"
+                    className="h-11 rounded-xl"
                   />
                 </div>
-                <Button type="submit" className="w-full h-10 text-sm font-medium rounded-lg" disabled={loading}>
+                <Button type="submit" className="w-full h-11 text-sm font-medium rounded-xl" disabled={loading}>
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -309,270 +297,183 @@ const Register = () => {
                     "Sign In"
                   )}
                 </Button>
-                <p className="text-center text-sm text-muted-foreground pt-2">
-                  Don't have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("signup")}
-                    className="text-primary font-medium hover:underline"
-                  >
-                    Sign up for free
-                  </button>
-                </p>
               </form>
-            </TabsContent>
 
-            <TabsContent value="signup" className="mt-0">
+              <div className="mt-6 text-center">
+                <p className="text-sm text-muted-foreground">
+                  New to MedDexPro?{" "}
+                  <span className="text-primary font-semibold">Check the right side →</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT SIDE - SIGNUP */}
+          <div className="p-8 lg:p-12 flex flex-col justify-center bg-background border-l border-border/20">
+
+            <div className="max-w-md mx-auto w-full">
               {signupStep === "details" ? (
-                <form onSubmit={handleSignupDetails} className="space-y-4 max-w-md mx-auto px-8 py-8">
-                  <div className="text-center mb-6">
-                    <h3 className="text-2xl font-semibold mb-2">Create Account</h3>
-                    <p className="text-muted-foreground text-sm">Join MedDexPro today</p>
+                <>
+                  <div className="mb-8">
+                    <h2 className="text-3xl font-bold mb-2">Get Started</h2>
+                    <p className="text-muted-foreground">Create your MedDexPro account</p>
                   </div>
 
-                  {/* User Type Toggle */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <Button
-                      type="button"
-                      variant={userType === "clinic_admin" ? "default" : "outline"}
-                      onClick={() => setUserType("clinic_admin")}
-                      className="w-full h-9 text-sm rounded-lg"
-                    >
-                      Clinic
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={userType === "doctor" ? "default" : "outline"}
-                      onClick={() => setUserType("doctor")}
-                      className="w-full h-9 text-sm rounded-lg"
-                    >
-                      Doctor
-                    </Button>
-                  </div>
+                  <form onSubmit={handleSignupDetails} className="space-y-4">
+                    {/* User Type Toggle */}
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      <Button
+                        type="button"
+                        variant={userType === "clinic_admin" ? "default" : "outline"}
+                        onClick={() => setUserType("clinic_admin")}
+                        className="w-full h-10 text-sm rounded-xl"
+                      >
+                        Clinic
+                      </Button>
+                      <Button
+                        type="button"
+                        variant={userType === "doctor" ? "default" : "outline"}
+                        onClick={() => setUserType("doctor")}
+                        className="w-full h-10 text-sm rounded-xl"
+                      >
+                        Doctor
+                      </Button>
+                    </div>
 
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signup-name" className="text-sm font-medium">Full Name</Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      placeholder="Dr. John Doe"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required
-                      className="h-10 rounded-lg"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signup-email" className="text-sm font-medium">Email Address</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="h-10 rounded-lg"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signup-password" className="text-sm font-medium">Password</Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      minLength={6}
-                      className="h-10 rounded-lg"
-                    />
-                    <p className="text-xs text-muted-foreground">Must be at least 6 characters</p>
-                  </div>
-
-                  {userType === "doctor" && (
-                    <>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="specialty" className="text-sm font-medium">Specialty</Label>
-                        <Input
-                          id="specialty"
-                          type="text"
-                          placeholder="e.g., Cardiology, Pediatrics"
-                          value={specialty}
-                          onChange={(e) => setSpecialty(e.target.value)}
-                          className="h-10 rounded-lg"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label htmlFor="license" className="text-sm font-medium">BMDC Registration Number *</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-                            BMDC Reg. No-
-                          </span>
-                          <Input
-                            id="license"
-                            type="text"
-                            placeholder="12345"
-                            value={licenseNumber}
-                            onChange={(e) => setLicenseNumber(e.target.value)}
-                            required
-                            className="pl-32 h-10 rounded-lg"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="space-y-1.5">
-                          <Label htmlFor="fee" className="text-sm font-medium">Consultation Fee (৳)</Label>
-                          <Input
-                            id="fee"
-                            type="number"
-                            placeholder="500"
-                            value={consultationFee}
-                            onChange={(e) => setConsultationFee(e.target.value)}
-                            className="h-10 rounded-lg"
-                          />
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label htmlFor="experience" className="text-sm font-medium">Experience (years)</Label>
-                          <Input
-                            id="experience"
-                            type="number"
-                            placeholder="5"
-                            value={experience}
-                            onChange={(e) => setExperience(e.target.value)}
-                            className="h-10 rounded-lg"
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  {userType === "clinic_admin" && (
                     <div className="space-y-1.5">
-                      <Label htmlFor="clinic-name" className="text-sm font-medium">Clinic Name</Label>
+                      <Label htmlFor="signup-name" className="text-sm font-medium">Full Name</Label>
                       <Input
-                        id="clinic-name"
+                        id="signup-name"
                         type="text"
-                        placeholder="City Medical Center"
-                        value={specialty}
-                        onChange={(e) => setSpecialty(e.target.value)}
+                        placeholder="Dr. John Doe"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
                         required
-                        className="h-10 rounded-lg"
+                        className="h-11 rounded-xl"
                       />
                     </div>
-                  )}
+                    <div className="space-y-1.5">
+                      <Label htmlFor="signup-email" className="text-sm font-medium">Email Address</Label>
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="h-11 rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="signup-password" className="text-sm font-medium">Password</Label>
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        minLength={6}
+                        className="h-11 rounded-xl"
+                      />
+                      <p className="text-xs text-muted-foreground">Must be at least 6 characters</p>
+                    </div>
 
-                  <Button type="submit" className="w-full h-10 text-sm font-medium rounded-lg mt-2" disabled={loading}>
-                    {loading ? (
+                    {userType === "doctor" && (
                       <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Creating account...
-                      </>
-                    ) : (
-                      "Create Account"
-                    )}
-                  </Button>
-
-                  <p className="text-center text-sm text-muted-foreground pt-2">
-                    Already have an account?{" "}
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab("login")}
-                      className="text-primary font-medium hover:underline"
-                    >
-                      Sign in
-                    </button>
-                  </p>
-                </form>
-              ) : (
-                <div className="space-y-8">
-                  <div className="text-center">
-                    <h3 className="text-2xl font-bold mb-2">Choose Your Plan</h3>
-                    <p className="text-muted-foreground">Step 2 of 2: Select the plan that fits your practice</p>
-                  </div>
-
-                  <div className="grid md:grid-cols-3 gap-6">
-                    {plans.map((plan) => (
-                      <Card
-                        key={plan.id}
-                        className={cn(
-                          "relative p-6 cursor-pointer transition-all hover:shadow-lg",
-                          selectedPlan === plan.id && "border-2 border-primary shadow-xl",
-                          plan.featured && "border-primary/50"
-                        )}
-                        onClick={() => setSelectedPlan(plan.id)}
-                      >
-                        {plan.badge && (
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-medium">
-                              {plan.badge}
-                            </span>
-                          </div>
-                        )}
-
-                        <div className="text-center mb-4">
-                          <h4 className="font-bold text-lg mb-2">{plan.name}</h4>
-                          <div className="flex items-baseline justify-center gap-1 mb-1">
-                            <span className="text-3xl font-bold text-primary">
-                              {plan.currency}{plan.price}
-                            </span>
-                            <span className="text-muted-foreground">/{plan.period}</span>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{plan.description}</p>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="specialty" className="text-sm font-medium">Specialty</Label>
+                          <Input
+                            id="specialty"
+                            type="text"
+                            placeholder="e.g., Cardiology, Pediatrics"
+                            value={specialty}
+                            onChange={(e) => setSpecialty(e.target.value)}
+                            className="h-11 rounded-xl"
+                          />
                         </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="license" className="text-sm font-medium">BMDC Registration Number *</Label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                              BMDC Reg. No-
+                            </span>
+                            <Input
+                              id="license"
+                              type="text"
+                              placeholder="12345"
+                              value={licenseNumber}
+                              onChange={(e) => setLicenseNumber(e.target.value)}
+                              required
+                              className="pl-32 h-11 rounded-xl"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="fee" className="text-sm font-medium">Consultation Fee (৳)</Label>
+                            <Input
+                              id="fee"
+                              type="number"
+                              placeholder="500"
+                              value={consultationFee}
+                              onChange={(e) => setConsultationFee(e.target.value)}
+                              className="h-11 rounded-xl"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label htmlFor="experience" className="text-sm font-medium">Experience (years)</Label>
+                            <Input
+                              id="experience"
+                              type="number"
+                              placeholder="5"
+                              value={experience}
+                              onChange={(e) => setExperience(e.target.value)}
+                              className="h-11 rounded-xl"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
 
-                        <ul className="space-y-2 mb-4">
-                          {plan.features.slice(0, 5).map((feature, idx) => (
-                            <li key={idx} className="flex items-start gap-2 text-sm">
-                              <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                          {plan.features.length > 5 && (
-                            <li className="text-xs text-muted-foreground">
-                              +{plan.features.length - 5} more features
-                            </li>
-                          )}
-                        </ul>
+                    {userType === "clinic_admin" && (
+                      <div className="space-y-1.5">
+                        <Label htmlFor="clinic-name" className="text-sm font-medium">Clinic Name</Label>
+                        <Input
+                          id="clinic-name"
+                          type="text"
+                          placeholder="City Medical Center"
+                          value={specialty}
+                          onChange={(e) => setSpecialty(e.target.value)}
+                          required
+                          className="h-11 rounded-xl"
+                        />
+                      </div>
+                    )}
 
-                        {selectedPlan === plan.id && (
-                          <div className="absolute inset-0 border-2 border-primary rounded-lg pointer-events-none" />
-                        )}
-                      </Card>
-                    ))}
-                  </div>
-
-                  <div className="flex gap-4 max-w-md mx-auto">
-                    <Button
-                      variant="outline"
-                      onClick={() => setSignupStep("details")}
-                      className="flex-1"
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      onClick={handleSignup}
-                      disabled={loading || !selectedPlan}
-                      className="flex-1"
-                      size="lg"
-                    >
+                    <Button type="submit" className="w-full h-11 text-sm font-medium rounded-xl mt-4" disabled={loading}>
                       {loading ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Creating Account...
+                          Creating account...
                         </>
                       ) : (
-                        <>
-                          Complete Signup
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </>
+                        "Create Account"
                       )}
                     </Button>
+                  </form>
+
+                  <div className="mt-6 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Already have an account?{" "}
+                      <span className="text-primary font-semibold">Check the left side ←</span>
+                    </p>
                   </div>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </Card>
+                </>
+              ) : null}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
