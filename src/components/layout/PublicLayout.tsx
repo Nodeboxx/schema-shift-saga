@@ -49,10 +49,6 @@ export const PublicLayout = ({ children }: PublicLayoutProps) => {
         <div dangerouslySetInnerHTML={{ __html: headerContent.html }} />
       ) : (
         <>
-          <div className="bg-primary text-primary-foreground py-2 px-6 text-center text-sm">
-            <p>🎉 Trusted by doctors. Rated the #1 choice in digital healthcare management</p>
-          </div>
-          
           <nav className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
             <div className="container mx-auto px-6 py-4">
               <div className="flex items-center justify-between">
