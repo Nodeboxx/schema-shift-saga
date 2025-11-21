@@ -67,11 +67,11 @@ const ClinicDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background p-4">
-      <div className="container mx-auto max-w-7xl py-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="container mx-auto max-w-7xl py-4 md:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
           <div>
-            <h1 className="text-3xl font-bold">{clinic.name}</h1>
-            <p className="text-muted-foreground">Clinic Management</p>
+            <h1 className="text-2xl md:text-3xl font-bold">{clinic.name}</h1>
+            <p className="text-sm md:text-base text-muted-foreground">Clinic Management</p>
           </div>
           <Button variant="outline" onClick={() => navigate("/dashboard")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -80,10 +80,10 @@ const ClinicDashboard = () => {
         </div>
 
         <Tabs defaultValue="members" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="members">Team Members</TabsTrigger>
-            <TabsTrigger value="branding">Branding</TabsTrigger>
-            <TabsTrigger value="subscription">Subscription</TabsTrigger>
+          <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
+            <TabsTrigger value="members" className="text-xs sm:text-sm">Team</TabsTrigger>
+            <TabsTrigger value="branding" className="text-xs sm:text-sm">Branding</TabsTrigger>
+            <TabsTrigger value="subscription" className="text-xs sm:text-sm">Subscription</TabsTrigger>
           </TabsList>
 
           <TabsContent value="members">

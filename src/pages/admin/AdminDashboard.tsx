@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { AdminGuard } from "@/components/guards/AdminGuard";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   LayoutDashboard, 
   Users, 
@@ -24,7 +26,8 @@ import {
   ShoppingCart,
   LogOut,
   Database,
-  Package
+  Package,
+  Menu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AdminUsers from "@/components/admin/AdminUsers";
@@ -53,6 +56,8 @@ const AdminDashboard = () => {
   const { toast } = useToast();
   const { isSuperAdmin } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
+  const [open, setOpen] = useState(false);
+  const isMobile = useIsMobile();
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalClinics: 0,
@@ -112,71 +117,105 @@ const AdminDashboard = () => {
     }
   };
 
+  const SidebarNav = () => (
+    <>
+      <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.id}
+              onClick={() => {
+                setActiveTab(item.id);
+                if (isMobile) setOpen(false);
+              }}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                activeTab === item.id
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              )}
+            >
+              <Icon className="h-5 w-5 flex-shrink-0" />
+              <span className="truncate text-left">{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="p-4 border-t border-border space-y-2">
+        <Button 
+          variant="outline" 
+          className="w-full justify-start"
+          onClick={() => navigate("/dashboard")}
+        >
+          <LayoutDashboard className="h-5 w-5 mr-3" />
+          Back to Dashboard
+        </Button>
+        <Button 
+          variant="ghost" 
+          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            navigate("/login");
+          }}
+        >
+          <LogOut className="h-5 w-5 mr-3" />
+          Logout
+        </Button>
+      </div>
+    </>
+  );
+
   return (
     <AdminGuard requireSuperAdmin={true}>
-      <div className="flex min-h-screen w-full bg-background">
-        {/* Left Sidebar */}
-        <aside className="w-64 border-r border-border bg-card flex flex-col">
-          <div className="flex h-16 items-center border-b border-border px-6">
+      <div className="flex flex-col md:flex-row min-h-screen w-full bg-background">
+        {/* Mobile Header */}
+        {isMobile && (
+          <header className="flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-50">
             <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
               Admin Panel
             </h1>
-          </div>
-          
-          <nav className="flex-1 overflow-y-auto p-4 space-y-1">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={cn(
-                    "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                    activeTab === item.id
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  <Icon className="h-5 w-5" />
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-64">
+                <div className="flex h-16 items-center border-b border-border px-6">
+                  <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                    Admin Panel
+                  </h1>
+                </div>
+                <SidebarNav />
+              </SheetContent>
+            </Sheet>
+          </header>
+        )}
 
-          <div className="p-4 border-t border-border space-y-2">
-            <Button 
-              variant="outline" 
-              className="w-full justify-start"
-              onClick={() => navigate("/dashboard")}
-            >
-              <LayoutDashboard className="h-5 w-5 mr-3" />
-              Back to Dashboard
-            </Button>
-            <Button 
-              variant="ghost" 
-              className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-              onClick={async () => {
-                await supabase.auth.signOut();
-                navigate("/login");
-              }}
-            >
-              <LogOut className="h-5 w-5 mr-3" />
-              Logout
-            </Button>
-          </div>
-        </aside>
+        {/* Desktop Sidebar */}
+        {!isMobile && (
+          <aside className="w-64 border-r border-border bg-card flex flex-col">
+            <div className="flex h-16 items-center border-b border-border px-6">
+              <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                Admin Panel
+              </h1>
+            </div>
+            <SidebarNav />
+          </aside>
+        )}
 
         {/* Right Content Area */}
         <main className="flex-1 overflow-auto">
           {/* Header */}
           <header className="border-b border-border bg-card">
-            <div className="flex h-16 items-center justify-between px-8">
+            <div className="flex h-16 items-center justify-between px-4 md:px-8">
               <div>
-                <h2 className="text-2xl font-bold">
+                <h2 className="text-xl md:text-2xl font-bold">
                   {menuItems.find(item => item.id === activeTab)?.label}
                 </h2>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs md:text-sm text-muted-foreground hidden sm:block">
                   Enterprise system management
                 </p>
               </div>
@@ -185,8 +224,8 @@ const AdminDashboard = () => {
 
           {/* Stats Cards */}
           {activeTab === "overview" && (
-            <div className="p-8">
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 mb-8">
+            <div className="p-4 md:p-8">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 mb-8">
                 {[
                   { title: "Total Users", value: stats.totalUsers, icon: Users, gradient: "from-blue-500 to-blue-600" },
                   { title: "Clinics", value: stats.totalClinics, icon: Building2, gradient: "from-purple-500 to-purple-600" },
@@ -214,8 +253,8 @@ const AdminDashboard = () => {
                 })}
               </div>
 
-              <div className="grid gap-6 md:grid-cols-2">
-                <Card className="p-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card className="p-4 md:p-6">
                   <h3 className="text-lg font-semibold mb-4">Quick Stats</h3>
                   <ul className="space-y-3 text-sm">
                     <li className="flex justify-between">
@@ -237,7 +276,7 @@ const AdminDashboard = () => {
                   </ul>
                 </Card>
                 
-                <Card className="p-6">
+                <Card className="p-4 md:p-6">
                   <h3 className="text-lg font-semibold mb-4">Admin Capabilities</h3>
                   <ul className="space-y-3 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
@@ -263,7 +302,7 @@ const AdminDashboard = () => {
           )}
 
           {/* Tab Content */}
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             {activeTab === "users" && <AdminUsers />}
             {activeTab === "clinics" && <AdminClinics />}
             {activeTab === "appointments" && <AdminAppointments />}
