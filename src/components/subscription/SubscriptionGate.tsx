@@ -64,7 +64,9 @@ export const SubscriptionGate = ({
 
       // If feature is specified, check tier-based access
       if (feature && hasValidSubscription) {
-        const tierAccess = hasFeatureAccess(data.subscription_tier, feature);
+        // Default to 'free' tier for trial users or users without tier set
+        const effectiveTier = data.subscription_tier || (hasValidTrial ? 'free' : null);
+        const tierAccess = hasFeatureAccess(effectiveTier, feature);
         setHasAccess(tierAccess);
       } else {
         setHasAccess(hasValidSubscription);
