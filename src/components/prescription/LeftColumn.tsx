@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { VoiceContentEditable } from "@/components/voice/VoiceContentEditable";
 
 interface LeftColumnProps {
   width: number;
@@ -152,10 +153,9 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           }}>
             {enabledSections.find(s => s.id === "cc")?.title || "Presenting Complains:"}
           </h4>
-          <div
-            ref={ccRef}
-            contentEditable
-            suppressContentEditableWarning
+          <VoiceContentEditable
+            value={data?.ccText || "• "}
+            onBlur={(value) => handleContentChange("ccText", value)}
             onInput={(e) => {
               const content = e.currentTarget.innerHTML;
               if (!content.trim() || content.trim() === "<br>") {
@@ -174,8 +174,6 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
                 document.execCommand("insertHTML", false, "<br>• ");
               }
             }}
-            onBlur={(e) => handleContentChange("ccText", e.currentTarget.innerHTML)}
-            dangerouslySetInnerHTML={{ __html: data?.ccText || "• " }}
             style={{
               fontSize: "9px",
               lineHeight: "1.4",
@@ -268,15 +266,9 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
             >
               {section.title}
             </h4>
-            <div
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) =>
-                handleCustomSectionChange(section.id, e.currentTarget.innerHTML)
-              }
-              dangerouslySetInnerHTML={{
-                __html: customSectionContent[section.id] || "",
-              }}
+            <VoiceContentEditable
+              value={customSectionContent[section.id] || ""}
+              onBlur={(value) => handleCustomSectionChange(section.id, value)}
               style={{
                 fontSize: "9px",
                 lineHeight: "1.4",
@@ -421,12 +413,9 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           }}>
             {enabledSections.find(s => s.id === "dx")?.title || "Diagnosis:"}
           </h4>
-          <div
-            ref={dxRef}
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => handleContentChange("dxText", e.currentTarget.innerHTML)}
-            dangerouslySetInnerHTML={{ __html: data?.dxText || "" }}
+          <VoiceContentEditable
+            value={data?.dxText || ""}
+            onBlur={(value) => handleContentChange("dxText", value)}
             style={{
               fontSize: "9px",
               lineHeight: "1.4",
@@ -456,10 +445,9 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           }}>
             {enabledSections.find(s => s.id === "adv")?.title || "Advice:"}
           </h4>
-          <div
-            ref={advRef}
-            contentEditable
-            suppressContentEditableWarning
+          <VoiceContentEditable
+            value={data?.advText || "• "}
+            onBlur={(value) => handleContentChange("advText", value)}
             onInput={(e) => {
               const content = e.currentTarget.textContent || "";
               const htmlContent = e.currentTarget.innerHTML;
@@ -498,8 +486,6 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
                 document.execCommand("insertHTML", false, "<br>• ");
               }
             }}
-            onBlur={(e) => handleContentChange("advText", e.currentTarget.innerHTML)}
-            dangerouslySetInnerHTML={{ __html: data?.advText || "• " }}
             style={{
               fontSize: "9px",
               lineHeight: "1.4",
@@ -529,12 +515,9 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           }}>
             {enabledSections.find(s => s.id === "followup")?.title || "Follow Up:"}
           </h4>
-          <div
-            ref={followUpRef}
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => handleContentChange("followUpText", e.currentTarget.innerHTML)}
-            dangerouslySetInnerHTML={{ __html: data?.followUpText || "" }}
+          <VoiceContentEditable
+            value={data?.followUpText || ""}
+            onBlur={(value) => handleContentChange("followUpText", value)}
             style={{
               fontSize: "9px",
               lineHeight: "1.4",

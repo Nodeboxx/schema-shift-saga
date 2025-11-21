@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { VoiceContentEditable } from "@/components/voice/VoiceContentEditable";
 
 const PrescriptionFooter = () => {
   const [footerLeft, setFooterLeft] = useState("");
@@ -44,23 +45,23 @@ const PrescriptionFooter = () => {
       boxSizing: "border-box",
       marginTop: "auto",
     }}>
-      <div
-        contentEditable
-        suppressContentEditableWarning
-        onBlur={(e) => setFooterLeft(e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: footerLeft }}
-        style={{ width: "45%" }}
-      />
+      <div style={{ width: "45%", position: "relative" }}>
+        <VoiceContentEditable
+          value={footerLeft}
+          onBlur={(value) => setFooterLeft(value)}
+          style={{ minHeight: "20px" }}
+        />
+      </div>
       <div style={{ fontSize: "12px", fontWeight: 600, textAlign: "center" }}>
         Page 1
       </div>
-      <div
-        contentEditable
-        suppressContentEditableWarning
-        onBlur={(e) => setFooterRight(e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: footerRight }}
-        style={{ width: "45%", textAlign: "right" }}
-      />
+      <div style={{ width: "45%", position: "relative" }}>
+        <VoiceContentEditable
+          value={footerRight}
+          onBlur={(value) => setFooterRight(value)}
+          style={{ textAlign: "right", minHeight: "20px" }}
+        />
+      </div>
     </footer>
   );
 };

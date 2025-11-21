@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import MedicineAutocomplete from "./MedicineAutocomplete";
 import DoseSelector from "./DoseSelector";
 import DurationSelector from "./DurationSelector";
+import { VoiceContentEditable } from "@/components/voice/VoiceContentEditable";
 
 interface Medicine {
   id: string;
@@ -157,12 +158,9 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
 
             {med.type === "category" ? (
               <>
-                <div
-                  id={`categoryContent-${med.id}`}
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => updateMedicine(med.id, "categoryContent", e.currentTarget.innerHTML)}
-                  dangerouslySetInnerHTML={{ __html: med.categoryContent || "" }}
+                <VoiceContentEditable
+                  value={med.categoryContent || ""}
+                  onBlur={(value) => updateMedicine(med.id, "categoryContent", value)}
                   style={{
                     fontSize: "12px",
                     fontWeight: 700,
@@ -301,12 +299,9 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                   {med.duration && ` ${med.duration.replace("→ সময়কাল: ", "")}`}
                 </div>
 
-                <div
-                  id={`details-${med.id}`}
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => updateMedicine(med.id, "details", e.currentTarget.innerHTML)}
-                  dangerouslySetInnerHTML={{ __html: med.details || "" }}
+                <VoiceContentEditable
+                  value={med.details || ""}
+                  onBlur={(value) => updateMedicine(med.id, "details", value)}
                   style={{
                     fontSize: "8px",
                     lineHeight: "1.3",
