@@ -8,6 +8,7 @@ import PrescriptionFooter from "./PrescriptionFooter";
 import { PatientSelector } from "./PatientSelector";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, Save, Mail, MessageCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface PrescriptionPageProps {
   prescriptionData?: any;
@@ -447,16 +448,22 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
 
   return (
     <>
-      {/* Patient selector - shown first if no patient selected */}
-      {!patientSelected && (
-        <div className="max-w-2xl mx-auto mb-8">
+      {/* Patient selector dialog - blocks until a patient is chosen for new prescriptions */}
+      <Dialog open={!patientSelected} onOpenChange={() => {}}>
+        <DialogContent className="max-w-xl sm:max-w-2xl bg-background border border-border shadow-xl">
+          <DialogHeader>
+            <DialogTitle>Select or Add Patient</DialogTitle>
+            <DialogDescription>
+              Choose an existing patient or create a new one before writing the prescription.
+            </DialogDescription>
+          </DialogHeader>
           <PatientSelector onPatientSelect={handlePatientSelect} />
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
 
       {/* Action buttons - only shown after patient selection */}
       {patientSelected && (
-        <div className="no-print sticky top-4 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg p-4 mb-4 shadow-lg">
+        <div className="no-print sticky top-4 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border rounded-lg p-4 mb-4 shadow-lg">
           <div className="flex flex-wrap gap-2 justify-center items-center">
             <Button onClick={handleSave} size="lg" className="flex-1 min-w-[150px]">
               <Save className="w-4 h-4 mr-2" />
