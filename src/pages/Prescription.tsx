@@ -129,7 +129,7 @@ const Prescription = () => {
 
   return (
     <div
-      className="min-h-screen bg-muted pt-32 md:pt-36 px-2 sm:px-4 lg:px-8 pb-8"
+      className="min-h-screen bg-muted pt-40 md:pt-44 px-2 sm:px-4 lg:px-8 pb-8"
       style={{ fontFamily: "'Kalpurush', 'SolaimanLipi', 'Arial', sans-serif" }}
     >
       <PrescriptionControls 

@@ -1468,6 +1468,7 @@ export type Database = {
           available_hours: string | null
           avatar_url: string | null
           bio: string | null
+          bismillah_text: string | null
           clinic_id: string | null
           consultation_fee: number | null
           council_logo_url: string | null
@@ -1513,6 +1514,7 @@ export type Database = {
           available_hours?: string | null
           avatar_url?: string | null
           bio?: string | null
+          bismillah_text?: string | null
           clinic_id?: string | null
           consultation_fee?: number | null
           council_logo_url?: string | null
@@ -1558,6 +1560,7 @@ export type Database = {
           available_hours?: string | null
           avatar_url?: string | null
           bio?: string | null
+          bismillah_text?: string | null
           clinic_id?: string | null
           consultation_fee?: number | null
           council_logo_url?: string | null

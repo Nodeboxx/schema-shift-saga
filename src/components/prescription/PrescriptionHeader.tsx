@@ -39,7 +39,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
 
       if (data) {
         setDoctorInfo({
-          bismillah: "بسم الله الرحمن الرحيم",
+          bismillah: data.bismillah_text || "",
           docNameEN: data.full_name || "Dr. [Your Name]",
           docDegreeEN: data.degree_en || "MBBS<br/>Experienced Physician",
           docNameBN: data.name_bn || "ডাঃ [আপনার নাম]",
@@ -66,18 +66,20 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
       zIndex: 1,
       backgroundColor: "white",
     }}>
-      <div
-        contentEditable
-        suppressContentEditableWarning
-        onBlur={(e) => handleEdit("bismillah", e.currentTarget.textContent || "")}
-        style={{
-          textAlign: "center",
-          fontSize: "18px",
-          marginBottom: "10px",
-        }}
-      >
-        {doctorInfo.bismillah}
-      </div>
+      {doctorInfo.bismillah && (
+        <div
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e) => handleEdit("bismillah", e.currentTarget.textContent || "")}
+          style={{
+            textAlign: "center",
+            fontSize: "18px",
+            marginBottom: "10px",
+          }}
+        >
+          {doctorInfo.bismillah}
+        </div>
+      )}
       
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
         {/* Left Column - English */}
