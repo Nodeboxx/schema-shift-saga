@@ -182,13 +182,15 @@ const AdminDashboard = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-64">
-                <div className="flex h-16 items-center border-b border-border px-6">
+              <SheetContent side="left" className="p-0 w-64 flex flex-col">
+                <div className="flex h-16 items-center border-b border-border px-6 flex-shrink-0">
                   <h1 className="text-lg font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
                     Admin Panel
                   </h1>
                 </div>
-                <SidebarNav />
+                <div className="flex-1 flex flex-col min-h-0">
+                  <SidebarNav />
+                </div>
               </SheetContent>
             </Sheet>
           </header>
