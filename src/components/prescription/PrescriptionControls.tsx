@@ -26,6 +26,11 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
   const [headerlessPrint, setHeaderlessPrint] = useState(false);
 
   const handlePrint = () => {
+    if (headerlessPrint) {
+      document.body.classList.add('print-headerless');
+    } else {
+      document.body.classList.remove('print-headerless');
+    }
     window.print();
   };
 
@@ -185,14 +190,12 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
             visibility: hidden !important;
             opacity: 0 !important;
           }
-          ${headerlessPrint ? `
-            .prescription-header {
-              display: none !important;
-            }
-            .prescription-footer {
-              display: none !important;
-            }
-          ` : ''}
+          body.print-headerless .prescription-header {
+            display: none !important;
+          }
+          body.print-headerless .prescription-footer {
+            display: none !important;
+          }
         }
       `}</style>
       <div className="no-print fixed top-0 left-0 right-0 bg-muted/50 backdrop-blur-sm border-b border-border z-[998] shadow-sm">
