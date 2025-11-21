@@ -17,18 +17,25 @@ export type FeatureKey =
   | 'priority_support';
 
 // Define which features are available for each tier
+// Aligned with CMS pricing plans:
+// - Free/Prescription Plan: Basic prescription features
+// - Pro/Appointment + Prescription Plan: Prescriptions + Appointments + Patient Management
+// - Enterprise/Full Care Plan: All features including patient journey tracking
 export const TIER_FEATURES: Record<SubscriptionTier, FeatureKey[]> = {
   free: [
-    'prescriptions', // Basic prescription creation
+    'prescriptions',        // Smart Prescription Builder
+    'custom_templates',     // Customizable Templates
+    'prescription_email',   // Send via WhatsApp/Email/Messenger
   ],
   pro: [
     'prescriptions',
-    'appointments',
-    'patient_management',
-    'analytics',
-    'prescription_history',
+    'appointments',         // Online Appointment Scheduling + Calendar
+    'patient_management',   // Patient Management
+    'analytics',           // Basic Analytics
+    'prescription_history', // Appointment History
     'prescription_email',
     'custom_templates',
+    'telemedicine',        // Telemedicine Integration (from Appointment plan)
   ],
   enterprise: [
     'prescriptions',
@@ -36,15 +43,15 @@ export const TIER_FEATURES: Record<SubscriptionTier, FeatureKey[]> = {
     'patient_management',
     'analytics',
     'telemedicine',
-    'patient_journey',
-    'questionnaires',
+    'patient_journey',      // Patient Journey Tracker
+    'questionnaires',       // Patient Questionnaires
     'prescription_history',
     'prescription_email',
     'custom_templates',
-    'multi_clinic',
-    'advanced_analytics',
-    'api_access',
-    'priority_support',
+    'multi_clinic',         // Multidisciplinary care support
+    'advanced_analytics',   // Advanced Analytics & Reports
+    'api_access',          // Clinical Insights & Research Support
+    'priority_support',     // Priority Feature Requests + Dedicated Team Training
   ],
 };
 

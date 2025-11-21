@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Check, ArrowLeft } from "lucide-react";
 import { SubscriptionAuth } from "@/components/subscription/SubscriptionAuth";
+import { getTierFromPlanId } from "@/lib/planMapping";
 
 interface PricingPlan {
   id: string;
@@ -139,6 +140,7 @@ const Checkout = () => {
 
       // For instant payments (card), auto-approve and create subscription
       if (paymentMethod !== 'bkash' && paymentMethod !== 'wire') {
+        const tier = getTierFromPlanId(plan); // Map plan ID to tier
         const isLifetime = plan === 'lifetime';
         const endDate = new Date();
         
@@ -151,7 +153,7 @@ const Checkout = () => {
         // Create subscription
         await supabase.from("subscriptions").insert({
           user_id: user.id,
-          tier: plan as any,
+          tier: tier as any,
           status: 'active',
           amount: displayPrice,
           billing_cycle: billingCycle,
@@ -161,9 +163,9 @@ const Checkout = () => {
           end_date: endDate.toISOString(),
         });
 
-        // Update profile
+        // Update profile with correct tier
         await supabase.from("profiles").update({
-          subscription_tier: plan as any,
+          subscription_tier: tier as any,
           subscription_status: "active",
           subscription_start_date: new Date().toISOString(),
           subscription_end_date: endDate.toISOString(),
