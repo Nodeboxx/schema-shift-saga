@@ -4,9 +4,21 @@ import { Card } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Users, Search, Plus } from "lucide-react";
+import { Users, Search, Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { PatientDetailDialog } from "./PatientDetailDialog";
+import { PatientFormDialog } from "./PatientFormDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Patient {
   id: string;
@@ -16,6 +28,8 @@ interface Patient {
   phone: string | null;
   email: string | null;
   blood_group: string | null;
+  allergies: string | null;
+  medical_history: string | null;
   created_at: string;
 }
 
@@ -25,6 +39,12 @@ export const MyPatientsTab = () => {
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [formDialogOpen, setFormDialogOpen] = useState(false);
+  const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [patientToDelete, setPatientToDelete] = useState<Patient | null>(null);
 
   useEffect(() => {
     loadPatients();
@@ -70,6 +90,55 @@ export const MyPatientsTab = () => {
     }
   };
 
+  const handleViewPatient = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setDetailDialogOpen(true);
+  };
+
+  const handleAddPatient = () => {
+    setEditingPatient(null);
+    setFormDialogOpen(true);
+  };
+
+  const handleEditPatient = (patient: Patient) => {
+    setEditingPatient(patient);
+    setFormDialogOpen(true);
+  };
+
+  const handleDeleteClick = (patient: Patient) => {
+    setPatientToDelete(patient);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!patientToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("patients")
+        .delete()
+        .eq("id", patientToDelete.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Patient deleted successfully",
+      });
+
+      loadPatients();
+    } catch (error: any) {
+      toast({
+        title: "Error deleting patient",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setPatientToDelete(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -87,7 +156,7 @@ export const MyPatientsTab = () => {
             <Users className="h-5 w-5 text-primary" />
             <h3 className="text-lg font-semibold">Patient Database</h3>
           </div>
-          <Button onClick={() => window.location.href = '/prescription/new'}>
+          <Button onClick={handleAddPatient}>
             <Plus className="h-4 w-4 mr-2" />
             Add Patient
           </Button>
@@ -116,6 +185,7 @@ export const MyPatientsTab = () => {
               <TableHead>Email</TableHead>
               <TableHead>Blood Group</TableHead>
               <TableHead>Registered</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -130,7 +200,11 @@ export const MyPatientsTab = () => {
               </TableRow>
             ) : (
               filteredPatients.map((patient) => (
-                <TableRow key={patient.id}>
+                <TableRow 
+                  key={patient.id}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => handleViewPatient(patient)}
+                >
                   <TableCell className="font-medium">{patient.name}</TableCell>
                   <TableCell>{patient.age || "-"}</TableCell>
                   <TableCell>{patient.sex || "-"}</TableCell>
@@ -139,6 +213,24 @@ export const MyPatientsTab = () => {
                   <TableCell>{patient.blood_group || "-"}</TableCell>
                   <TableCell className="text-muted-foreground">
                     {format(new Date(patient.created_at), "PP")}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleEditPatient(patient)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDeleteClick(patient)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -153,6 +245,36 @@ export const MyPatientsTab = () => {
           Showing {filteredPatients.length} of {patients.length} total patients
         </p>
       </Card>
+
+      <PatientDetailDialog
+        patient={selectedPatient}
+        open={detailDialogOpen}
+        onOpenChange={setDetailDialogOpen}
+      />
+
+      <PatientFormDialog
+        patient={editingPatient}
+        open={formDialogOpen}
+        onOpenChange={setFormDialogOpen}
+        onSuccess={loadPatients}
+      />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Patient?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete {patientToDelete?.name}? This action cannot be undone and will remove all associated records.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
