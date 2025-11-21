@@ -149,7 +149,7 @@ export const PatientSelector = ({ onPatientSelect }: PatientSelectorProps) => {
                 <SelectTrigger>
                   <SelectValue placeholder="Select a patient..." />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-50 bg-popover">
                   {patients.map((patient) => (
                     <SelectItem key={patient.id} value={patient.id}>
                       {patient.name} - {patient.age} - {patient.sex}

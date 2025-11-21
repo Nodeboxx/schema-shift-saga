@@ -36,8 +36,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (error) throw error;
 
       const roleList = (data || []).map((r: any) => r.role as UserRole);
-      setRoles(roleList);
-      return roleList;
+      // Default to 'doctor' if no explicit roles are found so doctors see full UI
+      const finalRoles: UserRole[] = roleList.length > 0 ? roleList : ['doctor'];
+      setRoles(finalRoles);
+      return finalRoles;
     } catch (error: any) {
       console.error('Error loading roles:', error);
       toast({
