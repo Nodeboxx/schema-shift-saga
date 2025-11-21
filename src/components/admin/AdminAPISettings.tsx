@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Eye, EyeOff, Save, Key, Cpu, CreditCard, Mail } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 export const AdminAPISettings = () => {
   const { toast } = useToast();
@@ -32,27 +33,63 @@ export const AdminAPISettings = () => {
     // SMS Services
     twilio_account_sid: '',
     twilio_auth_token: '',
-    twilio_phone: ''
+    twilio_phone: '',
+    
+    // Messaging Services
+    whatsapp_api_key: '',
+    whatsapp_phone_number_id: '',
+    whatsapp_business_account_id: '',
+    messenger_page_access_token: '',
+    messenger_verify_token: '',
+    messenger_app_secret: ''
   });
 
   const toggleKeyVisibility = (key: string) => {
     setShowKeys(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('*')
+        .eq('key', 'api_settings')
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      
+      if (data?.value && typeof data.value === 'object') {
+        setApiSettings(prev => ({ ...prev, ...(data.value as any) }));
+      }
+    } catch (error: any) {
+      console.error('Error loading API settings:', error);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
-      // Save to database or environment
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated save
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({
+          key: 'api_settings',
+          value: apiSettings
+        });
+
+      if (error) throw error;
       
       toast({
         title: 'Success',
         description: 'API settings saved successfully',
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to save API settings',
+        description: error.message || 'Failed to save API settings',
         variant: 'destructive'
       });
     } finally {
@@ -114,7 +151,7 @@ export const AdminAPISettings = () => {
       </div>
 
       <Tabs defaultValue="ai" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="ai">
             <Cpu className="h-4 w-4 mr-2" />
             AI Services
@@ -126,6 +163,10 @@ export const AdminAPISettings = () => {
           <TabsTrigger value="email">
             <Mail className="h-4 w-4 mr-2" />
             Email/SMS
+          </TabsTrigger>
+          <TabsTrigger value="messaging">
+            <Mail className="h-4 w-4 mr-2" />
+            Messaging
           </TabsTrigger>
           <TabsTrigger value="other">
             <Key className="h-4 w-4 mr-2" />
@@ -189,6 +230,40 @@ export const AdminAPISettings = () => {
               {renderAPIField('twilio_account_sid', 'Account SID', 'AC...', Key)}
               {renderAPIField('twilio_auth_token', 'Auth Token', '...', Key)}
               {renderAPIField('twilio_phone', 'Phone Number', '+1...', Key)}
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="messaging" className="space-y-4">
+          <div className="grid gap-6">
+            <div className="space-y-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                WhatsApp Business API
+              </h3>
+              <Card className="p-4 bg-muted/50 mb-4">
+                <p className="text-sm text-muted-foreground">
+                  Configure WhatsApp Business API from Meta. You'll need a Business Account ID, Phone Number ID, and API Key.
+                </p>
+              </Card>
+              {renderAPIField('whatsapp_api_key', 'WhatsApp API Key', 'EAAE...', Key)}
+              {renderAPIField('whatsapp_phone_number_id', 'Phone Number ID', '123456...', Key)}
+              {renderAPIField('whatsapp_business_account_id', 'Business Account ID', '123456...', Key)}
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Facebook Messenger
+              </h3>
+              <Card className="p-4 bg-muted/50 mb-4">
+                <p className="text-sm text-muted-foreground">
+                  Configure Facebook Messenger API. You'll need a Page Access Token, Verify Token, and App Secret from your Facebook App.
+                </p>
+              </Card>
+              {renderAPIField('messenger_page_access_token', 'Page Access Token', 'EAAE...', Key)}
+              {renderAPIField('messenger_verify_token', 'Verify Token', 'your_verify_token', Key)}
+              {renderAPIField('messenger_app_secret', 'App Secret', 'abc123...', Key)}
             </div>
           </div>
         </TabsContent>

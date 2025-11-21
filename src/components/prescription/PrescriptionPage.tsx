@@ -153,6 +153,34 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   }, [prescriptionData]);
 
   const handleSave = async () => {
+    // Validate required patient data
+    if (!patientInfo.patientName.trim()) {
+      toast({
+        title: "Patient Name Required",
+        description: "Please enter patient's name before prescribing",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!patientInfo.patientAge.trim() || patientInfo.patientAge === "0y") {
+      toast({
+        title: "Patient Age Required",
+        description: "Please enter patient's age before prescribing",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!patientInfo.patientSex) {
+      toast({
+        title: "Patient Sex Required",
+        description: "Please select patient's sex before prescribing",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!userId || !patientInfo.patientName) {
       toast({
         title: "Error",
