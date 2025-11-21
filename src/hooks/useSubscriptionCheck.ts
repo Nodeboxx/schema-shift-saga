@@ -76,16 +76,22 @@ export const useSubscriptionCheck = () => {
         return;
       }
 
-      // Check if subscription is active
-      const hasActiveSubscription = data.subscription_status === "active";
+      const now = new Date();
+
+      // Check if paid subscription period (active or cancelled) is still valid
+      const hasPaidPeriod =
+        data.subscription_end_date && new Date(data.subscription_end_date) > now;
+      const hasActiveOrCancelledSubscription =
+        (data.subscription_status === "active" || data.subscription_status === "cancelled") &&
+        hasPaidPeriod;
       
       // Check if trial is still valid
       const hasValidTrial = 
         data.subscription_status === "trial" &&
         data.trial_ends_at &&
-        new Date(data.trial_ends_at) > new Date();
+        new Date(data.trial_ends_at) > now;
 
-      const hasAccess = hasActiveSubscription || hasValidTrial;
+      const hasAccess = hasActiveOrCancelledSubscription || hasValidTrial;
 
       setSubscription({
         hasAccess,

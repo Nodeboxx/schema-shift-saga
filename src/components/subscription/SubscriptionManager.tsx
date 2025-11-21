@@ -99,11 +99,6 @@ export const SubscriptionManager = () => {
   const getRemainingDays = () => {
     if (!subscription) return 0;
 
-    // Cancelled or inactive subscriptions should show 0 days remaining
-    if (subscription.subscription_status !== "active" && subscription.subscription_status !== "trial") {
-      return 0;
-    }
-
     const endDate = subscription.subscription_status === "trial" 
       ? subscription.trial_ends_at 
       : subscription.subscription_end_date;
