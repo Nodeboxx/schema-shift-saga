@@ -49,8 +49,18 @@ export const VoiceTextarea = ({
   });
 
   const handleVoiceToggle = async (lang: 'en-US' | 'bn-BD') => {
-    // Request microphone permission first
     if (!isListening) {
+      // Check browser support
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        toast({
+          title: 'Not Supported',
+          description: 'Voice input is only supported in Chrome, Edge, and Safari browsers.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Request microphone permission first
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
         setLanguage(lang);
