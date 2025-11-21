@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import PrescriptionHeader from "./PrescriptionHeader";
 import PatientInfoBar from "./PatientInfoBar";
 import PrescriptionBody from "./PrescriptionBody";
@@ -19,6 +20,7 @@ interface PrescriptionPageProps {
 
 const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageReady }: PrescriptionPageProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [patientSelected, setPatientSelected] = useState(false);
   const [pages, setPages] = useState([{ id: 1 }]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -464,7 +466,12 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
   return (
     <>
       {/* Patient selector dialog - blocks until a patient is chosen for new prescriptions */}
-      <Dialog open={!patientSelected} onOpenChange={() => {}}>
+      <Dialog open={!patientSelected} onOpenChange={(open) => {
+        if (!open) {
+          // User closed the dialog, redirect to dashboard
+          navigate("/dashboard");
+        }
+      }}>
         <DialogContent className="max-w-xl sm:max-w-2xl bg-background border border-border shadow-xl z-[9999]">
           <DialogHeader>
             <DialogTitle>Select or Add Patient</DialogTitle>
