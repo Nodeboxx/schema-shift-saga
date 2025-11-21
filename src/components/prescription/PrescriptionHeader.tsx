@@ -120,8 +120,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
                 src={councilLogoUrl} 
                 alt="Medical Council Logo"
                 style={{
-                  maxHeight: "80px",
-                  maxWidth: "120px",
+                  maxHeight: "50px",
+                  maxWidth: "70px",
                   objectFit: "contain"
                 }}
                 onError={(e) => {
@@ -130,7 +130,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               />
               {registrationNumber && (
                 <div style={{
-                  fontSize: "11px",
+                  fontSize: "9px",
                   fontWeight: 600,
                   color: "#333",
                   textAlign: "center",
