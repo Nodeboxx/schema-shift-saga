@@ -33,6 +33,8 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "pending":
+        return "secondary";
       case "scheduled":
         return "default";
       case "in_consultation":
@@ -43,6 +45,29 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
         return "destructive";
       default:
         return "default";
+    }
+  };
+
+  const handleApprove = async (appointmentId: string) => {
+    try {
+      const { error } = await supabase.rpc('approve_appointment', {
+        appointment_id: appointmentId
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Appointment approved successfully"
+      });
+
+      onUpdate();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to approve appointment",
+        variant: "destructive"
+      });
     }
   };
 
@@ -197,8 +222,19 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
               )}
             </div>
 
-            <div className="flex gap-2">
-              {appointment.status === "scheduled" && (
+            <div className="flex gap-2 flex-wrap">
+              {appointment.status === "pending" && (
+                <Button 
+                  size="sm" 
+                  variant="default"
+                  onClick={() => handleApprove(appointment.id)}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Calendar className="h-4 w-4 mr-1" />
+                  Approve
+                </Button>
+              )}
+              {(appointment.status === "scheduled" || appointment.status === "pending") && (
                 <>
                   <Button 
                     size="sm" 

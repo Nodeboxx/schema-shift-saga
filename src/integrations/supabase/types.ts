@@ -2160,6 +2160,10 @@ export type Database = {
       }
     }
     Functions: {
+      approve_appointment: {
+        Args: { appointment_id: string }
+        Returns: undefined
+      }
       assign_user_role: {
         Args: {
           user_email: string
@@ -2211,6 +2215,7 @@ export type Database = {
         | "completed"
         | "cancelled"
         | "no_show"
+        | "pending"
       subscription_tier: "free" | "pro" | "enterprise"
     }
     CompositeTypes: {
@@ -2346,6 +2351,7 @@ export const Constants = {
         "completed",
         "cancelled",
         "no_show",
+        "pending",
       ],
       subscription_tier: ["free", "pro", "enterprise"],
     },
