@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { cn } from "@/lib/utils";
 
 export const PublicAppointmentBooking = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [doctors, setDoctors] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState("");
@@ -37,11 +39,15 @@ export const PublicAppointmentBooking = () => {
 
       if (error) throw error;
       setDoctors(data || []);
+
+      const doctorFromParam = searchParams.get("doctor");
+      if (doctorFromParam && (data || []).some((d) => d.id === doctorFromParam)) {
+        setSelectedDoctor(doctorFromParam);
+      }
     } catch (error: any) {
       console.error("Error loading doctors:", error);
     }
   };
-
   const timeSlots = [
     "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
     "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
