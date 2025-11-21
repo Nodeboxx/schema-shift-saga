@@ -282,7 +282,11 @@ export const SubscriptionManager = () => {
         <div className="flex gap-3">
           <Button onClick={() => setUpgradeModalOpen(true)} className="flex-1">
             <TrendingUp className="mr-2 h-4 w-4" />
-            {subscription.subscription_status === "trial" ? "Choose Plan" : "Upgrade Plan"}
+            {subscription.subscription_status === "trial" 
+              ? "Choose Plan" 
+              : subscription.subscription_tier === "pro" 
+              ? "Extend Plan" 
+              : "Upgrade Plan"}
           </Button>
           
           {subscription.subscription_status === "active" && (
