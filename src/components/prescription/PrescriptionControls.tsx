@@ -172,6 +172,17 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
           button[style*="position: absolute"] {
             display: none !important;
           }
+          /* Hide Lovable badge */
+          [data-lovable-badge],
+          .lovable-badge,
+          a[href*="lovable"],
+          a[href*="Lovable"],
+          footer a,
+          footer button {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+          }
           ${headerlessPrint ? `
             .prescription-header {
               display: none !important;

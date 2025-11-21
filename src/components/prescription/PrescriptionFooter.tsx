@@ -44,18 +44,18 @@ const PrescriptionFooter = () => {
       boxSizing: "border-box",
       marginTop: "auto",
     }}>
-      <div style={{ width: "45%", position: "relative" }}>
+      <div style={{ width: "45%", position: "relative", textAlign: "left" }}>
         <div
           contentEditable
           dangerouslySetInnerHTML={{ __html: footerLeft }}
           onBlur={(e) => setFooterLeft(e.currentTarget.innerHTML)}
-          style={{ minHeight: "20px", outline: "none" }}
+          style={{ minHeight: "20px", outline: "none", textAlign: "left" }}
         />
       </div>
-      <div style={{ fontSize: "12px", fontWeight: 600, textAlign: "center" }}>
+      <div style={{ fontSize: "12px", fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}>
         Page 1
       </div>
-      <div style={{ width: "45%", position: "relative" }}>
+      <div style={{ width: "45%", position: "relative", textAlign: "right" }}>
         <div
           contentEditable
           dangerouslySetInnerHTML={{ __html: footerRight }}
