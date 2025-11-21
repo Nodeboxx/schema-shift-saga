@@ -53,7 +53,7 @@ const PrescriptionBody = ({ data, setData, templateSections }: PrescriptionBodyP
         onMouseDown={handleMouseDown}
         className="no-print"
         style={{
-          width: "5px",
+          width: "8px",
           cursor: "col-resize",
           backgroundColor: "#ccc",
           flexShrink: 0,
