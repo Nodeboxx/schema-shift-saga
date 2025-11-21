@@ -209,19 +209,65 @@ All colors MUST be HSL.
     padding: 8px 12px !important;
   }
   
-  /* Compact footer */
-  .prescription-page > footer {
-    display: block !important;
-    position: relative !important;
+  /* Footer with proper alignment */
+  .prescription-page > footer,
+  .prescription-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
     background: white !important;
     border-top: 1px solid #e0e0e0 !important;
     padding: 6px 12px !important;
     margin: 0 !important;
     flex-shrink: 0 !important;
+    position: relative !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Footer left side - force left alignment */
+  .prescription-footer > div:first-child {
+    width: 45% !important;
+    text-align: left !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .prescription-footer > div:first-child > div {
+    text-align: left !important;
+  }
+
+  /* Footer center - page number */
+  .prescription-footer > div:nth-child(2) {
+    width: auto !important;
+    text-align: center !important;
+    padding: 0 8px !important;
+  }
+
+  /* Footer right side - force right alignment */
+  .prescription-footer > div:last-child {
+    width: 45% !important;
+    text-align: right !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .prescription-footer > div:last-child > div {
+    text-align: right !important;
   }
 
   .prescription-page:last-of-type {
     page-break-after: auto !important;
+  }
+
+  /* Hide Lovable badge and any links/buttons in footer */
+  [data-lovable-badge],
+  .lovable-badge,
+  a[href*="lovable"],
+  footer a,
+  footer button {
+    display: none !important;
+    visibility: hidden !important;
   }
 
   /* Hide any interactive elements in print */

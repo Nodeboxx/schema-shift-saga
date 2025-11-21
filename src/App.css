@@ -73,13 +73,17 @@
     overflow: hidden !important;
   }
   
-  /* Hide Lovable badge and controls */
+  /* Hide Lovable badge, controls, and any footer links */
   [data-lovable-badge],
   .lovable-badge,
   a[href*="lovable"],
+  a[href*="Lovable"],
+  footer a,
+  footer button,
   nav,
   .no-print {
     display: none !important;
     visibility: hidden !important;
+    opacity: 0 !important;
   }
 }
