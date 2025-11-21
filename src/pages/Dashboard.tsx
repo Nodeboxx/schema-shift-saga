@@ -43,13 +43,25 @@ const Dashboard = () => {
 
       const { data } = await supabase
         .from("profiles")
-        .select("subscription_status, subscription_tier, trial_ends_at")
+        .select("subscription_status, subscription_tier, subscription_end_date, trial_ends_at")
         .eq("id", user.id)
         .single();
 
       if (data) {
-        const hasActive = data.subscription_status === "active" || 
-          (data.subscription_status === "trial" && data.trial_ends_at && new Date(data.trial_ends_at) > new Date());
+        // Check if subscription is active (any tier with active status)
+        const hasActiveSubscription = data.subscription_status === "active";
+        
+        // Check if trial is still valid
+        const hasValidTrial = data.subscription_status === "trial" && 
+          data.trial_ends_at && 
+          new Date(data.trial_ends_at) > new Date();
+
+        // Check if subscription has not expired (end date in future)
+        const hasValidEndDate = 
+          data.subscription_end_date &&
+          new Date(data.subscription_end_date) > new Date();
+
+        const hasActive = hasActiveSubscription || hasValidTrial || hasValidEndDate;
         setHasActiveSubscription(hasActive);
       }
     } catch (error) {
