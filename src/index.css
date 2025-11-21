@@ -208,6 +208,11 @@ All colors MUST be HSL.
     margin: 0 !important;
     padding: 8px 12px !important;
   }
+
+  /* Maintain spacing in medicine list area */
+  .prescription-page > div:nth-child(3) > div > div:last-child {
+    padding-left: 20px !important;
+  }
   
   /* Footer with proper alignment */
   .prescription-page > footer,

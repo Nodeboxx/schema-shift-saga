@@ -96,6 +96,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
       flexBasis: `${width}%`,
       background: "#fff",
       padding: "10px",
+      paddingLeft: "20px",
       position: "relative",
       minWidth: "300px",
       display: "flex",
@@ -124,7 +125,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
       </div>
 
       <div style={{
-        paddingLeft: "15px",
+        paddingLeft: "20px",
         fontSize: "10px",
         lineHeight: "1.3",
         flexGrow: 1,
@@ -136,7 +137,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
             key={med.id}
             style={{
               marginBottom: "8px",
-              paddingLeft: "8px",
+              paddingLeft: "12px",
               paddingRight: "30px",
               position: "relative",
               borderBottom: "1px solid #f0f0f0",
