@@ -1182,8 +1182,10 @@ export type Database = {
           patient_age_days: number | null
           patient_age_months: number | null
           patient_age_years: number | null
+          patient_email: string | null
           patient_id: string | null
           patient_name: string
+          patient_phone: string | null
           patient_sex: string | null
           patient_weight: string | null
           patient_weight_grams: number | null
@@ -1221,8 +1223,10 @@ export type Database = {
           patient_age_days?: number | null
           patient_age_months?: number | null
           patient_age_years?: number | null
+          patient_email?: string | null
           patient_id?: string | null
           patient_name: string
+          patient_phone?: string | null
           patient_sex?: string | null
           patient_weight?: string | null
           patient_weight_grams?: number | null
@@ -1260,8 +1264,10 @@ export type Database = {
           patient_age_days?: number | null
           patient_age_months?: number | null
           patient_age_years?: number | null
+          patient_email?: string | null
           patient_id?: string | null
           patient_name?: string
+          patient_phone?: string | null
           patient_sex?: string | null
           patient_weight?: string | null
           patient_weight_grams?: number | null
