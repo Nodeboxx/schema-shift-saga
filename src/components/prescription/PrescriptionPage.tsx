@@ -183,6 +183,7 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
             dose: item.dose,
             duration: item.duration,
             categoryContent: item.category_content,
+            textContent: item.item_type === "text_field" ? item.category_content : undefined,
             // Restore medicine metadata from parsed details
             ...parsedDetails,
           };
@@ -470,7 +471,7 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
             details: JSON.stringify(metadata), // Store metadata as JSON
             dose: med.dose || "",
             duration: med.duration || "",
-            category_content: med.categoryContent || "",
+            category_content: med.type === "text_field" ? (med.textContent || "") : (med.categoryContent || ""),
             sort_order: index,
           };
         });
