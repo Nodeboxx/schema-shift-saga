@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Home, LogOut, Printer, Send, MessageCircle, Mail, Save, Plus } from "lucide-react";
+import { Home, LogOut, Printer, Send, MessageCircle, Mail, Save, Plus, ZoomIn, ZoomOut } from "lucide-react";
 import RichTextToolbar from "../RichTextToolbar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -16,9 +16,11 @@ interface PrescriptionControlsProps {
   patientPhone?: string;
   onSave?: () => void;
   onAddPage?: () => void;
+  zoom?: number;
+  onZoomChange?: (zoom: number) => void;
 }
 
-const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone, onSave, onAddPage }: PrescriptionControlsProps) => {
+const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone, onSave, onAddPage, zoom = 1, onZoomChange }: PrescriptionControlsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [headerlessPrint, setHeaderlessPrint] = useState(false);
@@ -303,6 +305,31 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
           <div className="mt-3 pt-3 border-t border-border">
             <RichTextToolbar onCommand={handleCommand} />
           </div>
+
+          {/* Zoom Controls */}
+          {onZoomChange && (
+            <div className="mt-3 pt-3 border-t border-border flex items-center justify-center gap-2">
+              <Button
+                size="icon"
+                variant="secondary"
+                onClick={() => onZoomChange(Math.max(0.5, zoom - 0.1))}
+                className="h-8 w-8"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </Button>
+              <div className="bg-secondary px-3 py-1.5 rounded-md font-semibold text-sm min-w-[60px] text-center">
+                {Math.round(zoom * 100)}%
+              </div>
+              <Button
+                size="icon"
+                variant="secondary"
+                onClick={() => onZoomChange(Math.min(2, zoom + 0.1))}
+                className="h-8 w-8"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </>

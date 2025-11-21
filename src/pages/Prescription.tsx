@@ -7,7 +7,7 @@ import PrescriptionPage from "@/components/prescription/PrescriptionPage";
 import PrescriptionControls from "@/components/prescription/PrescriptionControls";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock, ZoomIn, ZoomOut } from "lucide-react";
+import { Lock } from "lucide-react";
 
 const Prescription = () => {
   const [loading, setLoading] = useState(true);
@@ -139,30 +139,9 @@ const Prescription = () => {
         patientPhone={prescriptionData?.patient?.phone}
         onSave={onSave}
         onAddPage={onAddPage}
+        zoom={zoom}
+        onZoomChange={setZoom}
       />
-      
-      {/* Zoom controls */}
-      <div className="fixed bottom-4 right-4 flex gap-2 z-50 print:hidden">
-        <Button
-          size="icon"
-          variant="secondary"
-          onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
-          className="shadow-lg"
-        >
-          <ZoomOut className="w-4 h-4" />
-        </Button>
-        <div className="bg-secondary px-3 py-2 rounded-md shadow-lg font-semibold">
-          {Math.round(zoom * 100)}%
-        </div>
-        <Button
-          size="icon"
-          variant="secondary"
-          onClick={() => setZoom(Math.min(2, zoom + 0.1))}
-          className="shadow-lg"
-        >
-          <ZoomIn className="w-4 h-4" />
-        </Button>
-      </div>
 
       <div
         id="page-wrapper"
