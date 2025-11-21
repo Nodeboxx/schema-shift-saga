@@ -126,6 +126,7 @@ const Settings = () => {
     registration_number: "",
     footer_left: "",
     footer_right: "",
+    bismillah_text: "بسم الله الرحمن الرحيم",
     left_template_sections: [] as any[],
     active_template: "general_medicine",
     custom_templates: [] as any[],
@@ -181,6 +182,7 @@ const Settings = () => {
         registration_number: data.registration_number || "",
         footer_left: data.footer_left || "",
         footer_right: data.footer_right || "",
+        bismillah_text: data.bismillah_text || "بسم الله الرحمن الرحيم",
         left_template_sections: Array.isArray(data.left_template_sections) ? data.left_template_sections : [],
         active_template: data.active_template || "general_medicine",
         custom_templates: Array.isArray(data.custom_templates) ? data.custom_templates : [],
@@ -319,6 +321,7 @@ const Settings = () => {
           registration_number: profile.registration_number,
           footer_left: profile.footer_left,
           footer_right: profile.footer_right,
+          bismillah_text: profile.bismillah_text,
           avatar_url: avatarUrl,
         })
         .eq("id", user.id);
@@ -739,6 +742,20 @@ const Settings = () => {
                     placeholder="Phone: +880 123456789&#10;Email: doctor@example.com"
                     rows={3}
                   />
+                </div>
+
+                <div className="border-t pt-6">
+                  <Label htmlFor="bismillah_text">Bismillah Text (Optional)</Label>
+                  <Input
+                    id="bismillah_text"
+                    value={profile.bismillah_text}
+                    onChange={(e) => setProfile({ ...profile, bismillah_text: e.target.value })}
+                    placeholder="بسم الله الرحمن الرحيم"
+                    className="text-center text-lg"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This will appear at the top of your prescriptions. Leave empty to hide.
+                  </p>
                 </div>
 
                 <Button
