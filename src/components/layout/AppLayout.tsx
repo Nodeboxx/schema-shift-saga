@@ -22,7 +22,8 @@ import {
   Bell,
   Video,
   Menu,
-  Lock
+  Lock,
+  BookOpen
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -113,7 +114,14 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       feature: null // Available for all tiers
     },
     { 
-      to: '/telemedicine', 
+      to: '/user-guide', 
+      icon: BookOpen, 
+      label: 'User Guide',
+      show: isDoctor || isSuperAdmin || isClinicAdmin,
+      feature: null
+    },
+    { 
+      to: '/telemedicine',
       icon: Video, 
       label: 'Telemedicine',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
