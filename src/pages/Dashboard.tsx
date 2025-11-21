@@ -10,6 +10,7 @@ import { MyPatientsTab } from "@/components/dashboard/MyPatientsTab";
 import { ReportsTab } from "@/components/dashboard/ReportsTab";
 import { SubscriptionManager } from "@/components/subscription/SubscriptionManager";
 import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
+import { SubscriptionExpiryBanner } from "@/components/subscription/SubscriptionExpiryBanner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold">Dashboard</h1>
         </div>
 
+        <SubscriptionExpiryBanner />
         <SubscriptionManager />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

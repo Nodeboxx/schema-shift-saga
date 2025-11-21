@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { AdminSubscriptionStats } from "./AdminSubscriptionStats";
 
 interface Subscription {
   id: string;
@@ -103,6 +104,23 @@ export const AdminSubscriptions = () => {
         })
         .eq("id", subscription.user_id);
 
+      // Send notification
+      try {
+        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-subscription-notifications`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'subscription_approved',
+            subscriptionId,
+            userId: subscription.user_id,
+          }),
+        });
+      } catch (notifError) {
+        console.error('Failed to send notification:', notifError);
+      }
+
       toast({
         title: "Success",
         description: "Subscription approved successfully",
@@ -120,12 +138,33 @@ export const AdminSubscriptions = () => {
 
   const handleReject = async (subscriptionId: string) => {
     try {
+      const subscription = subscriptions.find(s => s.id === subscriptionId);
+
       const { error } = await supabase
         .from("subscriptions")
         .update({ status: "cancelled" })
         .eq("id", subscriptionId);
 
       if (error) throw error;
+
+      // Send notification
+      if (subscription) {
+        try {
+          await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-subscription-notifications`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              type: 'subscription_rejected',
+              subscriptionId,
+              userId: subscription.user_id,
+            }),
+          });
+        } catch (notifError) {
+          console.error('Failed to send notification:', notifError);
+        }
+      }
 
       toast({
         title: "Success",
@@ -202,6 +241,8 @@ export const AdminSubscriptions = () => {
 
   return (
     <>
+      <AdminSubscriptionStats />
+      
       <Card className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Subscription Management</h2>
