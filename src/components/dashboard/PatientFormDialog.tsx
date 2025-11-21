@@ -218,15 +218,32 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
 
             if (response.error) throw response.error;
 
+            const invitationLink = response.data?.invitationLink;
+
             toast({
-              title: "Invitation Sent",
-              description: `An invitation email has been sent to ${formData.email}`,
+              title: "Invitation Created",
+              description: invitationLink 
+                ? `Link: ${invitationLink}`
+                : "Patient created successfully.",
+              duration: 10000,
             });
+
+            // Auto-copy to clipboard
+            if (invitationLink) {
+              navigator.clipboard.writeText(invitationLink);
+              setTimeout(() => {
+                toast({ 
+                  title: "✓ Link copied to clipboard!", 
+                  description: "Share this link with your patient",
+                  duration: 5000 
+                });
+              }, 500);
+            }
           } catch (inviteError: any) {
             console.error("Error sending invitation:", inviteError);
             toast({
               title: "Invitation Note",
-              description: "Patient created successfully. Invitation link can be shared manually.",
+              description: "Patient created successfully. Invitation link can be shared manually from patient details.",
             });
           } finally {
             setSendingInvite(false);

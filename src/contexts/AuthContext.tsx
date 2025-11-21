@@ -14,6 +14,7 @@ interface AuthContextType {
   isClinicAdmin: boolean;
   isDoctor: boolean;
   isStaff: boolean;
+  isPatient: boolean;
   hasRole: (role: UserRole) => boolean;
   refreshRoles: () => Promise<void>;
 }
@@ -97,6 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isClinicAdmin = roles.includes('clinic_admin') || isSuperAdmin;
   const isDoctor = roles.includes('doctor') || isClinicAdmin;
   const isStaff = roles.includes('staff') || isDoctor;
+  const isPatient = roles.includes('patient');
 
   return (
     <AuthContext.Provider
@@ -109,6 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isClinicAdmin,
         isDoctor,
         isStaff,
+        isPatient,
         hasRole,
         refreshRoles
       }}

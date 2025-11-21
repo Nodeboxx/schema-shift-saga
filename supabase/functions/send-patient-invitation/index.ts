@@ -64,8 +64,11 @@ serve(async (req) => {
     if (updateError) throw updateError;
 
     // TODO: Send email via Resend when RESEND_API_KEY is configured
-    // For now, just return the invitation link
-    const invitationLink = `${Deno.env.get("SUPABASE_URL")?.replace("supabase.co", "lovable.app")}/patient-invite?token=${token}`;
+    // For now, return the invitation link for manual sharing
+    const baseUrl = Deno.env.get("SUPABASE_URL");
+    const projectId = baseUrl?.split("//")[1]?.split(".")[0] || "";
+    const appUrl = `https://${projectId}.lovable.app`;
+    const invitationLink = `${appUrl}/patient-invite?token=${token}`;
 
     console.log("Patient invitation created:", {
       patientId,
@@ -77,7 +80,7 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         invitationLink,
-        message: "Invitation created successfully",
+        message: "Invitation created successfully. Share this link with the patient.",
       }),
       {
         status: 200,

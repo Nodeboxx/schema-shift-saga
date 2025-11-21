@@ -3,18 +3,39 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const RoleRedirect = () => {
-  const { isSuperAdmin, isClinicAdmin, isDoctor, loading } = useAuth();
+  const { user, roles, isSuperAdmin, isClinicAdmin, isDoctor, isPatient, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || !user) return;
 
-    // Don't redirect if on login or public pages
-    if (location.pathname === '/login' || 
-        location.pathname === '/register' || 
-        location.pathname.startsWith('/verify/')) {
-      return;
+    // List of public pages that don't require authentication
+    const publicPages = [
+      '/', '/login', '/register', '/forgot-password', '/reset-password',
+      '/patient-invite', '/terms', '/privacy', '/about', '/contact',
+      '/find-doctors', '/book-appointment'
+    ];
+    
+    const isPublicPage = publicPages.some(page => 
+      location.pathname === page || location.pathname.startsWith('/verify/')
+    );
+    
+    if (isPublicPage) return;
+
+    // Check if user is a patient (has patient role)
+    const isOnlyPatient = isPatient && !isDoctor && !isClinicAdmin && !isSuperAdmin;
+
+    // Patient trying to access doctor/admin pages -> redirect to patient dashboard
+    if (isOnlyPatient) {
+      const doctorPages = ['/dashboard', '/prescription', '/prescriptions', '/appointments', 
+                          '/analytics', '/settings', '/telemedicine', '/admin', '/clinic'];
+      const isDoctorPage = doctorPages.some(page => location.pathname.startsWith(page));
+      
+      if (isDoctorPage && !location.pathname.startsWith('/patient/')) {
+        navigate('/patient/dashboard', { replace: true });
+        return;
+      }
     }
 
     // Super admin accessing regular dashboard -> redirect to admin
@@ -36,7 +57,13 @@ export const RoleRedirect = () => {
         return;
       }
     }
-  }, [isSuperAdmin, isClinicAdmin, isDoctor, loading, location.pathname, navigate]);
+
+    // Doctor/staff trying to access patient pages -> redirect to dashboard
+    if ((isDoctor || isSuperAdmin || isClinicAdmin) && location.pathname.startsWith('/patient/')) {
+      navigate('/dashboard', { replace: true });
+      return;
+    }
+  }, [user, roles, isSuperAdmin, isClinicAdmin, isDoctor, isPatient, loading, location.pathname, navigate]);
 
   return null;
 };
