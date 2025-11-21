@@ -94,10 +94,7 @@ const DemoPrescription = () => {
           <div className="flex items-center gap-3">
             <Button variant="outline" size="sm" onClick={handlePrintClick}>
               <Printer className="w-4 h-4 mr-2" />
-              Print (Disabled)
-            </Button>
-            <Button onClick={() => navigate("/register")}>
-              Sign Up for Full Access
+              Print (Disabled in Demo)
             </Button>
           </div>
         </div>
@@ -136,13 +133,10 @@ const DemoPrescription = () => {
         </div>
       </div>
 
-      {/* Bottom CTA */}
-      <div className="no-print fixed bottom-0 left-0 right-0 bg-primary text-primary-foreground py-4 px-6 text-center shadow-lg">
+      {/* Bottom Info Bar */}
+      <div className="no-print fixed bottom-0 left-0 right-0 bg-muted py-3 px-6 text-center shadow-lg">
         <div className="flex items-center justify-center gap-4">
-          <span className="font-medium">Enjoying the demo? Get unlimited access with a free trial!</span>
-          <Button variant="secondary" size="lg" onClick={() => navigate("/register")}>
-            Start Free Trial
-          </Button>
+          <span className="text-sm text-muted-foreground">This is a demo preview. In the full version, you can add unlimited medicines and print prescriptions.</span>
         </div>
       </div>
     </div>

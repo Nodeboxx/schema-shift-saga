@@ -136,16 +136,16 @@ const Demo = () => {
 
             <Card className="border-2 border-primary">
               <CardContent className="p-6 text-center">
-                <h3 className="text-xl font-bold mb-2">Ready to unlock all features?</h3>
+                <h3 className="text-xl font-bold mb-2">Enjoying the demo?</h3>
                 <p className="text-muted-foreground mb-4">
-                  Sign up now to get unlimited prescriptions, printing, patient management, and more!
+                  This is a preview of our doctor dashboard. Explore the prescription feature to see more!
                 </p>
                 <div className="flex gap-3 justify-center">
-                  <Button size="lg" onClick={() => navigate("/register")}>
-                    Start Free Trial
+                  <Button size="lg" onClick={() => navigate("/demo/prescription")}>
+                    Try Prescription Demo
                   </Button>
                   <Button size="lg" variant="outline" onClick={() => navigate("/")}>
-                    Learn More
+                    Back to Home
                   </Button>
                 </div>
               </CardContent>
