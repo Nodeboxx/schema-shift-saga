@@ -4,9 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Send, Video, Mic, MicOff, VideoOff } from "lucide-react";
+import { ArrowLeft, Send, Video, Mic, MicOff, VideoOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { RealtimeVoiceSession } from "@/utils/RealtimeVoice";
 
 interface Message {
   id: string;
@@ -27,9 +28,11 @@ const TelemedicineSession = ({ session, onEnd }: TelemedicineSessionProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [currentUserId, setCurrentUserId] = useState<string>("");
-  const [isMicOn, setIsMicOn] = useState(true);
-  const [isVideoOn, setIsVideoOn] = useState(true);
+  const [isVoiceActive, setIsVoiceActive] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [voiceStatus, setVoiceStatus] = useState<string>('disconnected');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const voiceRef = useRef<RealtimeVoiceSession | null>(null);
 
   useEffect(() => {
     loadMessages();
@@ -55,6 +58,9 @@ const TelemedicineSession = ({ session, onEnd }: TelemedicineSessionProps) => {
 
     return () => {
       supabase.removeChannel(channel);
+      if (voiceRef.current) {
+        voiceRef.current.disconnect();
+      }
     };
   }, [session.id]);
 
@@ -130,6 +136,87 @@ const TelemedicineSession = ({ session, onEnd }: TelemedicineSessionProps) => {
     }
   };
 
+  const startVoiceSession = async () => {
+    setIsConnecting(true);
+    try {
+      voiceRef.current = new RealtimeVoiceSession(
+        (message) => {
+          console.log("Voice message:", message);
+          
+          if (message.type === 'user') {
+            setMessages(prev => [...prev, {
+              id: Math.random().toString(),
+              sender_id: currentUserId,
+              sender_type: 'doctor',
+              message: `🎤 ${message.text}`,
+              created_at: new Date().toISOString(),
+              is_read: true
+            }]);
+          }
+          
+          if (message.type === 'assistant_partial' || message.type === 'assistant') {
+            setMessages(prev => {
+              const lastMsg = prev[prev.length - 1];
+              if (lastMsg && lastMsg.sender_id === 'ai') {
+                return [
+                  ...prev.slice(0, -1),
+                  { ...lastMsg, message: lastMsg.message + message.text }
+                ];
+              } else {
+                return [...prev, {
+                  id: Math.random().toString(),
+                  sender_id: 'ai',
+                  sender_type: 'doctor',
+                  message: message.text,
+                  created_at: new Date().toISOString(),
+                  is_read: true
+                }];
+              }
+            });
+          }
+        },
+        (status) => {
+          console.log("Voice status:", status);
+          setVoiceStatus(status);
+          if (status === 'connected') {
+            setIsVoiceActive(true);
+          } else if (status === 'error' || status === 'disconnected') {
+            setIsVoiceActive(false);
+          }
+        }
+      );
+
+      await voiceRef.current.connect();
+      
+      toast({
+        title: "Voice session started",
+        description: "You can now speak with the AI assistant",
+      });
+    } catch (error: any) {
+      console.error('Error starting voice:', error);
+      toast({
+        title: "Error starting voice",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const stopVoiceSession = () => {
+    if (voiceRef.current) {
+      voiceRef.current.disconnect();
+      voiceRef.current = null;
+    }
+    setIsVoiceActive(false);
+    
+    toast({
+      title: "Voice session ended",
+      description: "Voice communication has been stopped",
+    });
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -163,22 +250,36 @@ const TelemedicineSession = ({ session, onEnd }: TelemedicineSessionProps) => {
             </div>
           </div>
 
-          {/* Video Controls */}
+          {/* Voice Controls */}
           <div className="flex items-center justify-center gap-4">
-            <Button
-              variant={isMicOn ? "default" : "destructive"}
-              size="lg"
-              onClick={() => setIsMicOn(!isMicOn)}
-            >
-              {isMicOn ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
-            </Button>
-            <Button
-              variant={isVideoOn ? "default" : "destructive"}
-              size="lg"
-              onClick={() => setIsVideoOn(!isVideoOn)}
-            >
-              {isVideoOn ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
-            </Button>
+            {!isVoiceActive ? (
+              <Button
+                size="lg"
+                onClick={startVoiceSession}
+                disabled={isConnecting}
+              >
+                {isConnecting ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Connecting...
+                  </>
+                ) : (
+                  <>
+                    <Mic className="h-5 w-5 mr-2" />
+                    Start Voice Session
+                  </>
+                )}
+              </Button>
+            ) : (
+              <Button
+                variant="destructive"
+                size="lg"
+                onClick={stopVoiceSession}
+              >
+                <MicOff className="h-5 w-5 mr-2" />
+                Stop Voice
+              </Button>
+            )}
           </div>
         </Card>
 
