@@ -384,6 +384,58 @@ export const AdminSubscriptions = () => {
               />
             </div>
 
+            {/* Quick actions for extending subscription */}
+            <div className="space-y-2">
+              <Label>Quick Extend Options</Label>
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
+                    if (endDateInput && editingSubscription?.end_date) {
+                      const currentDate = new Date(editingSubscription.end_date);
+                      currentDate.setMonth(currentDate.getMonth() + 1);
+                      endDateInput.value = currentDate.toISOString().split('T')[0];
+                    }
+                  }}
+                >
+                  +1 Month
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
+                    if (endDateInput && editingSubscription?.end_date) {
+                      const currentDate = new Date(editingSubscription.end_date);
+                      currentDate.setMonth(currentDate.getMonth() + 3);
+                      endDateInput.value = currentDate.toISOString().split('T')[0];
+                    }
+                  }}
+                >
+                  +3 Months
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
+                    if (endDateInput && editingSubscription?.end_date) {
+                      const currentDate = new Date(editingSubscription.end_date);
+                      currentDate.setFullYear(currentDate.getFullYear() + 1);
+                      endDateInput.value = currentDate.toISOString().split('T')[0];
+                    }
+                  }}
+                >
+                  +1 Year
+                </Button>
+              </div>
+            </div>
+
             <div className="flex gap-2">
               <Button type="submit" className="flex-1">Save Changes</Button>
               <Button type="button" variant="outline" onClick={() => setEditingSubscription(null)}>

@@ -82,73 +82,47 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.totalPatients}</div>
-                  <p className="text-xs text-muted-foreground">Patients Prescribed</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Prescriptions</CardTitle>
+                  <CardTitle className="text-sm font-medium">Total Prescriptions</CardTitle>
                   <FileText className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.totalPrescriptions}</div>
-                  <p className="text-xs text-muted-foreground">Prescriptions Issued</p>
-                  <Button onClick={() => navigate('/prescription')} size="sm" className="mt-2">
-                    Prescribe now
-                  </Button>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Appointments</CardTitle>
+                  <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{stats.totalAppointments}</div>
-                  <p className="text-xs text-muted-foreground">Total Appointments Until today</p>
                 </CardContent>
               </Card>
             </div>
+            </SubscriptionGate>
+          </TabsContent>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Patient Gender Distribution</CardTitle>
-                </CardHeader>
-                <CardContent className="h-64 flex items-center justify-center text-muted-foreground">
-                  Chart visualization
-                </CardContent>
-              </Card>
+          <TabsContent value="patients">
+            <SubscriptionGate feature="patient management">
+              <MyPatientsTab />
+            </SubscriptionGate>
+          </TabsContent>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Appointments Per Day</CardTitle>
-                </CardHeader>
-                <CardContent className="h-64 flex items-center justify-center text-muted-foreground">
-                  Chart visualization
-                </CardContent>
-                  </Card>
-                </div>
-              </SubscriptionGate>
-            </TabsContent>
-
-            <TabsContent value="patients">
-              <SubscriptionGate feature="patient management">
-                <MyPatientsTab />
-              </SubscriptionGate>
-            </TabsContent>
-
-            <TabsContent value="reports">
-              <SubscriptionGate feature="reports">
-                <ReportsTab />
-              </SubscriptionGate>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </AppLayout>
-    );
-  };
+          <TabsContent value="reports">
+            <SubscriptionGate feature="reports and analytics">
+              <ReportsTab />
+            </SubscriptionGate>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </AppLayout>
+  );
+};
 
   export default Dashboard;
