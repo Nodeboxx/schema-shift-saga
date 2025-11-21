@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { QRCodeDisplay } from "./QRCodeDisplay";
 
 interface PrescriptionHeaderProps {
   doctorInfo: {
@@ -10,9 +11,11 @@ interface PrescriptionHeaderProps {
     docDegreeBN: string;
   };
   setDoctorInfo: (info: any) => void;
+  prescriptionId?: string;
+  uniqueHash?: string;
 }
 
-const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderProps) => {
+const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueHash }: PrescriptionHeaderProps) => {
   const [loading, setLoading] = useState(true);
   const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
@@ -101,42 +104,49 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo }: PrescriptionHeaderPro
           />
         </div>
 
-        {/* Center Column - Medical Council Logo */}
-        {councilLogoUrl && (
-          <div style={{ 
-            flex: "0 0 auto", 
-            display: "flex", 
-            flexDirection: "column", 
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "5px 15px"
-          }}>
-            <img 
-              src={councilLogoUrl} 
-              alt="Medical Council Logo"
-              style={{
-                maxHeight: "80px",
-                maxWidth: "120px",
-                objectFit: "contain",
-                marginBottom: "5px"
-              }}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-            {registrationNumber && (
-              <div style={{
-                fontSize: "11px",
-                fontWeight: 600,
-                color: "#333",
-                textAlign: "center",
-                whiteSpace: "nowrap"
-              }}>
-                {registrationNumber}
-              </div>
-            )}
-          </div>
-        )}
+        {/* Center Column - Medical Council Logo & QR Code */}
+        <div style={{ 
+          flex: "0 0 auto", 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "5px 15px",
+          gap: "10px"
+        }}>
+          {councilLogoUrl && (
+            <>
+              <img 
+                src={councilLogoUrl} 
+                alt="Medical Council Logo"
+                style={{
+                  maxHeight: "80px",
+                  maxWidth: "120px",
+                  objectFit: "contain"
+                }}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              {registrationNumber && (
+                <div style={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: "#333",
+                  textAlign: "center",
+                  whiteSpace: "nowrap"
+                }}>
+                  {registrationNumber}
+                </div>
+              )}
+            </>
+          )}
+          
+          {/* QR Code for Verification */}
+          {prescriptionId && uniqueHash && (
+            <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
+          )}
+        </div>
 
         {/* Right Column - Bengali */}
         <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>

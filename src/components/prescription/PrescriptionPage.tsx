@@ -18,6 +18,8 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
   const [pages, setPages] = useState([{ id: 1 }]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagesData, setPagesData] = useState<Record<number, any>>({ 1: {} });
+  const [prescriptionId, setPrescriptionId] = useState<string | undefined>();
+  const [uniqueHash, setUniqueHash] = useState<string | undefined>();
 
   const [doctorInfo, setDoctorInfo] = useState({
     bismillah: "بسم الله الرحمن الرحيم",
@@ -82,6 +84,10 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
 
   useEffect(() => {
     if (prescriptionData) {
+      // Store prescription ID and unique hash
+      setPrescriptionId(prescriptionData.id);
+      setUniqueHash(prescriptionData.unique_hash);
+      
       // Load patient info
       const formatDateFromDB = (dateStr: string) => {
         if (!dateStr) return new Date().toLocaleDateString('en-GB');
@@ -291,6 +297,24 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
 
         if (error) throw error;
         prescriptionId = data.id;
+        
+        // Update state with new prescription ID and hash
+        setPrescriptionId(data.id);
+        setUniqueHash(data.unique_hash);
+      }
+
+      // If updating existing prescription, fetch the latest unique_hash
+      if (prescriptionData?.id) {
+        const { data: updatedPrescription } = await supabase
+          .from("prescriptions")
+          .select("id, unique_hash")
+          .eq("id", prescriptionId)
+          .single();
+        
+        if (updatedPrescription) {
+          setPrescriptionId(updatedPrescription.id);
+          setUniqueHash(updatedPrescription.unique_hash);
+        }
       }
 
       // Save prescription items
@@ -403,7 +427,12 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
             flexDirection: "column",
           }}
         >
-          <PrescriptionHeader doctorInfo={doctorInfo} setDoctorInfo={setDoctorInfo} />
+          <PrescriptionHeader 
+            doctorInfo={doctorInfo} 
+            setDoctorInfo={setDoctorInfo}
+            prescriptionId={prescriptionId}
+            uniqueHash={uniqueHash}
+          />
           <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
           <PrescriptionBody 
             data={page.id === 1 ? bodyData : pagesData[page.id]}
