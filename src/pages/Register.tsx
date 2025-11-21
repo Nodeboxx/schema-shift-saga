@@ -70,20 +70,17 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      toast({
-        title: "Login Failed",
-        description: error.message,
-        variant: "destructive",
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-    } else {
-      const { data: { user } } = await supabase.auth.getUser();
 
+      if (error) throw error;
+
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) throw userError;
       if (!user) {
         navigate("/register");
         return;
@@ -95,10 +92,16 @@ const Register = () => {
         return;
       }
 
-      const { data: roles } = await supabase
+      const { data: roles, error: rolesError } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id);
+
+      if (rolesError) {
+        console.error("Error fetching roles:", rolesError);
+        navigate("/dashboard");
+        return;
+      }
 
       const roleList = (roles || []).map((r: any) => r.role);
 
@@ -109,63 +112,67 @@ const Register = () => {
       } else {
         navigate("/dashboard");
       }
+    } catch (error: any) {
+      console.error("Login error:", error);
+      toast({
+        title: "Login Failed",
+        description: error.message || "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSignupDetails = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password || !fullName) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // For doctors, validate additional fields
-    if (userType === "doctor") {
-      if (!licenseNumber) {
+    
+    try {
+      if (!email || !password || !fullName) {
         toast({
-          title: "Missing License",
-          description: "Please enter your BMDC registration number",
+          title: "Missing Information",
+          description: "Please fill in all fields",
           variant: "destructive",
         });
         return;
       }
-    }
 
-    // Direct signup without plan selection
-    setLoading(true);
+      // For doctors, validate additional fields
+      if (userType === "doctor") {
+        if (!licenseNumber) {
+          toast({
+            title: "Missing License",
+            description: "Please enter your BMDC registration number",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
 
-    const signupRedirectUrl = searchParams.get('redirect') 
-      ? `${window.location.origin}${searchParams.get('redirect')}`
-      : `${window.location.origin}/dashboard`;
+      setLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: signupRedirectUrl,
-        data: {
-          full_name: fullName,
-          user_type: userType,
-          specialty: userType === "doctor" ? specialty : null,
-          license_number: userType === "doctor" ? `BMDC Reg. No-${licenseNumber}` : null,
-          consultation_fee: userType === "doctor" ? consultationFee : null,
-          experience: userType === "doctor" ? experience : null,
+      const signupRedirectUrl = searchParams.get('redirect') 
+        ? `${window.location.origin}${searchParams.get('redirect')}`
+        : `${window.location.origin}/dashboard`;
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: signupRedirectUrl,
+          data: {
+            full_name: fullName,
+            user_type: userType,
+            specialty: userType === "doctor" ? specialty : null,
+            license_number: userType === "doctor" ? `BMDC Reg. No-${licenseNumber}` : null,
+            consultation_fee: userType === "doctor" ? consultationFee : null,
+            experience: userType === "doctor" ? experience : null,
+          },
         },
-      },
-    });
-
-    if (error) {
-      toast({
-        title: "Signup Failed",
-        description: error.message,
-        variant: "destructive",
       });
-    } else {
+
+      if (error) throw error;
+
       toast({
         title: "Success!",
         description: "Account created successfully. Logging you in...",
@@ -175,8 +182,16 @@ const Register = () => {
       setTimeout(() => {
         navigate("/dashboard");
       }, 1000);
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      toast({
+        title: "Signup Failed",
+        description: error.message || "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSignup = async () => {
@@ -234,21 +249,21 @@ const Register = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
       <div className="w-full max-w-7xl">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <img src={logo} alt="MedDexPro" className="h-12 md:h-14" />
+        <div className="flex justify-center mb-6 sm:mb-8">
+          <img src={logo} alt="MedDexPro" className="h-10 sm:h-12 md:h-14" />
         </div>
 
         {/* Back to Home - Top Right */}
-        <div className="absolute top-4 right-4">
-          <Button variant="ghost" onClick={() => navigate("/")} size="sm">
+        <div className="fixed top-4 right-4 z-10">
+          <Button variant="ghost" onClick={() => navigate("/")} size="sm" className="text-xs sm:text-sm">
             ← Home
           </Button>
         </div>
 
         {/* Split Screen Layout */}
-        <div className="grid lg:grid-cols-2 gap-0 bg-card rounded-3xl shadow-2xl overflow-hidden border border-border/40 backdrop-blur-xl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 bg-card rounded-3xl shadow-2xl overflow-hidden border border-border/40 backdrop-blur-xl">
           {/* LEFT SIDE - LOGIN */}
-          <div className="p-8 lg:p-12 flex flex-col justify-center bg-gradient-to-br from-primary/5 to-primary/10">
+          <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-gradient-to-br from-primary/5 to-primary/10">
             <div className="max-w-md mx-auto w-full">
 
               <div className="mb-8">
@@ -309,7 +324,7 @@ const Register = () => {
           </div>
 
           {/* RIGHT SIDE - SIGNUP */}
-          <div className="p-8 lg:p-12 flex flex-col justify-center bg-background border-l border-border/20">
+          <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center bg-background lg:border-l border-t lg:border-t-0 border-border/20">
 
             <div className="max-w-md mx-auto w-full">
               {signupStep === "details" ? (
