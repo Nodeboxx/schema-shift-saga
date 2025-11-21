@@ -13,9 +13,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 interface PrescriptionPageProps {
   prescriptionData?: any;
   userId?: string;
+  onSaveReady?: (saveHandler: () => void) => void;
+  onAddPageReady?: (addPageHandler: () => void) => void;
 }
 
-const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) => {
+const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageReady }: PrescriptionPageProps) => {
   const { toast } = useToast();
   const [patientSelected, setPatientSelected] = useState(false);
   const [pages, setPages] = useState([{ id: 1 }]);
@@ -446,11 +448,24 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
     }
   };
 
+  // Expose handlers to parent
+  useEffect(() => {
+    if (onSaveReady) {
+      onSaveReady(handleSave);
+    }
+  }, [onSaveReady, handleSave]);
+
+  useEffect(() => {
+    if (onAddPageReady) {
+      onAddPageReady(addPage);
+    }
+  }, [onAddPageReady, addPage]);
+
   return (
     <>
       {/* Patient selector dialog - blocks until a patient is chosen for new prescriptions */}
       <Dialog open={!patientSelected} onOpenChange={() => {}}>
-        <DialogContent className="max-w-xl sm:max-w-2xl bg-background border border-border shadow-xl">
+        <DialogContent className="max-w-xl sm:max-w-2xl bg-background border border-border shadow-xl z-[9999]">
           <DialogHeader>
             <DialogTitle>Select or Add Patient</DialogTitle>
             <DialogDescription>
@@ -461,43 +476,7 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
         </DialogContent>
       </Dialog>
 
-      {/* Action buttons - only shown after patient selection */}
-      {patientSelected && (
-        <div className="no-print sticky top-4 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border rounded-lg p-4 mb-4 shadow-lg">
-          <div className="flex flex-wrap gap-2 justify-center items-center">
-            <Button onClick={handleSave} size="lg" className="flex-1 min-w-[150px]">
-              <Save className="w-4 h-4 mr-2" />
-              Save Prescription
-            </Button>
-            
-            {uniqueHash && (
-              <>
-                <Button onClick={handleEmailShare} variant="outline" size="lg">
-                  <Mail className="w-4 h-4 mr-2" />
-                  Email
-                </Button>
-                <Button onClick={handleWhatsAppShare} variant="outline" size="lg">
-                  <MessageCircle className="w-4 h-4 mr-2" />
-                  WhatsApp
-                </Button>
-              </>
-            )}
-            
-            <div className="flex gap-2">
-              <Button onClick={addPage} variant="outline" size="lg">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Page
-              </Button>
-              {pages.length > 1 && (
-                <Button onClick={() => removePage(currentPage)} variant="destructive" size="lg">
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Remove Page
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Action buttons removed - moved to top toolbar */}
 
       {/* Prescription pages - only shown after patient selection */}
       {patientSelected && pages.map((page) => (
