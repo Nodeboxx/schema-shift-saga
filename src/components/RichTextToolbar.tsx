@@ -19,9 +19,6 @@ import {
   Plus,
   AlignHorizontalSpaceAround,
   Baseline,
-  FileText,
-  Download,
-  Image,
 } from "lucide-react";
 import {
   Select,
@@ -38,10 +35,9 @@ import { Slider } from "@/components/ui/slider";
 interface RichTextToolbarProps {
   onCommand: (command: string, value?: string) => void;
   className?: string;
-  contentRef?: React.RefObject<HTMLElement>;
 }
 
-const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarProps) => {
+const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
   const [fontSize, setFontSize] = useState("13");
   const [fontFamily, setFontFamily] = useState("Arial");
   const [textColor, setTextColor] = useState("#000000");
@@ -49,54 +45,20 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
   const [lineHeight, setLineHeight] = useState("1.5");
   const [letterSpacing, setLetterSpacing] = useState("0");
 
-  // 30+ Professional Fonts
   const fonts = [
-    "Arial",
-    "Times New Roman",
-    "Georgia",
-    "Courier New",
-    "Verdana",
-    "Helvetica",
-    "Palatino",
-    "Garamond",
-    "Bookman",
-    "Comic Sans MS",
-    "Trebuchet MS",
-    "Arial Black",
-    "Impact",
-    "Lucida Sans",
-    "Tahoma",
-    "Century Gothic",
-    "Lucida Console",
-    "Monaco",
-    "Consolas",
-    "Calibri",
-    "Cambria",
-    "Candara",
-    "Segoe UI",
-    "Franklin Gothic Medium",
-    "Copperplate",
-    "Brush Script MT",
-    "Lucida Handwriting",
-    "Papyrus",
-    "Kalpurush",
-    "SolaimanLipi",
-    "Noto Sans Bengali",
-    "Roboto",
-    "Open Sans",
-    "Lato",
+    "Arial", "Times New Roman", "Georgia", "Courier New", "Verdana", "Helvetica",
+    "Palatino", "Garamond", "Bookman", "Comic Sans MS", "Trebuchet MS", "Arial Black",
+    "Impact", "Lucida Sans", "Tahoma", "Century Gothic", "Lucida Console", "Monaco",
+    "Consolas", "Calibri", "Cambria", "Candara", "Segoe UI", "Franklin Gothic Medium",
+    "Copperplate", "Brush Script MT", "Lucida Handwriting", "Papyrus", "Kalpurush",
+    "SolaimanLipi", "Noto Sans Bengali", "Roboto", "Open Sans", "Lato",
   ];
 
-  // Font sizes from 1 to 300
   const generateFontSizes = () => {
     const sizes = [];
-    // 1-20: every 1px
     for (let i = 1; i <= 20; i++) sizes.push(i);
-    // 21-72: every 2px
     for (let i = 22; i <= 72; i += 2) sizes.push(i);
-    // 76-200: every 4px
     for (let i = 76; i <= 200; i += 4) sizes.push(i);
-    // 208-300: every 8px
     for (let i = 208; i <= 300; i += 8) sizes.push(i);
     return sizes;
   };
@@ -154,82 +116,6 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
     }
   };
 
-  const handleExportPDF = async () => {
-    if (!contentRef?.current) return;
-    
-    try {
-      const html2canvas = (await import("html2canvas")).default;
-      const jsPDF = (await import("jspdf")).default;
-      
-      const canvas = await html2canvas(contentRef.current, {
-        scale: 2,
-        useCORS: true,
-      });
-      
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-      
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-      pdf.save("prescription.pdf");
-    } catch (error) {
-      console.error("Error exporting PDF:", error);
-    }
-  };
-
-  const handleExportDOC = async () => {
-    if (!contentRef?.current) return;
-    
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Prescription</title>
-        </head>
-        <body>
-          ${contentRef.current.innerHTML}
-        </body>
-      </html>
-    `;
-    
-    const blob = new Blob([htmlContent], { type: "application/msword" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "prescription.doc";
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleExportPNG = async () => {
-    if (!contentRef?.current) return;
-    
-    try {
-      const html2canvas = (await import("html2canvas")).default;
-      
-      const canvas = await html2canvas(contentRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-      });
-      
-      const url = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "prescription.png";
-      link.click();
-    } catch (error) {
-      console.error("Error exporting PNG:", error);
-    }
-  };
-
   const colors = [
     "#000000", "#FFFFFF", "#FF0000", "#00FF00", "#0000FF", "#FFFF00", 
     "#FF00FF", "#00FFFF", "#C0C0C0", "#808080", "#800000", "#808000",
@@ -244,8 +130,7 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
   ];
 
   return (
-    <div className={`flex flex-wrap items-center justify-center gap-1 p-3 bg-card border-b border-border shadow-sm ${className || ''}`}>
-      {/* Font Family */}
+    <div className={`flex flex-wrap items-center justify-center gap-1 p-3 bg-card border-b border-border shadow-sm ${className}`}>
       <Select value={fontFamily} onValueChange={handleFontFamily}>
         <SelectTrigger className="w-[180px] h-9 text-sm bg-background">
           <SelectValue placeholder="Font Family" />
@@ -259,7 +144,6 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
         </SelectContent>
       </Select>
 
-      {/* Font Size */}
       <Select value={fontSize} onValueChange={handleFontSize}>
         <SelectTrigger className="w-[100px] h-9 text-sm bg-background">
           <SelectValue placeholder="Size" />
@@ -275,70 +159,27 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
 
       <div className="h-6 w-px bg-border mx-1" />
 
-      {/* Text Formatting */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("bold")}
-        title="Bold (Ctrl+B)"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("bold")} title="Bold (Ctrl+B)">
         <Bold className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("italic")}
-        title="Italic (Ctrl+I)"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("italic")} title="Italic (Ctrl+I)">
         <Italic className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("underline")}
-        title="Underline (Ctrl+U)"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("underline")} title="Underline (Ctrl+U)">
         <Underline className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("strikeThrough")}
-        title="Strikethrough"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("strikeThrough")} title="Strikethrough">
         <Strikethrough className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("subscript")}
-        title="Subscript"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("subscript")} title="Subscript">
         <Subscript className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("superscript")}
-        title="Superscript"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("superscript")} title="Superscript">
         <Superscript className="h-4 w-4" />
       </Button>
 
       <div className="h-6 w-px bg-border mx-1" />
 
-      {/* Text Color */}
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" title="Text Color">
@@ -361,17 +202,11 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
                 />
               ))}
             </div>
-            <Input
-              type="color"
-              value={textColor}
-              onChange={(e) => handleColor(e.target.value)}
-              className="w-full h-10"
-            />
+            <Input type="color" value={textColor} onChange={(e) => handleColor(e.target.value)} className="w-full h-10" />
           </div>
         </PopoverContent>
       </Popover>
 
-      {/* Highlight Color */}
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" title="Highlight">
@@ -394,105 +229,43 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
                 />
               ))}
             </div>
-            <Input
-              type="color"
-              value={bgColor}
-              onChange={(e) => handleHighlight(e.target.value)}
-              className="w-full h-10"
-            />
+            <Input type="color" value={bgColor} onChange={(e) => handleHighlight(e.target.value)} className="w-full h-10" />
           </div>
         </PopoverContent>
       </Popover>
 
       <div className="h-6 w-px bg-border mx-1" />
 
-      {/* Alignment */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("justifyLeft")}
-        title="Align Left"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("justifyLeft")} title="Align Left">
         <AlignLeft className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("justifyCenter")}
-        title="Align Center"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("justifyCenter")} title="Align Center">
         <AlignCenter className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("justifyRight")}
-        title="Align Right"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("justifyRight")} title="Align Right">
         <AlignRight className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("justifyFull")}
-        title="Justify"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("justifyFull")} title="Justify">
         <AlignJustify className="h-4 w-4" />
       </Button>
 
       <div className="h-6 w-px bg-border mx-1" />
 
-      {/* Lists */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("insertUnorderedList")}
-        title="Bullet List"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("insertUnorderedList")} title="Bullet List">
         <List className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("insertOrderedList")}
-        title="Numbered List"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("insertOrderedList")} title="Numbered List">
         <ListOrdered className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("indent")}
-        title="Increase Indent"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("indent")} title="Increase Indent">
         <Plus className="h-4 w-4" />
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 w-9 p-0 hover:bg-muted"
-        onClick={() => onCommand("outdent")}
-        title="Decrease Indent"
-      >
+      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 hover:bg-muted" onClick={() => onCommand("outdent")} title="Decrease Indent">
         <Minus className="h-4 w-4" />
       </Button>
 
       <div className="h-6 w-px bg-border mx-1" />
 
-      {/* Line Spacing */}
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="ghost" size="sm" className="h-9 px-3 hover:bg-muted" title="Line Spacing">
@@ -503,20 +276,12 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
         <PopoverContent className="w-64 p-4 z-[9999] bg-background">
           <div className="space-y-3">
             <Label className="text-sm font-medium">Line Spacing</Label>
-            <Slider
-              value={[parseFloat(lineHeight)]}
-              onValueChange={([value]) => applyLineHeight(value.toString())}
-              min={1}
-              max={3}
-              step={0.1}
-              className="w-full"
-            />
+            <Slider value={[parseFloat(lineHeight)]} onValueChange={([value]) => applyLineHeight(value.toString())} min={1} max={3} step={0.1} className="w-full" />
             <div className="text-xs text-muted-foreground">Current: {lineHeight}</div>
           </div>
         </PopoverContent>
       </Popover>
 
-      {/* Letter Spacing */}
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="ghost" size="sm" className="h-9 px-3 hover:bg-muted" title="Letter Spacing">
@@ -527,14 +292,7 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
         <PopoverContent className="w-64 p-4 z-[9999] bg-background">
           <div className="space-y-3">
             <Label className="text-sm font-medium">Letter Spacing</Label>
-            <Slider
-              value={[parseFloat(letterSpacing)]}
-              onValueChange={([value]) => applyLetterSpacing(value.toString())}
-              min={-5}
-              max={20}
-              step={0.5}
-              className="w-full"
-            />
+            <Slider value={[parseFloat(letterSpacing)]} onValueChange={([value]) => applyLetterSpacing(value.toString())} min={-5} max={20} step={0.5} className="w-full" />
             <div className="text-xs text-muted-foreground">Current: {letterSpacing}px</div>
           </div>
         </PopoverContent>
@@ -542,84 +300,20 @@ const RichTextToolbar = ({ onCommand, className, contentRef }: RichTextToolbarPr
 
       <div className="h-6 w-px bg-border mx-1" />
 
-      {/* Headings */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 px-3 text-xs hover:bg-muted font-semibold"
-        onClick={() => onCommand("formatBlock", "h1")}
-        title="Heading 1"
-      >
+      <Button variant="ghost" size="sm" className="h-9 px-3 text-xs hover:bg-muted font-semibold" onClick={() => onCommand("formatBlock", "h1")} title="Heading 1">
         H1
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 px-3 text-xs hover:bg-muted font-semibold"
-        onClick={() => onCommand("formatBlock", "h2")}
-        title="Heading 2"
-      >
+      <Button variant="ghost" size="sm" className="h-9 px-3 text-xs hover:bg-muted font-semibold" onClick={() => onCommand("formatBlock", "h2")} title="Heading 2">
         H2
       </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 px-3 text-xs hover:bg-muted"
-        onClick={() => onCommand("formatBlock", "p")}
-        title="Paragraph"
-      >
+      <Button variant="ghost" size="sm" className="h-9 px-3 text-xs hover:bg-muted" onClick={() => onCommand("formatBlock", "p")} title="Paragraph">
         P
       </Button>
 
       <div className="h-6 w-px bg-border mx-1" />
 
-      {/* Clear Formatting */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 px-3 text-xs hover:bg-muted"
-        onClick={() => onCommand("removeFormat")}
-        title="Clear Formatting"
-      >
+      <Button variant="ghost" size="sm" className="h-9 px-3 text-xs hover:bg-muted" onClick={() => onCommand("removeFormat")} title="Clear Formatting">
         Clear
-      </Button>
-
-      <div className="h-6 w-px bg-border mx-1" />
-
-      {/* Export Options */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 px-3 text-xs hover:bg-muted gap-1"
-        onClick={handleExportPDF}
-        title="Export as PDF"
-      >
-        <FileText className="h-4 w-4" />
-        PDF
-      </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 px-3 text-xs hover:bg-muted gap-1"
-        onClick={handleExportDOC}
-        title="Export as DOC"
-      >
-        <Download className="h-4 w-4" />
-        DOC
-      </Button>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 px-3 text-xs hover:bg-muted gap-1"
-        onClick={handleExportPNG}
-        title="Export as PNG"
-      >
-        <Image className="h-4 w-4" />
-        PNG
       </Button>
     </div>
   );
