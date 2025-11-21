@@ -32,7 +32,7 @@ const Register = () => {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [searchParams] = useSearchParams();
-  const [userType, setUserType] = useState<"patient" | "doctor">("doctor");
+  const [userType, setUserType] = useState<"clinic_admin" | "doctor">("doctor");
   const [specialty, setSpecialty] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
   const [consultationFee, setConsultationFee] = useState("");
@@ -311,11 +311,11 @@ const Register = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <Button
                       type="button"
-                      variant={userType === "patient" ? "default" : "outline"}
-                      onClick={() => setUserType("patient")}
+                      variant={userType === "clinic_admin" ? "default" : "outline"}
+                      onClick={() => setUserType("clinic_admin")}
                       className="w-full"
                     >
-                      Patient
+                      Clinic
                     </Button>
                     <Button
                       type="button"
@@ -390,17 +390,18 @@ const Register = () => {
                             placeholder="12345"
                             value={licenseNumber}
                             onChange={(e) => setLicenseNumber(e.target.value)}
+                            required
                             className="pl-32"
                           />
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="fee">Consultation Fee ($)</Label>
+                          <Label htmlFor="fee">Consultation Fee (৳)</Label>
                           <Input
                             id="fee"
                             type="number"
-                            placeholder="100"
+                            placeholder="500"
                             value={consultationFee}
                             onChange={(e) => setConsultationFee(e.target.value)}
                             className="mt-2"
@@ -419,6 +420,21 @@ const Register = () => {
                         </div>
                       </div>
                     </>
+                  )}
+
+                  {userType === "clinic_admin" && (
+                    <div>
+                      <Label htmlFor="clinic-name">Clinic Name</Label>
+                      <Input
+                        id="clinic-name"
+                        type="text"
+                        placeholder="City Medical Center"
+                        value={specialty}
+                        onChange={(e) => setSpecialty(e.target.value)}
+                        required
+                        className="mt-2"
+                      />
+                    </div>
                   )}
 
                   <Button type="submit" className="w-full" size="lg">
