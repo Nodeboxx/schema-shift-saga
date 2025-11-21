@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, Plus, Trash2, GripVertical, FileText, Check, Wand2 } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, GripVertical, FileText, Check, Wand2, User, Mail, Lock, Upload } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -128,7 +128,19 @@ const Settings = () => {
     left_template_sections: [] as any[],
     active_template: "general_medicine",
     custom_templates: [] as any[],
+    avatar_url: "",
+    email: "",
   });
+
+  const [accountSettings, setAccountSettings] = useState({
+    newEmail: "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
 
   useEffect(() => {
     const initAuth = async () => {
@@ -171,7 +183,10 @@ const Settings = () => {
         left_template_sections: Array.isArray(data.left_template_sections) ? data.left_template_sections : [],
         active_template: data.active_template || "general_medicine",
         custom_templates: Array.isArray(data.custom_templates) ? data.custom_templates : [],
+        avatar_url: data.avatar_url || "",
+        email: data.email || "",
       });
+      setAvatarPreview(data.avatar_url || "");
     }
   };
 
@@ -236,11 +251,62 @@ const Settings = () => {
     }
   };
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadAvatar = async () => {
+    if (!avatarFile || !user) return null;
+
+    try {
+      const fileExt = avatarFile.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('council-logos')
+        .upload(filePath, avatarFile);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('council-logos')
+        .getPublicUrl(filePath);
+
+      return data.publicUrl;
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to upload avatar",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
   const handleSaveProfile = async () => {
     if (!user) return;
 
     setSaving(true);
     try {
+      let avatarUrl = profile.avatar_url;
+
+      // Upload avatar if new file selected
+      if (avatarFile) {
+        const uploadedUrl = await handleUploadAvatar();
+        if (uploadedUrl) {
+          avatarUrl = uploadedUrl;
+        }
+      }
+
       const { error } = await supabase
         .from("profiles")
         .update({
@@ -252,10 +318,14 @@ const Settings = () => {
           registration_number: profile.registration_number,
           footer_left: profile.footer_left,
           footer_right: profile.footer_right,
+          avatar_url: avatarUrl,
         })
         .eq("id", user.id);
 
       if (error) throw error;
+
+      setProfile({ ...profile, avatar_url: avatarUrl });
+      setAvatarFile(null);
 
       toast({
         title: "Success",
@@ -265,6 +335,105 @@ const Settings = () => {
       toast({
         title: "Error",
         description: error.message || "Failed to update profile",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleUpdateEmail = async () => {
+    if (!accountSettings.newEmail) {
+      toast({
+        title: "Error",
+        description: "Please enter a new email address",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        email: accountSettings.newEmail,
+      });
+
+      if (error) throw error;
+
+      // Update profiles table
+      await supabase
+        .from("profiles")
+        .update({ email: accountSettings.newEmail })
+        .eq("id", user.id);
+
+      toast({
+        title: "Success",
+        description: "Email updated successfully. Please check your new email for confirmation.",
+      });
+
+      setAccountSettings({ ...accountSettings, newEmail: "" });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update email",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (!accountSettings.newPassword || !accountSettings.confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Please fill in all password fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (accountSettings.newPassword !== accountSettings.confirmPassword) {
+      toast({
+        title: "Error",
+        description: "New passwords do not match",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (accountSettings.newPassword.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: accountSettings.newPassword,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Password updated successfully",
+      });
+
+      setAccountSettings({
+        ...accountSettings,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update password",
         variant: "destructive",
       });
     } finally {
@@ -339,11 +508,132 @@ const Settings = () => {
           <h1 className="text-4xl font-bold text-foreground">Profile Settings</h1>
         </div>
 
-        <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+        <Tabs defaultValue="account" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="account">Account Settings</TabsTrigger>
             <TabsTrigger value="profile">Profile Information</TabsTrigger>
             <TabsTrigger value="templates">Prescription Templates</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="account" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Account Settings</CardTitle>
+                <CardDescription>Manage your account credentials and avatar</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Avatar Section */}
+                <div className="space-y-4">
+                  <Label>Profile Avatar</Label>
+                  <div className="flex items-center gap-6">
+                    <div className="w-24 h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-border">
+                      {avatarPreview ? (
+                        <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        <User className="w-12 h-12 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        className="mb-2"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Upload a profile photo. This will be visible in the admin dashboard and doctor listings.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Email Section */}
+                <div className="border-t pt-6 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg font-semibold">Change Email</h3>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <Label>Current Email</Label>
+                      <Input
+                        type="email"
+                        value={profile.email}
+                        disabled
+                        className="bg-muted"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="new_email">New Email Address</Label>
+                      <Input
+                        id="new_email"
+                        type="email"
+                        value={accountSettings.newEmail}
+                        onChange={(e) => setAccountSettings({ ...accountSettings, newEmail: e.target.value })}
+                        placeholder="Enter new email address"
+                      />
+                    </div>
+                    <Button
+                      onClick={handleUpdateEmail}
+                      disabled={saving || !accountSettings.newEmail}
+                      className="gap-2"
+                    >
+                      <Mail className="w-4 h-4" />
+                      Update Email
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Password Section */}
+                <div className="border-t pt-6 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg font-semibold">Change Password</h3>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="new_password">New Password</Label>
+                      <Input
+                        id="new_password"
+                        type="password"
+                        value={accountSettings.newPassword}
+                        onChange={(e) => setAccountSettings({ ...accountSettings, newPassword: e.target.value })}
+                        placeholder="Enter new password"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="confirm_password">Confirm New Password</Label>
+                      <Input
+                        id="confirm_password"
+                        type="password"
+                        value={accountSettings.confirmPassword}
+                        onChange={(e) => setAccountSettings({ ...accountSettings, confirmPassword: e.target.value })}
+                        placeholder="Confirm new password"
+                      />
+                    </div>
+                    <Button
+                      onClick={handleUpdatePassword}
+                      disabled={saving || !accountSettings.newPassword || !accountSettings.confirmPassword}
+                      className="gap-2"
+                    >
+                      <Lock className="w-4 h-4" />
+                      Update Password
+                    </Button>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handleSaveProfile}
+                  disabled={saving}
+                  size="lg"
+                  className="w-full gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  {saving ? "Saving..." : "Save All Changes"}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="profile" className="space-y-6">
             <Card>
