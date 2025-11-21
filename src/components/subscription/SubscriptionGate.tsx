@@ -28,7 +28,7 @@ export const SubscriptionGate = ({ children, feature = "this feature" }: Subscri
 
       const { data } = await supabase
         .from("profiles")
-        .select("subscription_status, trial_ends_at")
+        .select("subscription_status, subscription_end_date, trial_ends_at")
         .eq("id", user.id)
         .single();
 
@@ -37,13 +37,21 @@ export const SubscriptionGate = ({ children, feature = "this feature" }: Subscri
         return;
       }
 
-      // Check if has active subscription or valid trial
-      const hasActiveSubscription = data.subscription_status === "active";
+      const now = new Date();
+
+      // Check if paid subscription period (active or cancelled) is still valid
+      const hasPaidPeriod =
+        data.subscription_end_date && new Date(data.subscription_end_date) > now;
+      const hasActiveOrCancelledSubscription =
+        (data.subscription_status === "active" || data.subscription_status === "cancelled") &&
+        hasPaidPeriod;
+
+      // Check if trial is still valid
       const hasValidTrial = data.subscription_status === "trial" && 
         data.trial_ends_at && 
-        new Date(data.trial_ends_at) > new Date();
+        new Date(data.trial_ends_at) > now;
 
-      setHasAccess(hasActiveSubscription || hasValidTrial);
+      setHasAccess(hasActiveOrCancelledSubscription || hasValidTrial);
     } catch (error) {
       console.error("Error checking access:", error);
       setHasAccess(false);
