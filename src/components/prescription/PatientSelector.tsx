@@ -71,10 +71,10 @@ export const PatientSelector = ({ onPatientSelect }: PatientSelectorProps) => {
   };
 
   const handleAddPatient = async () => {
-    if (!newPatient.name.trim() || !newPatient.age || !newPatient.sex) {
+    if (!newPatient.name.trim() || !newPatient.age || !newPatient.sex || !newPatient.phone || !newPatient.email) {
       toast({
         title: "Required Fields",
-        description: "Please fill in name, age, and sex",
+        description: "Please fill in all required fields: name, age, sex, phone, and email",
         variant: "destructive",
       });
       return;
@@ -220,22 +220,24 @@ export const PatientSelector = ({ onPatientSelect }: PatientSelectorProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label>Phone</Label>
+                <Label>Phone *</Label>
                 <Input
                   value={newPatient.phone}
                   onChange={(e) => setNewPatient({ ...newPatient, phone: e.target.value })}
                   placeholder="Phone number"
+                  required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Email</Label>
+              <Label>Email *</Label>
               <Input
                 type="email"
                 value={newPatient.email}
                 onChange={(e) => setNewPatient({ ...newPatient, email: e.target.value })}
                 placeholder="Email address"
+                required
               />
             </div>
 

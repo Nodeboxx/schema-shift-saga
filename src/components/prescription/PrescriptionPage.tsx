@@ -118,13 +118,15 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
         patientWeightGrams: prescriptionData.patient_weight_grams?.toString() || "0",
       });
 
-      // Load body data (vitals, complaints, etc.)
+      // Load body data (vitals, complaints, etc.) including patient contact info
       setBodyData({
         ccText: prescriptionData.cc_text || "",
         dxText: prescriptionData.dx_text || "",
         advText: prescriptionData.adv_text || "",
         instructionsText: prescriptionData.instructions_text || "",
         followUpText: prescriptionData.follow_up_text || "",
+        patientPhone: prescriptionData.patient_phone || "",
+        patientEmail: prescriptionData.patient_email || "",
         vitals: {
           bp_s: prescriptionData.oe_bp_s || "",
           bp_d: prescriptionData.oe_bp_d || "",
@@ -169,13 +171,22 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
   }, [prescriptionData]);
 
   const handlePatientSelect = (patient: any) => {
+    // Store complete patient data including phone and email
     setPatientInfo({
       ...patientInfo,
-      patientName: patient.name,
+      patientName: patient.name || "",
       patientAge: patient.age || "",
       patientSex: patient.sex || "",
       patientWeight: patient.weight || "",
     });
+    
+    // Store additional patient data in state for later use
+    setBodyData({
+      ...bodyData,
+      patientPhone: patient.phone || "",
+      patientEmail: patient.email || "",
+    });
+    
     setPatientSelected(true);
     
     toast({
@@ -283,7 +294,7 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
       };
 
       // Extract template-specific fields from bodyData
-      const { ccText, dxText, advText, instructionsText, followUpText, vitals, medicines, ...templateSpecificData } = bodyData;
+      const { ccText, dxText, advText, instructionsText, followUpText, vitals, medicines, patientPhone, patientEmail, ...templateSpecificData } = bodyData;
 
       // Get current template sections to save with prescription
       const { data: { user: currentUser } } = await supabase.auth.getUser();
@@ -314,6 +325,8 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
         patient_weight: patientInfo.patientWeight,
         patient_weight_kg: parseInt(patientInfo.patientWeightKg) || 0,
         patient_weight_grams: parseInt(patientInfo.patientWeightGrams) || 0,
+        patient_phone: patientPhone || "",
+        patient_email: patientEmail || "",
         prescription_date: convertDateForDB(patientInfo.patientDate),
         cc_text: bodyData.ccText,
         dx_text: bodyData.dxText,

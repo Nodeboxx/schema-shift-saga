@@ -229,18 +229,19 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
             </div>
 
             <div>
-              <Label htmlFor="age">Age</Label>
+              <Label htmlFor="age">Age *</Label>
               <Input
                 id="age"
                 value={formData.age || ""}
                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                 placeholder="e.g., 35"
+                required
               />
             </div>
 
             <div>
-              <Label htmlFor="sex">Sex</Label>
-              <Select value={formData.sex || ""} onValueChange={(value) => setFormData({ ...formData, sex: value })}>
+              <Label htmlFor="sex">Sex *</Label>
+              <Select value={formData.sex || ""} onValueChange={(value) => setFormData({ ...formData, sex: value })} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select sex" />
                 </SelectTrigger>
@@ -253,23 +254,25 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
             </div>
 
             <div>
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">Phone *</Label>
               <Input
                 id="phone"
                 value={formData.phone || ""}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="+880..."
+                required
               />
             </div>
 
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email || ""}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="patient@example.com"
+                required
               />
             </div>
 
