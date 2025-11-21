@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -178,136 +179,138 @@ const Telemedicine = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Telemedicine</h1>
-            <p className="text-muted-foreground">Manage your virtual consultations</p>
+      <SubscriptionGate feature="telemedicine">
+        <div className="container mx-auto p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Telemedicine</h1>
+              <p className="text-muted-foreground">Manage your virtual consultations</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Video className="h-5 w-5 text-primary" />
+              <span className="text-sm font-medium">Virtual Consultations</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Video className="h-5 w-5 text-primary" />
-            <span className="text-sm font-medium">Virtual Consultations</span>
-          </div>
+
+          <Tabs defaultValue="active" className="space-y-6">
+            <TabsList>
+              <TabsTrigger value="active">
+                <Users className="h-4 w-4 mr-2" />
+                Active & Waiting
+              </TabsTrigger>
+              <TabsTrigger value="scheduled">
+                <Clock className="h-4 w-4 mr-2" />
+                Scheduled
+              </TabsTrigger>
+              <TabsTrigger value="completed">
+                <CheckCircle2 className="h-4 w-4 mr-2" />
+                Completed
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="active" className="space-y-4">
+              {filterSessions(["waiting", "in_progress"]).length === 0 ? (
+                <Card className="p-8 text-center">
+                  <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No active sessions</p>
+                </Card>
+              ) : (
+                filterSessions(["waiting", "in_progress"]).map((session) => (
+                  <Card key={session.id} className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
+                          {getStatusBadge(session.status)}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>Age: {session.appointments.patients.age || "N/A"}</span>
+                          <span>Phone: {session.appointments.patients.phone || "N/A"}</span>
+                          <span>Scheduled: {format(new Date(session.appointments.start_time), "PPp")}</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {session.status === "waiting" && (
+                          <Button onClick={() => startSession(session.id)}>
+                            <Video className="h-4 w-4 mr-2" />
+                            Start Session
+                          </Button>
+                        )}
+                        {session.status === "in_progress" && (
+                          <>
+                            <Button onClick={() => setActiveSession(session.id)}>
+                              Open Session
+                            </Button>
+                            <Button variant="destructive" onClick={() => endSession(session.id)}>
+                              <XCircle className="h-4 w-4 mr-2" />
+                              End
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="scheduled" className="space-y-4">
+              {filterSessions(["scheduled"]).length === 0 ? (
+                <Card className="p-8 text-center">
+                  <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No scheduled sessions</p>
+                </Card>
+              ) : (
+                filterSessions(["scheduled"]).map((session) => (
+                  <Card key={session.id} className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
+                          {getStatusBadge(session.status)}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>Scheduled: {format(new Date(session.appointments.start_time), "PPp")}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="completed" className="space-y-4">
+              {filterSessions(["completed"]).length === 0 ? (
+                <Card className="p-8 text-center">
+                  <CheckCircle2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">No completed sessions</p>
+                </Card>
+              ) : (
+                filterSessions(["completed"]).map((session) => (
+                  <Card key={session.id} className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
+                          {getStatusBadge(session.status)}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>Completed: {session.end_time ? format(new Date(session.end_time), "PPp") : "N/A"}</span>
+                          {session.start_time && session.end_time && (
+                            <span>
+                              Duration: {Math.round((new Date(session.end_time).getTime() - new Date(session.start_time).getTime()) / 60000)} min
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                ))
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
-
-      <Tabs defaultValue="active" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="active">
-            <Users className="h-4 w-4 mr-2" />
-            Active & Waiting
-          </TabsTrigger>
-          <TabsTrigger value="scheduled">
-            <Clock className="h-4 w-4 mr-2" />
-            Scheduled
-          </TabsTrigger>
-          <TabsTrigger value="completed">
-            <CheckCircle2 className="h-4 w-4 mr-2" />
-            Completed
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="active" className="space-y-4">
-          {filterSessions(["waiting", "in_progress"]).length === 0 ? (
-            <Card className="p-8 text-center">
-              <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No active sessions</p>
-            </Card>
-          ) : (
-            filterSessions(["waiting", "in_progress"]).map((session) => (
-              <Card key={session.id} className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
-                      {getStatusBadge(session.status)}
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>Age: {session.appointments.patients.age || "N/A"}</span>
-                      <span>Phone: {session.appointments.patients.phone || "N/A"}</span>
-                      <span>Scheduled: {format(new Date(session.appointments.start_time), "PPp")}</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    {session.status === "waiting" && (
-                      <Button onClick={() => startSession(session.id)}>
-                        <Video className="h-4 w-4 mr-2" />
-                        Start Session
-                      </Button>
-                    )}
-                    {session.status === "in_progress" && (
-                      <>
-                        <Button onClick={() => setActiveSession(session.id)}>
-                          Open Session
-                        </Button>
-                        <Button variant="destructive" onClick={() => endSession(session.id)}>
-                          <XCircle className="h-4 w-4 mr-2" />
-                          End
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))
-          )}
-        </TabsContent>
-
-        <TabsContent value="scheduled" className="space-y-4">
-          {filterSessions(["scheduled"]).length === 0 ? (
-            <Card className="p-8 text-center">
-              <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No scheduled sessions</p>
-            </Card>
-          ) : (
-            filterSessions(["scheduled"]).map((session) => (
-              <Card key={session.id} className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
-                      {getStatusBadge(session.status)}
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>Scheduled: {format(new Date(session.appointments.start_time), "PPp")}</span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))
-          )}
-        </TabsContent>
-
-        <TabsContent value="completed" className="space-y-4">
-          {filterSessions(["completed"]).length === 0 ? (
-            <Card className="p-8 text-center">
-              <CheckCircle2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No completed sessions</p>
-            </Card>
-          ) : (
-            filterSessions(["completed"]).map((session) => (
-              <Card key={session.id} className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
-                      {getStatusBadge(session.status)}
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>Completed: {session.end_time ? format(new Date(session.end_time), "PPp") : "N/A"}</span>
-                      {session.start_time && session.end_time && (
-                        <span>
-                          Duration: {Math.round((new Date(session.end_time).getTime() - new Date(session.start_time).getTime()) / 60000)} min
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
+      </SubscriptionGate>
     </AppLayout>
   );
 };

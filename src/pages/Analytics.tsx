@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { 
   TrendingUp, Users, FileText, Calendar, 
   Activity, DollarSign, Clock, Award 
@@ -115,69 +116,71 @@ const Analytics = () => {
 
   return (
     <AppLayout>
-      <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Analytics & Insights</h1>
-          <p className="text-muted-foreground">
-            Track your practice performance and clinical insights
-          </p>
+      <SubscriptionGate feature="analytics">
+        <div className="p-6 space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Analytics & Insights</h1>
+            <p className="text-muted-foreground">
+              Track your practice performance and clinical insights
+            </p>
+          </div>
+
+          {/* Stats Overview */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {statCards.map((stat) => (
+              <Card key={stat.title}>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    {stat.title}
+                  </CardTitle>
+                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Detailed Analytics Tabs */}
+          <Tabs defaultValue="prescriptions" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="prescriptions">
+                <FileText className="h-4 w-4 mr-2" />
+                Prescriptions
+              </TabsTrigger>
+              <TabsTrigger value="appointments">
+                <Calendar className="h-4 w-4 mr-2" />
+                Appointments
+              </TabsTrigger>
+              <TabsTrigger value="patients">
+                <Users className="h-4 w-4 mr-2" />
+                Patient Demographics
+              </TabsTrigger>
+              <TabsTrigger value="revenue">
+                <DollarSign className="h-4 w-4 mr-2" />
+                Revenue
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="prescriptions" className="space-y-4">
+              <PrescriptionAnalytics />
+            </TabsContent>
+
+            <TabsContent value="appointments" className="space-y-4">
+              <AppointmentAnalytics />
+            </TabsContent>
+
+            <TabsContent value="patients" className="space-y-4">
+              <PatientDemographics />
+            </TabsContent>
+
+            <TabsContent value="revenue" className="space-y-4">
+              <RevenueAnalytics />
+            </TabsContent>
+          </Tabs>
         </div>
-
-        {/* Stats Overview */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {statCards.map((stat) => (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">
-                  {stat.title}
-                </CardTitle>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Detailed Analytics Tabs */}
-        <Tabs defaultValue="prescriptions" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="prescriptions">
-              <FileText className="h-4 w-4 mr-2" />
-              Prescriptions
-            </TabsTrigger>
-            <TabsTrigger value="appointments">
-              <Calendar className="h-4 w-4 mr-2" />
-              Appointments
-            </TabsTrigger>
-            <TabsTrigger value="patients">
-              <Users className="h-4 w-4 mr-2" />
-              Patient Demographics
-            </TabsTrigger>
-            <TabsTrigger value="revenue">
-              <DollarSign className="h-4 w-4 mr-2" />
-              Revenue
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="prescriptions" className="space-y-4">
-            <PrescriptionAnalytics />
-          </TabsContent>
-
-          <TabsContent value="appointments" className="space-y-4">
-            <AppointmentAnalytics />
-          </TabsContent>
-
-          <TabsContent value="patients" className="space-y-4">
-            <PatientDemographics />
-          </TabsContent>
-
-          <TabsContent value="revenue" className="space-y-4">
-            <RevenueAnalytics />
-          </TabsContent>
-        </Tabs>
-      </div>
+      </SubscriptionGate>
     </AppLayout>
   );
 };
