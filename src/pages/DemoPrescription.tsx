@@ -69,8 +69,8 @@ const DemoPrescription = () => {
   return (
     <div className="prescription-root" style={{ fontFamily: "'Kalpurush', 'SolaimanLipi', 'Arial', sans-serif", backgroundColor: "#e0e0e0", margin: 0, paddingTop: "100px" }}>
       {/* Demo Warning Banner */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-orange-500 text-white py-3 px-6 text-center font-medium">
-        🎯 Demo Mode - Limited to 3 medicines, no printing. <Button variant="link" className="text-white underline" onClick={() => navigate("/register")}>Sign up for full access</Button>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-orange-500 text-white py-3 px-6 text-center font-medium flex items-center justify-center gap-3">
+        🎯 Demo Mode - Experience the platform without signing up! Limited to 3 medicines.
       </div>
 
       {/* Controls */}

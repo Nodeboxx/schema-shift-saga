@@ -17,8 +17,8 @@ const Demo = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Demo Banner */}
-      <div className="bg-orange-500 text-white py-3 px-6 text-center font-medium">
-        🎯 Demo Mode - Explore features without signing up! Limited to 3 medicines, no printing.
+      <div className="bg-gradient-to-r from-primary to-purple-600 text-white py-3 px-6 text-center font-medium">
+        🎯 Demo Mode - Experience HealthScribe without signing up!
       </div>
 
       {/* Header */}
