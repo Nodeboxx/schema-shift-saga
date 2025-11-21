@@ -480,7 +480,7 @@ const AdminSiteSettings = () => {
                 <Input
                   value={footer.copyright}
                   onChange={(e) => setFooter({ ...footer, copyright: e.target.value })}
-                  placeholder="© 2025 MedScribe. All rights reserved."
+                  placeholder="© 2025 MedDexPro. All rights reserved."
                 />
               </div>
 

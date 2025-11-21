@@ -92,7 +92,7 @@ export const AdminSMTP = () => {
         body: {
           to: settings.from_email,
           subject: 'SMTP Test',
-          body: 'This is a test email from your MedEx system.'
+          body: 'This is a test email from your MedDexPro system.'
         }
       });
 
@@ -169,7 +169,7 @@ export const AdminSMTP = () => {
               type="email"
               value={settings.from_email}
               onChange={(e) => setSettings({ ...settings, from_email: e.target.value })}
-              placeholder="noreply@medex.com"
+              placeholder="noreply@meddexpro.com"
             />
           </div>
 
@@ -179,7 +179,7 @@ export const AdminSMTP = () => {
               id="from_name"
               value={settings.from_name}
               onChange={(e) => setSettings({ ...settings, from_name: e.target.value })}
-              placeholder="MedEx System"
+              placeholder="MedDexPro System"
             />
           </div>
         </div>

@@ -219,7 +219,7 @@ const PublicVerifyPrescription = () => {
 
         {/* Footer */}
         <Card className="p-4 text-center text-sm text-muted-foreground">
-          <p>This is an electronically generated prescription verified by MedEx.</p>
+          <p>This is an electronically generated prescription verified by MedDexPro.</p>
           <p className="mt-1">Created on {format(new Date(prescription.created_at), 'PPP')}</p>
         </Card>
       </div>

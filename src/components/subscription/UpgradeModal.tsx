@@ -283,7 +283,7 @@ export const UpgradeModal = ({ open, onOpenChange, onSuccess }: UpgradeModalProp
               <div className="bg-muted p-4 rounded-lg text-sm">
                 <p className="font-medium mb-2">Wire Transfer Details:</p>
                 <p>Bank: Example Bank Ltd.</p>
-                <p>Account: MedScribe Technologies</p>
+                <p>Account: MedDexPro Technologies</p>
                 <p>Account Number: 1234567890</p>
               </div>
             )}
