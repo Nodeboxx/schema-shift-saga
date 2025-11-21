@@ -269,10 +269,8 @@ export const AdminSubscriptions = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="free">Free</SelectItem>
-                    <SelectItem value="basic">Basic</SelectItem>
-                    <SelectItem value="professional">Professional</SelectItem>
-                    <SelectItem value="premium">Premium</SelectItem>
-                    <SelectItem value="lifetime">Lifetime</SelectItem>
+                    <SelectItem value="pro">Pro</SelectItem>
+                    <SelectItem value="enterprise">Enterprise</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -411,12 +409,12 @@ export const AdminSubscriptions = () => {
                     const tierSelect = document.querySelector('select[name="tier"]') as HTMLSelectElement;
                     const statusSelect = document.querySelector('select[name="status"]') as HTMLSelectElement;
                     if (tierSelect && statusSelect) {
-                      tierSelect.value = 'basic';
+                      tierSelect.value = 'pro';
                       statusSelect.value = 'active';
                     }
                   }}
                 >
-                  Activate Basic
+                  Activate Pro
                 </Button>
                 <Button
                   type="button"
@@ -453,15 +451,15 @@ export const AdminSubscriptions = () => {
                     const statusSelect = document.querySelector('select[name="status"]') as HTMLSelectElement;
                     const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
                     if (tierSelect && statusSelect && endDateInput) {
-                      tierSelect.value = 'lifetime';
+                      tierSelect.value = 'enterprise';
                       statusSelect.value = 'active';
                       const lifetimeEnd = new Date();
-                      lifetimeEnd.setFullYear(lifetimeEnd.getFullYear() + 100);
+                      lifetimeEnd.setFullYear(lifetimeEnd.getFullYear() + 10);
                       endDateInput.value = lifetimeEnd.toISOString().split('T')[0];
                     }
                   }}
                 >
-                  Set Lifetime
+                  Activate Enterprise
                 </Button>
                 <Button
                   type="button"
