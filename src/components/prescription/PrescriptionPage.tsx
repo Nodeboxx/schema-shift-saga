@@ -8,7 +8,7 @@ import PrescriptionBody from "./PrescriptionBody";
 import PrescriptionFooter from "./PrescriptionFooter";
 import { PatientSelector } from "./PatientSelector";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Save, Mail, MessageCircle } from "lucide-react";
+import { X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 interface PrescriptionPageProps {
@@ -503,6 +503,18 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
             flexDirection: "column",
           }}
         >
+          {/* Delete button for additional pages */}
+          {page.id > 1 && (
+            <Button
+              size="icon"
+              variant="destructive"
+              className="absolute -top-3 -right-3 z-10 print:hidden"
+              onClick={() => removePage(page.id)}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          )}
+          
           <PrescriptionHeader 
             doctorInfo={doctorInfo} 
             setDoctorInfo={setDoctorInfo}

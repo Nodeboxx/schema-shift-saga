@@ -7,7 +7,7 @@ import PrescriptionPage from "@/components/prescription/PrescriptionPage";
 import PrescriptionControls from "@/components/prescription/PrescriptionControls";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock } from "lucide-react";
+import { Lock, ZoomIn, ZoomOut } from "lucide-react";
 
 const Prescription = () => {
   const [loading, setLoading] = useState(true);
@@ -15,6 +15,7 @@ const Prescription = () => {
   const [prescriptionData, setPrescriptionData] = useState<any>(null);
   const [onSave, setOnSave] = useState<(() => void) | undefined>();
   const [onAddPage, setOnAddPage] = useState<(() => void) | undefined>();
+  const [zoom, setZoom] = useState(1);
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast } = useToast();
@@ -132,9 +133,34 @@ const Prescription = () => {
         onSave={onSave}
         onAddPage={onAddPage}
       />
+      
+      {/* Zoom controls */}
+      <div className="fixed bottom-4 right-4 flex gap-2 z-50 print:hidden">
+        <Button
+          size="icon"
+          variant="secondary"
+          onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+          className="shadow-lg"
+        >
+          <ZoomOut className="w-4 h-4" />
+        </Button>
+        <div className="bg-secondary px-3 py-2 rounded-md shadow-lg font-semibold">
+          {Math.round(zoom * 100)}%
+        </div>
+        <Button
+          size="icon"
+          variant="secondary"
+          onClick={() => setZoom(Math.min(2, zoom + 0.1))}
+          className="shadow-lg"
+        >
+          <ZoomIn className="w-4 h-4" />
+        </Button>
+      </div>
+
       <div
         id="page-wrapper"
-        className="prescription-page-wrapper mx-auto max-w-5xl md:max-w-6xl"
+        className="prescription-page-wrapper mx-auto max-w-5xl md:max-w-6xl transition-transform duration-200"
+        style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
       >
         <PrescriptionPage 
           prescriptionData={prescriptionData} 

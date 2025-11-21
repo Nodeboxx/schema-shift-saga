@@ -40,3 +40,42 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Print styles for prescription */
+@media print {
+  /* Hide everything except prescription pages */
+  body * {
+    visibility: hidden;
+  }
+  
+  .prescription-page,
+  .prescription-page * {
+    visibility: visible;
+  }
+  
+  .prescription-page {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    page-break-after: always;
+  }
+  
+  /* Hide Lovable badge */
+  [data-lovable-badge],
+  .lovable-badge,
+  a[href*="lovable"] {
+    display: none !important;
+  }
+  
+  /* Ensure full page coverage */
+  @page {
+    margin: 0;
+    size: A4;
+  }
+}
