@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MyPatientsTab } from "@/components/dashboard/MyPatientsTab";
 import { ReportsTab } from "@/components/dashboard/ReportsTab";
+import { SubscriptionManager } from "@/components/subscription/SubscriptionManager";
+import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -51,11 +53,9 @@ const Dashboard = () => {
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold">Dashboard</h1>
-          <Button onClick={() => navigate('/prescription')}>
-            <FileText className="w-4 h-4 mr-2" />
-            New Prescription
-          </Button>
         </div>
+
+        <SubscriptionManager />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList>
@@ -65,7 +65,14 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-3">
+            <SubscriptionGate feature="prescriptions and analytics">
+              <div className="flex justify-end mb-4">
+                <Button onClick={() => navigate('/prescription')}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  New Prescription
+                </Button>
+              </div>
+              <div className="grid gap-4 md:grid-cols-3">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Patients</CardTitle>
@@ -120,21 +127,26 @@ const Dashboard = () => {
                 <CardContent className="h-64 flex items-center justify-center text-muted-foreground">
                   Chart visualization
                 </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+                  </Card>
+                </div>
+              </SubscriptionGate>
+            </TabsContent>
 
-          <TabsContent value="patients">
-            <MyPatientsTab />
-          </TabsContent>
+            <TabsContent value="patients">
+              <SubscriptionGate feature="patient management">
+                <MyPatientsTab />
+              </SubscriptionGate>
+            </TabsContent>
 
-          <TabsContent value="reports">
-            <ReportsTab />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </AppLayout>
-  );
-};
+            <TabsContent value="reports">
+              <SubscriptionGate feature="reports">
+                <ReportsTab />
+              </SubscriptionGate>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </AppLayout>
+    );
+  };
 
-export default Dashboard;
+  export default Dashboard;

@@ -46,6 +46,7 @@ import { AdminAppointments } from "@/components/admin/AdminAppointments";
 import { AdminAPISettings } from "@/components/admin/AdminAPISettings";
 import { AdminOrders } from "@/components/admin/AdminOrders";
 import { AdminPricingPlans } from "@/components/admin/AdminPricingPlans";
+import { AdminSubscriptions } from "@/components/admin/AdminSubscriptions";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ const AdminDashboard = () => {
     { id: "doctors", label: "Doctors", icon: Users },
     { id: "appointments", label: "Appointments", icon: Calendar },
     { id: "orders", label: "Orders & Billing", icon: ShoppingCart },
+    { id: "subscriptions", label: "Subscriptions", icon: Activity },
     { id: "products", label: "Products", icon: Package },
     { id: "pricing-plans", label: "Pricing Plans", icon: Package },
     { id: "pages", label: "Pages", icon: FileText },
@@ -266,6 +268,7 @@ const AdminDashboard = () => {
             {activeTab === "clinics" && <AdminClinics />}
             {activeTab === "appointments" && <AdminAppointments />}
             {activeTab === "orders" && <AdminOrders />}
+            {activeTab === "subscriptions" && <AdminSubscriptions />}
             {activeTab === "products" && <AdminProducts />}
             {activeTab === "pricing-plans" && <AdminPricingPlans />}
             {activeTab === "pages" && <VisualPageEditor />}
