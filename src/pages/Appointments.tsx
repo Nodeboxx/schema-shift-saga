@@ -123,10 +123,10 @@ const Appointments = () => {
   };
 
   const pendingAppointments = appointments.filter(apt => 
-    apt.status === "scheduled" && apt.created_by !== user?.id
+    (apt.status === "pending" || (apt.status === "scheduled" && apt.created_by !== user?.id))
   );
   const confirmedAppointments = appointments.filter(apt => 
-    apt.status !== "cancelled" && (apt.status !== "scheduled" || apt.created_by === user?.id)
+    apt.status !== "cancelled" && apt.status !== "pending" && (apt.status !== "scheduled" || apt.created_by === user?.id)
   );
 
   return (
