@@ -13,11 +13,13 @@ import { SubscriptionManager } from "@/components/subscription/SubscriptionManag
 import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { SubscriptionExpiryBanner } from "@/components/subscription/SubscriptionExpiryBanner";
 import { SubscriptionHistory } from "@/components/subscription/SubscriptionHistory";
+import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalPrescriptions: 0,
@@ -26,6 +28,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     checkSubscription();
+    checkOnboarding();
     loadStats();
     
     // Check URL params for tab
@@ -35,6 +38,25 @@ const Dashboard = () => {
       setActiveTab(tab);
     }
   }, []);
+
+  const checkOnboarding = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("onboarding_completed")
+        .eq("id", user.id)
+        .single();
+
+      if (data && !data.onboarding_completed) {
+        setShowOnboarding(true);
+      }
+    } catch (error) {
+      console.error("Error checking onboarding:", error);
+    }
+  };
 
   const checkSubscription = async () => {
     try {
@@ -195,6 +217,14 @@ const Dashboard = () => {
         <SubscriptionHistory />
           </>
         )}
+
+        <OnboardingWizard 
+          open={showOnboarding} 
+          onComplete={() => {
+            setShowOnboarding(false);
+            loadStats();
+          }} 
+        />
       </div>
     </AppLayout>
   );
