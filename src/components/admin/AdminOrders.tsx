@@ -30,7 +30,7 @@ export const AdminOrders = () => {
         .from("orders")
         .select(`
           *,
-          user:profiles!orders_user_id_fkey(full_name, email)
+          profiles!inner(full_name, email)
         `)
         .order("created_at", { ascending: false });
 
@@ -179,8 +179,8 @@ export const AdminOrders = () => {
   };
 
   const filteredOrders = orders.filter(order => 
-    order.user?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.profiles?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.plan_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -264,8 +264,8 @@ export const AdminOrders = () => {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{order.user?.full_name || "N/A"}</div>
-                        <div className="text-sm text-muted-foreground">{order.user?.email}</div>
+                        <div className="font-medium">{order.profiles?.full_name || "N/A"}</div>
+                        <div className="text-sm text-muted-foreground">{order.profiles?.email}</div>
                       </div>
                     </TableCell>
                     <TableCell>
