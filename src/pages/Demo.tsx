@@ -40,13 +40,14 @@ const Demo = () => {
           </AlertDescription>
         </Alert>
 
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs defaultValue="doctor" className="space-y-6">
           <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="prescription">Try Prescription</TabsTrigger>
+            <TabsTrigger value="doctor">Doctor Dashboard</TabsTrigger>
+            <TabsTrigger value="clinic">Clinic Dashboard</TabsTrigger>
+            <TabsTrigger value="prescription">Prescription Demo</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="doctor" className="space-y-6">
             <div className="flex justify-end mb-4">
               <Button onClick={() => navigate("/demo/prescription")}>
                 <FileText className="w-4 h-4 mr-2" />
@@ -150,6 +151,50 @@ const Demo = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="clinic" className="space-y-6">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h3 className="text-xl font-bold">Clinic Dashboard Preview</h3>
+                <p className="text-muted-foreground">See how clinic owners manage their team, branding, and subscription.</p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Clinic Overview</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="font-semibold">Sunrise Health Clinic</div>
+                  <div className="text-sm text-muted-foreground">Patients per day: 120</div>
+                  <div className="text-sm text-muted-foreground">Active doctors: 8</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Team Members</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm text-muted-foreground">
+                  <div>• Dr. Ayesha Rahman – Cardiologist</div>
+                  <div>• Dr. Imran Hossain – Diabetologist</div>
+                  <div>• Front desk & nursing staff overview</div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Subscription Status</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm text-muted-foreground">
+                  <div>Plan: Pro (Clinic)</div>
+                  <div>Status: Active – renews in 12 days</div>
+                  <div>Billing: Monthly, auto-renew enabled</div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="prescription">
