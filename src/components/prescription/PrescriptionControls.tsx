@@ -135,17 +135,26 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
           display: none;
         }
         @media print {
+          * {
+            margin: 0 !important;
+          }
+          html, body {
+            padding: 0 !important;
+            margin: 0 !important;
+          }
           .no-print {
             display: none !important;
           }
           .print-only {
             display: flex !important;
           }
-          #page-wrapper {
-            padding-top: 0 !important;
+          #page-wrapper, #root, main, .container {
+            padding: 0 !important;
+            margin: 0 !important;
           }
           body {
-            padding-top: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
           }
           .medicine-remove-btn {
             display: none !important;
