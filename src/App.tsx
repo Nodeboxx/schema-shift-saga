@@ -30,6 +30,8 @@ import Questionnaires from "./pages/Questionnaires";
 import Notifications from "./pages/Notifications";
 import Telemedicine from "./pages/Telemedicine";
 import NotFound from "./pages/NotFound";
+import Demo from "./pages/Demo";
+import DemoPrescription from "./pages/DemoPrescription";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +70,8 @@ const App = () => (
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/clinic" element={<ClinicDashboard />} />
               <Route path="/verify/:id" element={<PublicVerifyPrescription />} />
+              <Route path="/demo" element={<Demo />} />
+              <Route path="/demo/prescription" element={<DemoPrescription />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
