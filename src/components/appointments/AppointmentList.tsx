@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Clock, User, Calendar, X, MessageSquare, Phone } from "lucide-react";
+import { Clock, User, Calendar, X, MessageSquare, Phone, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -24,6 +25,7 @@ interface AppointmentListProps {
 }
 
 const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListProps) => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [rescheduleDialog, setRescheduleDialog] = useState(false);
   const [cancelDialog, setCancelDialog] = useState(false);
@@ -31,6 +33,7 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
   const [newStartTime, setNewStartTime] = useState("");
   const [newEndTime, setNewEndTime] = useState("");
   const [cancelReason, setCancelReason] = useState("");
+  const [isStartingSession, setIsStartingSession] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -156,6 +159,60 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
     }
   };
 
+  const handleStartTelemedicine = async (appointment: any) => {
+    setIsStartingSession(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      // Check if session already exists for this appointment
+      const { data: existingSession } = await supabase
+        .from("telemedicine_sessions")
+        .select("id")
+        .eq("appointment_id", appointment.id)
+        .maybeSingle();
+
+      if (existingSession) {
+        // Navigate to existing session
+        navigate("/telemedicine");
+        return;
+      }
+
+      // Create new telemedicine session
+      const { data: session, error } = await supabase
+        .from("telemedicine_sessions")
+        .insert({
+          appointment_id: appointment.id,
+          doctor_id: user.id,
+          patient_id: appointment.patient_id,
+          status: "waiting"
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast({
+        title: "Session Created",
+        description: "Telemedicine session has been created. Redirecting...",
+      });
+
+      // Navigate to telemedicine page
+      setTimeout(() => {
+        navigate("/telemedicine");
+      }, 500);
+    } catch (error: any) {
+      console.error("Error starting telemedicine:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to start telemedicine session",
+        variant: "destructive",
+      });
+    } finally {
+      setIsStartingSession(false);
+    }
+  };
+
   if (loading) {
     return <Card className="p-6"><div>Loading appointments...</div></Card>;
   }
@@ -233,6 +290,17 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
                 >
                   <Calendar className="h-4 w-4 mr-1" />
                   Approve
+                </Button>
+              )}
+              {appointment.status === "scheduled" && (
+                <Button 
+                  size="sm" 
+                  onClick={() => handleStartTelemedicine(appointment)}
+                  disabled={isStartingSession}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  <Video className="h-4 w-4 mr-1" />
+                  {isStartingSession ? "Starting..." : "Start Telemedicine"}
                 </Button>
               )}
               {(appointment.status === "scheduled" || appointment.status === "pending") && (
