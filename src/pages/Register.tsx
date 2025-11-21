@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Check, ArrowRight, Home, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/meddexpro-logo.png";
 
 interface PricingPlan {
   id: string;
@@ -230,37 +231,47 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-purple-500/5 to-pink-500/5 flex items-start justify-center px-4 py-8">
-      <div className="w-full max-w-6xl">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 md:mb-8 lg:mb-10">
-          <div className="text-center sm:text-left flex-1">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-              Welcome to MedDexPro
-            </h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Your complete healthcare management solution</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-5xl">
+        {/* Logo and Header - Centered */}
+        <div className="text-center mb-12">
+          <div className="flex justify-center mb-6">
+            <img src={logo} alt="MedDexPro" className="h-16 md:h-20" />
           </div>
-          <Button variant="outline" onClick={() => navigate("/")}>
-            <Home className="w-4 h-4 mr-2" />
-            Back to Home
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
+            Welcome to MedDexPro
+          </h1>
+          <p className="text-sm md:text-base text-muted-foreground">
+            Your complete healthcare management solution
+          </p>
+        </div>
+
+        <div className="flex justify-end mb-6">
+          <Button variant="ghost" onClick={() => navigate("/")} className="text-sm">
+            ← Back to Home
           </Button>
         </div>
 
-        <Card className="overflow-hidden shadow-2xl border border-border/60 bg-card/95 backdrop-blur rounded-2xl">
+        <Card className="overflow-hidden shadow-xl border border-border/20 bg-card/80 backdrop-blur-xl rounded-3xl">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-12 sm:h-14">
-              <TabsTrigger value="login" className="text-base sm:text-lg">Login</TabsTrigger>
-              <TabsTrigger value="signup" className="text-base sm:text-lg">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 p-1.5 h-auto bg-muted/50 m-6 mb-0 rounded-xl">
+              <TabsTrigger value="login" className="text-sm font-medium py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Login
+              </TabsTrigger>
+              <TabsTrigger value="signup" className="text-sm font-medium py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                Sign Up
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="login" className="p-4 sm:p-8">
-              <form onSubmit={handleLogin} className="space-y-6 max-w-md mx-auto">
+            <TabsContent value="login" className="mt-0">
+              <form onSubmit={handleLogin} className="space-y-5 max-w-md mx-auto px-8 py-8">
                 <div className="text-center mb-6">
-                  <h3 className="text-2xl font-bold mb-2">Sign In</h3>
+                  <h3 className="text-2xl font-semibold mb-2">Sign In</h3>
                   <p className="text-muted-foreground text-sm">Access your MedDexPro account</p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-base">Email Address</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="login-email" className="text-sm font-medium">Email Address</Label>
                   <Input
                     id="login-email"
                     type="email"
@@ -268,13 +279,13 @@ const Register = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="h-12"
+                    className="h-10 rounded-lg"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="login-password" className="text-base">Password</Label>
-                    <Link to="/forgot-password" className="text-sm text-primary hover:underline">
+                    <Label htmlFor="login-password" className="text-sm font-medium">Password</Label>
+                    <Link to="/forgot-password" className="text-xs text-primary hover:underline">
                       Forgot password?
                     </Link>
                   </div>
@@ -285,10 +296,10 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="h-12"
+                    className="h-10 rounded-lg"
                   />
                 </div>
-                <Button type="submit" className="w-full h-12 text-base" size="lg" disabled={loading}>
+                <Button type="submit" className="w-full h-10 text-sm font-medium rounded-lg" disabled={loading}>
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -298,7 +309,7 @@ const Register = () => {
                     "Sign In"
                   )}
                 </Button>
-                <p className="text-center text-sm text-muted-foreground">
+                <p className="text-center text-sm text-muted-foreground pt-2">
                   Don't have an account?{" "}
                   <button
                     type="button"
@@ -311,11 +322,11 @@ const Register = () => {
               </form>
             </TabsContent>
 
-            <TabsContent value="signup" className="p-4 sm:p-8">
+            <TabsContent value="signup" className="mt-0">
               {signupStep === "details" ? (
-                <form onSubmit={handleSignupDetails} className="space-y-6 max-w-md mx-auto">
+                <form onSubmit={handleSignupDetails} className="space-y-4 max-w-md mx-auto px-8 py-8">
                   <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold mb-2">Create Account</h3>
+                    <h3 className="text-2xl font-semibold mb-2">Create Account</h3>
                     <p className="text-muted-foreground text-sm">Join MedDexPro today</p>
                   </div>
 
@@ -325,7 +336,7 @@ const Register = () => {
                       type="button"
                       variant={userType === "clinic_admin" ? "default" : "outline"}
                       onClick={() => setUserType("clinic_admin")}
-                      className="w-full"
+                      className="w-full h-9 text-sm rounded-lg"
                     >
                       Clinic
                     </Button>
@@ -333,14 +344,14 @@ const Register = () => {
                       type="button"
                       variant={userType === "doctor" ? "default" : "outline"}
                       onClick={() => setUserType("doctor")}
-                      className="w-full"
+                      className="w-full h-9 text-sm rounded-lg"
                     >
                       Doctor
                     </Button>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-name" className="text-base">Full Name</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="signup-name" className="text-sm font-medium">Full Name</Label>
                     <Input
                       id="signup-name"
                       type="text"
@@ -348,11 +359,11 @@ const Register = () => {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       required
-                      className="h-12"
+                      className="h-10 rounded-lg"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-base">Email Address</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="signup-email" className="text-sm font-medium">Email Address</Label>
                     <Input
                       id="signup-email"
                       type="email"
@@ -360,11 +371,11 @@ const Register = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="h-12"
+                      className="h-10 rounded-lg"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-base">Password</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="signup-password" className="text-sm font-medium">Password</Label>
                     <Input
                       id="signup-password"
                       type="password"
@@ -373,28 +384,28 @@ const Register = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       minLength={6}
-                      className="h-12"
+                      className="h-10 rounded-lg"
                     />
                     <p className="text-xs text-muted-foreground">Must be at least 6 characters</p>
                   </div>
 
                   {userType === "doctor" && (
                     <>
-                      <div className="space-y-2">
-                        <Label htmlFor="specialty" className="text-base">Specialty</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="specialty" className="text-sm font-medium">Specialty</Label>
                         <Input
                           id="specialty"
                           type="text"
                           placeholder="e.g., Cardiology, Pediatrics"
                           value={specialty}
                           onChange={(e) => setSpecialty(e.target.value)}
-                          className="h-12"
+                          className="h-10 rounded-lg"
                         />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="license" className="text-base">BMDC Registration Number *</Label>
+                      <div className="space-y-1.5">
+                        <Label htmlFor="license" className="text-sm font-medium">BMDC Registration Number *</Label>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
                             BMDC Reg. No-
                           </span>
                           <Input
@@ -404,31 +415,31 @@ const Register = () => {
                             value={licenseNumber}
                             onChange={(e) => setLicenseNumber(e.target.value)}
                             required
-                            className="pl-32 h-12"
+                            className="pl-32 h-10 rounded-lg"
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="fee" className="text-base">Consultation Fee (৳)</Label>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="fee" className="text-sm font-medium">Consultation Fee (৳)</Label>
                           <Input
                             id="fee"
                             type="number"
                             placeholder="500"
                             value={consultationFee}
                             onChange={(e) => setConsultationFee(e.target.value)}
-                            className="h-12"
+                            className="h-10 rounded-lg"
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="experience" className="text-base">Experience (years)</Label>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="experience" className="text-sm font-medium">Experience (years)</Label>
                           <Input
                             id="experience"
                             type="number"
                             placeholder="5"
                             value={experience}
                             onChange={(e) => setExperience(e.target.value)}
-                            className="h-12"
+                            className="h-10 rounded-lg"
                           />
                         </div>
                       </div>
@@ -436,8 +447,8 @@ const Register = () => {
                   )}
 
                   {userType === "clinic_admin" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="clinic-name" className="text-base">Clinic Name</Label>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="clinic-name" className="text-sm font-medium">Clinic Name</Label>
                       <Input
                         id="clinic-name"
                         type="text"
@@ -445,12 +456,12 @@ const Register = () => {
                         value={specialty}
                         onChange={(e) => setSpecialty(e.target.value)}
                         required
-                        className="h-12"
+                        className="h-10 rounded-lg"
                       />
                     </div>
                   )}
 
-                  <Button type="submit" className="w-full h-12 text-base" size="lg" disabled={loading}>
+                  <Button type="submit" className="w-full h-10 text-sm font-medium rounded-lg mt-2" disabled={loading}>
                     {loading ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -461,12 +472,12 @@ const Register = () => {
                     )}
                   </Button>
 
-                  <p className="text-center text-sm text-muted-foreground">
+                  <p className="text-center text-sm text-muted-foreground pt-2">
                     Already have an account?{" "}
                     <button
                       type="button"
                       onClick={() => setActiveTab("login")}
-                      className="text-primary hover:underline"
+                      className="text-primary font-medium hover:underline"
                     >
                       Sign in
                     </button>
