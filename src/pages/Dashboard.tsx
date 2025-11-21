@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import { Users, FileText, Calendar } from "lucide-react";
+import { Users, FileText, Calendar, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MyPatientsTab } from "@/components/dashboard/MyPatientsTab";
@@ -11,10 +11,12 @@ import { ReportsTab } from "@/components/dashboard/ReportsTab";
 import { SubscriptionManager } from "@/components/subscription/SubscriptionManager";
 import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { SubscriptionExpiryBanner } from "@/components/subscription/SubscriptionExpiryBanner";
+import { SubscriptionHistory } from "@/components/subscription/SubscriptionHistory";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean | null>(null);
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalPrescriptions: 0,
@@ -22,6 +24,7 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
+    checkSubscription();
     loadStats();
     
     // Check URL params for tab
@@ -31,6 +34,27 @@ const Dashboard = () => {
       setActiveTab(tab);
     }
   }, []);
+
+  const checkSubscription = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("subscription_status, subscription_tier, trial_ends_at")
+        .eq("id", user.id)
+        .single();
+
+      if (data) {
+        const hasActive = data.subscription_status === "active" || 
+          (data.subscription_status === "trial" && data.trial_ends_at && new Date(data.trial_ends_at) > new Date());
+        setHasActiveSubscription(hasActive);
+      }
+    } catch (error) {
+      console.error("Error checking subscription:", error);
+    }
+  };
 
   const loadStats = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -59,7 +83,26 @@ const Dashboard = () => {
         <SubscriptionExpiryBanner />
         <SubscriptionManager />
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        {hasActiveSubscription === false ? (
+          <Card className="border-dashed border-2">
+            <CardContent className="p-12 text-center space-y-6">
+              <Sparkles className="h-16 w-16 mx-auto text-primary" />
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Welcome to MedScribe!</h2>
+                <p className="text-muted-foreground">
+                  Subscribe to a plan or start your free trial to unlock all features and create prescriptions.
+                </p>
+              </div>
+              <div className="flex justify-center gap-4">
+                <Button onClick={() => navigate("/demo")} variant="outline" size="lg">
+                  Try Demo
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="patients">My Patients</TabsTrigger>
@@ -120,9 +163,13 @@ const Dashboard = () => {
             </SubscriptionGate>
           </TabsContent>
         </Tabs>
+
+        <SubscriptionHistory />
+          </>
+        )}
       </div>
     </AppLayout>
   );
 };
 
-  export default Dashboard;
+export default Dashboard;
