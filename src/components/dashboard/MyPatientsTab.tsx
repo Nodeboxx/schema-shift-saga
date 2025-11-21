@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,9 @@ interface Patient {
   allergies: string | null;
   medical_history: string | null;
   created_at: string;
+  auth_user_id?: string | null;
+  invitation_sent_at?: string | null;
+  invitation_accepted_at?: string | null;
 }
 
 export const MyPatientsTab = () => {
@@ -152,9 +156,14 @@ export const MyPatientsTab = () => {
       {/* Header */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold">Patient Database</h3>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Users className="h-5 w-5 text-primary" />
+              <h3 className="text-lg font-semibold">Patient Database</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Add patients and send invitations to create their accounts
+            </p>
           </div>
           <Button onClick={handleAddPatient}>
             <Plus className="h-4 w-4 mr-2" />
@@ -211,8 +220,14 @@ export const MyPatientsTab = () => {
                   <TableCell>{patient.phone || "-"}</TableCell>
                   <TableCell>{patient.email || "-"}</TableCell>
                   <TableCell>{patient.blood_group || "-"}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {format(new Date(patient.created_at), "PP")}
+                  <TableCell>
+                    {patient.auth_user_id ? (
+                      <Badge variant="default" className="text-xs">✓ Registered</Badge>
+                    ) : patient.invitation_sent_at ? (
+                      <Badge variant="secondary" className="text-xs">Invited</Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-xs">Not Invited</Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
