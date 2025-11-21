@@ -3,11 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import { Users, FileText, Calendar, Sparkles } from "lucide-react";
+import { Users, FileText, Calendar, Sparkles, ScanLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MyPatientsTab } from "@/components/dashboard/MyPatientsTab";
 import { ReportsTab } from "@/components/dashboard/ReportsTab";
+import { QRScanner } from "@/components/scanner/QRScanner";
 import { SubscriptionManager } from "@/components/subscription/SubscriptionManager";
 import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { SubscriptionExpiryBanner } from "@/components/subscription/SubscriptionExpiryBanner";
@@ -106,6 +107,7 @@ const Dashboard = () => {
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="patients">My Patients</TabsTrigger>
+            <TabsTrigger value="verify">Verify Patient</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
           </TabsList>
 
@@ -155,6 +157,21 @@ const Dashboard = () => {
             <SubscriptionGate feature="patient management">
               <MyPatientsTab />
             </SubscriptionGate>
+          </TabsContent>
+
+          <TabsContent value="verify">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 mb-4">
+                <ScanLine className="h-6 w-6 text-primary" />
+                <div>
+                  <h2 className="text-2xl font-bold">Verify Prescription</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Scan QR codes from prescriptions to verify authenticity and view patient details
+                  </p>
+                </div>
+              </div>
+              <QRScanner />
+            </div>
           </TabsContent>
 
           <TabsContent value="reports">
