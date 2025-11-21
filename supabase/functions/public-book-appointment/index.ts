@@ -122,7 +122,7 @@ serve(async (req) => {
         end_time: endTime,
         status: "pending",
         type: "in-person",
-        patient_type: "walk-in",
+        patient_type: "walk_in",
         notes: `Public appointment request - Contact: ${patientPhone}${
           patientEmail ? `, Email: ${patientEmail}` : ""
         }`,
@@ -153,7 +153,8 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("public-book-appointment unhandled error", error);
-    const message = error instanceof Error ? error.message : "Unknown error";
+    const anyError = error as any;
+    const message = anyError?.message || JSON.stringify(anyError) || "Unknown error";
     return new Response(
       JSON.stringify({ error: message }),
       {
