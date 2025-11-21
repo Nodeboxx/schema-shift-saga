@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Home, LogOut, Printer, Send, MessageCircle, Mail } from "lucide-react";
+import { Home, LogOut, Printer, Send, MessageCircle, Mail, Save, Plus } from "lucide-react";
 import RichTextToolbar from "../RichTextToolbar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -14,9 +14,11 @@ interface PrescriptionControlsProps {
   onRichTextCommand?: (command: string, value?: string) => void;
   patientName?: string;
   patientPhone?: string;
+  onSave?: () => void;
+  onAddPage?: () => void;
 }
 
-const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone }: PrescriptionControlsProps) => {
+const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone, onSave, onAddPage }: PrescriptionControlsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [headerlessPrint, setHeaderlessPrint] = useState(false);
@@ -198,6 +200,20 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
             <Home className="w-4 h-4 mr-2" />
             Dashboard
           </Button>
+          {onSave && (
+            <Button
+              onClick={onSave}
+              style={{
+                padding: "10px 15px",
+                backgroundColor: "#28a745",
+                color: "white",
+                fontWeight: 600,
+              }}
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save Prescription
+            </Button>
+          )}
           <Button
             onClick={handlePrint}
             style={{
@@ -275,6 +291,20 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
             <LogOut className="w-4 h-4 mr-2" />
             Logout
           </Button>
+          {onAddPage && (
+            <Button
+              onClick={onAddPage}
+              style={{
+                padding: "10px 15px",
+                backgroundColor: "#17a2b8",
+                color: "white",
+                fontWeight: 600,
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Page
+            </Button>
+          )}
         </div>
         <div style={{ marginTop: "10px", padding: "10px", background: "#f5f5f5", borderTop: "1px solid #ccc" }}>
           <RichTextToolbar onCommand={handleCommand} />

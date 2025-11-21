@@ -13,6 +13,8 @@ const Prescription = () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [prescriptionData, setPrescriptionData] = useState<any>(null);
+  const [onSave, setOnSave] = useState<(() => void) | undefined>();
+  const [onAddPage, setOnAddPage] = useState<(() => void) | undefined>();
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast } = useToast();
@@ -127,12 +129,19 @@ const Prescription = () => {
         userId={user?.id} 
         patientName={prescriptionData?.patient_name}
         patientPhone={prescriptionData?.patient?.phone}
+        onSave={onSave}
+        onAddPage={onAddPage}
       />
       <div
         id="page-wrapper"
         className="prescription-page-wrapper mx-auto max-w-5xl md:max-w-6xl"
       >
-        <PrescriptionPage prescriptionData={prescriptionData} userId={user?.id} />
+        <PrescriptionPage 
+          prescriptionData={prescriptionData} 
+          userId={user?.id}
+          onSaveReady={(handler) => setOnSave(() => handler)}
+          onAddPageReady={(handler) => setOnAddPage(() => handler)}
+        />
       </div>
     </div>
   );
