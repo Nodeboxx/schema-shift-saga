@@ -72,6 +72,8 @@ export const AppointmentCalendar = ({ compact = false }: AppointmentCalendarProp
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "pending":
+        return "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400";
       case "scheduled":
         return "bg-blue-500/10 text-blue-700 dark:text-blue-400";
       case "in_consultation":

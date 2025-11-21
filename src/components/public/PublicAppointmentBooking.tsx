@@ -106,9 +106,10 @@ export const PublicAppointmentBooking = () => {
           patient_id: patientId,
           start_time: startTime.toISOString(),
           end_time: endTime.toISOString(),
-          status: "scheduled",
+          status: "pending",
           type: "in-person",
-          notes: `Contact: ${patientPhone}${patientEmail ? `, Email: ${patientEmail}` : ""}`
+          patient_type: "walk-in",
+          notes: `Public appointment request - Contact: ${patientPhone}${patientEmail ? `, Email: ${patientEmail}` : ""}`
         });
 
       if (appointmentError) throw appointmentError;
