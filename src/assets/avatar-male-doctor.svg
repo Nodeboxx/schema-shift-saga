@@ -1,61 +1,100 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Faceless male doctor avatar">
   <defs>
-    <linearGradient id="doctorMaleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    <linearGradient id="bgGradM" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f7f8fa"/>
+      <stop offset="1" stop-color="#eef1f4"/>
     </linearGradient>
+
+    <radialGradient id="skinGradM" cx="40%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#ffd9bd"/>
+      <stop offset="1" stop-color="#f0b99a"/>
+    </radialGradient>
+
+    <linearGradient id="hairGradM" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#4c2f1f"/>
+      <stop offset="1" stop-color="#2e1b11"/>
+    </linearGradient>
+
+    <linearGradient id="coatGradM" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e9eef3"/>
+    </linearGradient>
+
+    <linearGradient id="scrubGradM" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#8fc6e6"/>
+      <stop offset="1" stop-color="#58a9d6"/>
+    </linearGradient>
+
+    <linearGradient id="stethGradM" x1="0" x2="1">
+      <stop offset="0" stop-color="#3b3f44"/>
+      <stop offset="1" stop-color="#1f2326"/>
+    </linearGradient>
+
+    <filter id="softShadowM" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
   </defs>
-  
-  <!-- Background Circle -->
-  <circle cx="100" cy="100" r="98" fill="#f0f9ff" stroke="#3b82f6" stroke-width="2"/>
-  
-  <!-- Lab Coat -->
-  <path d="M 60 120 Q 60 110 70 105 L 70 180 Q 70 190 80 190 L 120 190 Q 130 190 130 180 L 130 105 Q 140 110 140 120 L 140 185 Q 140 195 130 195 L 70 195 Q 60 195 60 185 Z" fill="white" stroke="#cbd5e1" stroke-width="2"/>
-  
-  <!-- Collar -->
-  <path d="M 75 105 L 80 115 L 70 120 Z" fill="white" stroke="#cbd5e1" stroke-width="1.5"/>
-  <path d="M 125 105 L 120 115 L 130 120 Z" fill="white" stroke="#cbd5e1" stroke-width="1.5"/>
-  
-  <!-- Buttons -->
-  <circle cx="100" cy="130" r="3" fill="#3b82f6"/>
-  <circle cx="100" cy="145" r="3" fill="#3b82f6"/>
-  <circle cx="100" cy="160" r="3" fill="#3b82f6"/>
-  
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#bgGradM)"/>
+
+  <!-- Torso base shadow -->
+  <g filter="url(#softShadowM)">
+    <ellipse cx="512" cy="820" rx="380" ry="120" fill="#f6f7f9" opacity="0.7"/>
+  </g>
+
+  <!-- Body: coat + scrubs -->
+  <g transform="translate(0,60)">
+    <path d="M180 820 C180 610 844 610 844 820 L844 920 L180 920 Z" fill="url(#coatGradM)"/>
+    <path d="M420 650 L360 820 L580 820 L520 650 Z" fill="rgba(0,0,0,0.02)"/>
+    <path d="M360 680 L512 740 L664 680 L612 740 L512 800 L412 740 Z" fill="url(#scrubGradM)"/>
+    <path d="M420 700 C470 740 554 740 604 700" fill="none" stroke="#2f6f91" stroke-width="6" stroke-linecap="round" opacity="0.12"/>
+  </g>
+
+  <!-- shoulders block -->
+  <path d="M200 560 C220 420 804 420 824 560 L824 620 C804 480 220 480 200 620 Z" fill="url(#coatGradM)" opacity="0.95"/>
+
+  <!-- Head & hair -->
+  <g transform="translate(0,-40)">
+    <!-- neck -->
+    <ellipse cx="512" cy="430" rx="78" ry="100" fill="url(#skinGradM)"/>
+
+    <!-- head -->
+    <path d="M512 180 C600 180 660 240 680 320 C700 420 660 520 512 520 C364 520 324 420 344 320 C364 240 424 180 512 180 Z" fill="url(#skinGradM)"/>
+
+    <!-- male hair -->
+    <path d="M380 210 C420 170 590 170 660 210 C640 170 600 150 512 150 C424 150 384 170 380 210 Z"
+          fill="url(#hairGradM)"/>
+    <path d="M420 190 C460 180 560 180 620 190 C600 170 560 160 512 160 C464 160 428 170 420 190 Z"
+          fill="rgba(0,0,0,0.06)"/>
+
+    <!-- ears -->
+    <ellipse cx="360" cy="350" rx="18" ry="26" fill="url(#skinGradM)"/>
+    <ellipse cx="664" cy="350" rx="18" ry="26" fill="url(#skinGradM)"/>
+  </g>
+
   <!-- Stethoscope -->
-  <path d="M 85 125 Q 80 130 80 140" stroke="#1e40af" stroke-width="3" fill="none"/>
-  <path d="M 115 125 Q 120 130 120 140" stroke="#1e40af" stroke-width="3" fill="none"/>
-  <circle cx="80" cy="142" r="5" fill="none" stroke="#1e40af" stroke-width="2"/>
-  <circle cx="120" cy="142" r="5" fill="none" stroke="#1e40af" stroke-width="2"/>
-  <circle cx="100" cy="155" r="8" fill="#1e40af"/>
-  <path d="M 80 142 Q 90 148 100 147" stroke="#1e40af" stroke-width="3" fill="none"/>
-  <path d="M 120 142 Q 110 148 100 147" stroke="#1e40af" stroke-width="3" fill="none"/>
-  
-  <!-- Head/Neck -->
-  <ellipse cx="100" cy="75" rx="25" ry="30" fill="#fbbf24"/>
-  <rect x="90" y="95" width="20" height="15" fill="#fbbf24"/>
-  
-  <!-- Short Hair -->
-  <ellipse cx="100" cy="50" rx="28" ry="20" fill="#374151"/>
-  <path d="M 72 60 Q 72 45 85 45 Q 90 40 100 40 Q 110 40 115 45 Q 128 45 128 60" fill="#374151"/>
-  
-  <!-- Medical Cap Light -->
-  <ellipse cx="100" cy="42" rx="30" ry="8" fill="#60a5fa" opacity="0.7"/>
-  
-  <!-- Ears -->
-  <ellipse cx="72" cy="75" rx="5" ry="8" fill="#fbbf24"/>
-  <ellipse cx="128" cy="75" rx="5" ry="8" fill="#fbbf24"/>
-  
-  <!-- Eyes -->
-  <circle cx="90" cy="72" r="3" fill="#1f2937"/>
-  <circle cx="110" cy="72" r="3" fill="#1f2937"/>
-  
-  <!-- Eyebrows -->
-  <path d="M 83 65 Q 90 63 97 65" stroke="#374151" stroke-width="2" fill="none" stroke-linecap="round"/>
-  <path d="M 103 65 Q 110 63 117 65" stroke="#374151" stroke-width="2" fill="none" stroke-linecap="round"/>
-  
-  <!-- Smile -->
-  <path d="M 90 85 Q 100 90 110 85" stroke="#1f2937" stroke-width="2" fill="none" stroke-linecap="round"/>
-  
-  <!-- Nose -->
-  <path d="M 100 75 L 100 82" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <g transform="translate(0,40)">
+    <!-- left tubing -->
+    <path d="M380 600 C360 520 340 480 340 460 C340 420 410 420 430 460 C444 488 420 500 404 520 C390 536 396 564 380 600 Z"
+          fill="none" stroke="url(#stethGradM)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" opacity="0.98"/>
+
+    <!-- right tubing -->
+    <path d="M644 600 C664 520 684 480 684 460 C684 420 614 420 594 460 C580 488 604 500 620 520 C634 536 628 564 644 600 Z"
+          fill="none" stroke="url(#stethGradM)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" opacity="0.98"/>
+
+    <!-- chest piece -->
+    <circle cx="660" cy="640" r="52" fill="#dfe7ec" stroke="#2c3136" stroke-width="10"/>
+    <circle cx="660" cy="640" r="30" fill="#3a3e42" stroke="#111" stroke-width="6" opacity="0.95"/>
+    <circle cx="660" cy="640" r="8" fill="#cfd7db"/>
+  </g>
+
+  <!-- highlights and subtle detail -->
+  <g opacity="0.6">
+    <path d="M240 640 C360 560 664 560 784 640" fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" opacity="0.12"/>
+  </g>
+
+  <!-- shadow under head -->
+  <ellipse cx="512" cy="560" rx="170" ry="18" fill="#000" opacity="0.06"/>
+
 </svg>
