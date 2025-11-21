@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Check } from "lucide-react";
+import { getTierFromPlanId } from "@/lib/planMapping";
 
 interface PricingPlan {
   id: string;
@@ -88,12 +89,13 @@ export const UpgradeModal = ({ open, onOpenChange, onSuccess }: UpgradeModalProp
       const formData = new FormData(e.target as HTMLFormElement);
       const displayPrice = billingCycle === 'yearly' ? selectedPlan.yearlyPrice : selectedPlan.price;
       const status = (paymentMethod === 'bkash' || paymentMethod === 'wire') ? 'pending' : 'active';
+      const tier = getTierFromPlanId(selectedPlan.id); // Map plan ID to tier
 
       const { error } = await supabase
         .from("subscriptions")
         .insert({
           user_id: user.id,
-          tier: selectedPlan.id as any,
+          tier: tier as any,
           status: status,
           amount: displayPrice,
           billing_cycle: billingCycle,
@@ -110,7 +112,7 @@ export const UpgradeModal = ({ open, onOpenChange, onSuccess }: UpgradeModalProp
         await supabase
           .from("profiles")
           .update({
-            subscription_tier: selectedPlan.id as any,
+            subscription_tier: tier as any,
             subscription_status: "active",
             subscription_start_date: new Date().toISOString(),
             subscription_end_date: endDate.toISOString(),
