@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Phone, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PublicLayout } from "@/components/layout/PublicLayout";
-import maleAvatar from "@/assets/avatar-male-doctor.svg";
-import femaleAvatar from "@/assets/avatar-female-doctor.svg";
+import maleAvatar from "@/assets/avatar-male-doctor.png";
+import femaleAvatar from "@/assets/avatar-female-doctor.png";
 
 interface Doctor {
   id: string;
@@ -152,7 +152,7 @@ const FindDoctors = () => {
                       <img 
                         src={doctor.sex === 'female' ? femaleAvatar : maleAvatar}
                         alt={`${doctor.full_name} - Doctor`}
-                        className="w-full h-full object-contain p-2"
+                        className="w-full h-full object-cover"
                       />
                     )}
                   </div>
