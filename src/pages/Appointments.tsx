@@ -19,6 +19,7 @@ const Appointments = () => {
   const { toast } = useToast();
   const [date, setDate] = useState<Date>(new Date());
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [pendingRequests, setPendingRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -30,6 +31,7 @@ const Appointments = () => {
   useEffect(() => {
     if (user) {
       loadAppointments();
+      loadPendingRequests();
     }
   }, [user, date]);
 
@@ -74,6 +76,29 @@ const Appointments = () => {
     }
   };
 
+  const loadPendingRequests = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("appointments")
+        .select(`
+          *,
+          patients (name, age, sex)
+        `)
+        .eq("doctor_id", user.id)
+        .eq("status", "pending")
+        .order("start_time");
+
+      if (error) throw error;
+      setPendingRequests(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleApproveAppointment = async (appointmentId: string) => {
     try {
       const { error } = await supabase
@@ -89,6 +114,7 @@ const Appointments = () => {
       });
       
       loadAppointments();
+      loadPendingRequests();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -113,6 +139,7 @@ const Appointments = () => {
       });
       
       loadAppointments();
+      loadPendingRequests();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -122,11 +149,8 @@ const Appointments = () => {
     }
   };
 
-  const pendingAppointments = appointments.filter(apt => 
-    (apt.status === "pending" || (apt.status === "scheduled" && apt.created_by !== user?.id))
-  );
   const confirmedAppointments = appointments.filter(apt => 
-    apt.status !== "cancelled" && apt.status !== "pending" && (apt.status !== "scheduled" || apt.created_by === user?.id)
+    apt.status !== "cancelled" && apt.status !== "pending"
   );
 
   return (
@@ -148,9 +172,9 @@ const Appointments = () => {
           <TabsList>
             <TabsTrigger value="pending">
               Pending Requests
-              {pendingAppointments.length > 0 && (
+              {pendingRequests.length > 0 && (
                 <Badge variant="destructive" className="ml-2">
-                  {pendingAppointments.length}
+                  {pendingRequests.length}
                 </Badge>
               )}
             </TabsTrigger>
@@ -162,13 +186,13 @@ const Appointments = () => {
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-4">Appointment Requests</h3>
-                {pendingAppointments.length === 0 ? (
+                {pendingRequests.length === 0 ? (
                   <p className="text-center text-muted-foreground py-8">
                     No pending appointment requests
                   </p>
                 ) : (
                   <div className="space-y-4">
-                    {pendingAppointments.map((appointment) => (
+                    {pendingRequests.map((appointment) => (
                       <div
                         key={appointment.id}
                         className="flex items-center justify-between p-4 border rounded-lg"
@@ -241,7 +265,10 @@ const Appointments = () => {
         <AppointmentDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
-          onSuccess={loadAppointments}
+          onSuccess={() => {
+            loadAppointments();
+            loadPendingRequests();
+          }}
           selectedDate={date}
         />
       </div>
