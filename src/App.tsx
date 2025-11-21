@@ -13,6 +13,7 @@ import PrivacyPolicy from "./pages/public/PrivacyPolicy";
 import AboutUs from "./pages/public/AboutUs";
 import ContactUs from "./pages/public/ContactUs";
 import FindDoctors from "./pages/public/FindDoctors";
+import BookAppointment from "./pages/public/BookAppointment";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -54,6 +55,7 @@ const App = () => (
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/find-doctors" element={<FindDoctors />} />
+          <Route path="/book-appointment" element={<BookAppointment />} />
               <Route path="/home" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
