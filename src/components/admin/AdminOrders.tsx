@@ -27,11 +27,10 @@ export const AdminOrders = () => {
   const loadOrders = async () => {
     try {
       const { data, error } = await supabase
-        .from("subscriptions")
+        .from("orders")
         .select(`
           *,
-          clinic:clinics(name),
-          user:profiles!subscriptions_user_id_fkey(full_name, email)
+          user:profiles!orders_user_id_fkey(full_name, email)
         `)
         .order("created_at", { ascending: false });
 
@@ -51,30 +50,76 @@ export const AdminOrders = () => {
   };
 
   const calculateStats = (ordersData: any[]) => {
-    const active = ordersData.filter(o => o.status === "active");
-    const totalRevenue = ordersData.reduce((sum, o) => sum + (o.amount || 0), 0);
-    const monthlyRevenue = active.reduce((sum, o) => sum + (o.amount || 0), 0);
+    const approved = ordersData.filter(o => o.status === "approved");
+    const pending = ordersData.filter(o => o.status === "pending");
+    const totalRevenue = approved.reduce((sum, o) => sum + (o.amount || 0), 0);
     
     setStats({
       totalRevenue,
-      activeSubscriptions: active.length,
-      monthlyRecurring: monthlyRevenue,
-      churnRate: ordersData.length > 0 ? ((ordersData.length - active.length) / ordersData.length * 100) : 0
+      activeSubscriptions: approved.length,
+      monthlyRecurring: totalRevenue,
+      churnRate: ordersData.length > 0 ? (pending.length / ordersData.length * 100) : 0
     });
   };
 
   const handleApprove = async (orderId: string) => {
     try {
-      const { error } = await supabase
-        .from("subscriptions")
-        .update({ status: "active" })
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const isLifetime = order.plan_id === 'lifetime';
+      const endDate = new Date();
+      
+      if (isLifetime) {
+        endDate.setFullYear(endDate.getFullYear() + 100);
+      } else {
+        endDate.setMonth(endDate.getMonth() + (order.billing_cycle === 'yearly' ? 12 : 1));
+      }
+
+      const { error: orderError } = await supabase
+        .from("orders")
+        .update({
+          status: "approved",
+          approved_by: user.id,
+          approved_at: new Date().toISOString(),
+        })
         .eq("id", orderId);
 
-      if (error) throw error;
+      if (orderError) throw orderError;
+
+      const { error: subError } = await supabase
+        .from("subscriptions")
+        .insert({
+          user_id: order.user_id,
+          order_id: orderId,
+          tier: order.plan_id as any,
+          status: "active",
+          amount: order.amount,
+          billing_cycle: order.billing_cycle,
+          payment_method: order.payment_method,
+          is_lifetime: isLifetime,
+          start_date: new Date().toISOString(),
+          end_date: endDate.toISOString(),
+        });
+
+      if (subError) throw subError;
+
+      await supabase
+        .from("profiles")
+        .update({
+          subscription_tier: order.plan_id as any,
+          subscription_status: "active",
+          subscription_start_date: new Date().toISOString(),
+          subscription_end_date: endDate.toISOString(),
+        })
+        .eq("id", order.user_id);
 
       toast({
         title: "Success",
-        description: "Order approved successfully"
+        description: "Order approved and subscription activated"
       });
 
       loadOrders();
@@ -89,16 +134,23 @@ export const AdminOrders = () => {
 
   const handleDeny = async (orderId: string) => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
       const { error } = await supabase
-        .from("subscriptions")
-        .update({ status: "cancelled" })
+        .from("orders")
+        .update({ 
+          status: "rejected",
+          rejected_by: user.id,
+          rejected_at: new Date().toISOString(),
+        })
         .eq("id", orderId);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Order denied"
+        description: "Order rejected"
       });
 
       loadOrders();
@@ -128,8 +180,8 @@ export const AdminOrders = () => {
 
   const filteredOrders = orders.filter(order => 
     order.user?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.clinic?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.tier?.toLowerCase().includes(searchTerm.toLowerCase())
+    order.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.plan_name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -183,26 +235,24 @@ export const AdminOrders = () => {
               <TableRow className="bg-muted/50">
                 <TableHead>Order ID</TableHead>
                 <TableHead>Customer</TableHead>
-                <TableHead>Clinic</TableHead>
                 <TableHead>Plan</TableHead>
                 <TableHead>Amount</TableHead>
-                <TableHead>Billing</TableHead>
+                <TableHead>Payment</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>End Date</TableHead>
+                <TableHead>Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-12">
+                  <TableCell colSpan={8} className="text-center py-12">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : filteredOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-12 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
                     No orders found
                   </TableCell>
                 </TableRow>
@@ -218,22 +268,26 @@ export const AdminOrders = () => {
                         <div className="text-sm text-muted-foreground">{order.user?.email}</div>
                       </div>
                     </TableCell>
-                    <TableCell>{order.clinic?.name || "—"}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="capitalize">
-                        {order.tier}
+                        {order.plan_name}
                       </Badge>
+                      <div className="text-xs text-muted-foreground mt-1">{order.billing_cycle}</div>
                     </TableCell>
                     <TableCell className="font-semibold">
-                      ${order.amount || 0}
+                      {order.currency}{order.amount || 0}
                     </TableCell>
-                    <TableCell className="capitalize">{order.billing_cycle || "monthly"}</TableCell>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium text-sm">{order.payment_method}</div>
+                        {order.payment_reference && (
+                          <div className="text-xs text-muted-foreground font-mono">{order.payment_reference}</div>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>{getStatusBadge(order.status || "pending")}</TableCell>
                     <TableCell>
-                      {order.start_date ? new Date(order.start_date).toLocaleDateString() : "—"}
-                    </TableCell>
-                    <TableCell>
-                      {order.end_date ? new Date(order.end_date).toLocaleDateString() : "—"}
+                      {order.created_at ? new Date(order.created_at).toLocaleDateString() : "—"}
                     </TableCell>
                     <TableCell className="text-right">
                       {order.status === "pending" && (

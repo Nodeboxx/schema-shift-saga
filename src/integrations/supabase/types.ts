@@ -819,6 +819,69 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          amount: number
+          approved_at: string | null
+          approved_by: string | null
+          billing_cycle: string
+          created_at: string
+          currency: string
+          id: string
+          payment_method: string
+          payment_proof_url: string | null
+          payment_reference: string | null
+          plan_id: string
+          plan_name: string
+          rejected_at: string | null
+          rejected_by: string | null
+          rejection_reason: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          approved_at?: string | null
+          approved_by?: string | null
+          billing_cycle: string
+          created_at?: string
+          currency?: string
+          id?: string
+          payment_method: string
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          plan_id: string
+          plan_name: string
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          billing_cycle?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          payment_method?: string
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          plan_id?: string
+          plan_name?: string
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       patient_journeys: {
         Row: {
           condition_name: string
@@ -1665,6 +1728,72 @@ export type Database = {
           },
         ]
       }
+      subscription_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          new_end_date: string | null
+          new_status: string | null
+          new_tier: string | null
+          old_end_date: string | null
+          old_status: string | null
+          old_tier: string | null
+          order_id: string | null
+          performed_by: string | null
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          new_end_date?: string | null
+          new_status?: string | null
+          new_tier?: string | null
+          old_end_date?: string | null
+          old_status?: string | null
+          old_tier?: string | null
+          order_id?: string | null
+          performed_by?: string | null
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          new_end_date?: string | null
+          new_status?: string | null
+          new_tier?: string | null
+          old_end_date?: string | null
+          old_status?: string | null
+          old_tier?: string | null
+          order_id?: string | null
+          performed_by?: string | null
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_logs_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_logs_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           amount: number | null
@@ -1677,7 +1806,9 @@ export type Database = {
           currency: string | null
           end_date: string | null
           id: string
+          is_lifetime: boolean | null
           next_billing_date: string | null
+          order_id: string | null
           payment_method: string | null
           payment_reference: string | null
           start_date: string | null
@@ -1699,7 +1830,9 @@ export type Database = {
           currency?: string | null
           end_date?: string | null
           id?: string
+          is_lifetime?: boolean | null
           next_billing_date?: string | null
+          order_id?: string | null
           payment_method?: string | null
           payment_reference?: string | null
           start_date?: string | null
@@ -1721,7 +1854,9 @@ export type Database = {
           currency?: string | null
           end_date?: string | null
           id?: string
+          is_lifetime?: boolean | null
           next_billing_date?: string | null
+          order_id?: string | null
           payment_method?: string | null
           payment_reference?: string | null
           start_date?: string | null
@@ -1745,6 +1880,13 @@ export type Database = {
             columns: ["clinic_id"]
             isOneToOne: false
             referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
           {
