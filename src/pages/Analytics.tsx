@@ -7,13 +7,14 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { 
   TrendingUp, Users, FileText, Calendar, 
-  Activity, DollarSign, Clock, Award 
+  Activity, DollarSign, Clock, Award, Database 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PrescriptionAnalytics from "@/components/analytics/PrescriptionAnalytics";
 import AppointmentAnalytics from "@/components/analytics/AppointmentAnalytics";
 import PatientDemographics from "@/components/analytics/PatientDemographics";
 import RevenueAnalytics from "@/components/analytics/RevenueAnalytics";
+import { ResearchInsights } from "@/components/analytics/ResearchInsights";
 
 const Analytics = () => {
   const navigate = useNavigate();
@@ -161,6 +162,10 @@ const Analytics = () => {
                 <DollarSign className="h-4 w-4 mr-2" />
                 Revenue
               </TabsTrigger>
+              <TabsTrigger value="research">
+                <Database className="h-4 w-4 mr-2" />
+                Clinical Insights
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="prescriptions" className="space-y-4">
@@ -177,6 +182,10 @@ const Analytics = () => {
 
             <TabsContent value="revenue" className="space-y-4">
               <RevenueAnalytics />
+            </TabsContent>
+
+            <TabsContent value="research" className="space-y-4">
+              <ResearchInsights />
             </TabsContent>
           </Tabs>
         </div>

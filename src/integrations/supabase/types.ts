@@ -1431,9 +1431,12 @@ export type Database = {
           id: string
           is_active: boolean | null
           is_featured: boolean | null
+          last_onboarding_date: string | null
           left_template_sections: Json | null
           license_number: string | null
           name_bn: string | null
+          onboarding_completed: boolean | null
+          onboarding_step: number | null
           phone: string | null
           qualifications: string | null
           registration_number: string | null
@@ -1473,9 +1476,12 @@ export type Database = {
           id: string
           is_active?: boolean | null
           is_featured?: boolean | null
+          last_onboarding_date?: string | null
           left_template_sections?: Json | null
           license_number?: string | null
           name_bn?: string | null
+          onboarding_completed?: boolean | null
+          onboarding_step?: number | null
           phone?: string | null
           qualifications?: string | null
           registration_number?: string | null
@@ -1515,9 +1521,12 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           is_featured?: boolean | null
+          last_onboarding_date?: string | null
           left_template_sections?: Json | null
           license_number?: string | null
           name_bn?: string | null
+          onboarding_completed?: boolean | null
+          onboarding_step?: number | null
           phone?: string | null
           qualifications?: string | null
           registration_number?: string | null
