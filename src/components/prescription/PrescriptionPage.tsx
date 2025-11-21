@@ -171,36 +171,33 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
   }, [prescriptionData]);
 
   const handlePatientSelect = (patient: any) => {
-    // Simple parsing: store age in years only (from patient.age string)
+    // Extract age (years only) from patient.age string
     let ageYears = "0";
     let ageText = "0y";
 
     if (patient.age) {
-      const parsedYears = parseInt(String(patient.age).replace(/[^0-9]/g, ""));
+      const parsedYears = parseInt(String(patient.age), 10);
       if (!isNaN(parsedYears)) {
         ageYears = parsedYears.toString();
         ageText = `${parsedYears}y`;
       }
     }
 
-    // Simple parsing for weight: treat value as kg if numeric
+    // Extract weight in kg from patient.weight string
     let weightKg = "0";
     let weightText = "0kg";
 
     if (patient.weight) {
-      const weightMatch = String(patient.weight).match(/(\d+\.?\d*)/);
-      if (weightMatch) {
-        const num = parseFloat(weightMatch[1]);
-        if (!isNaN(num)) {
-          weightKg = Math.round(num).toString();
-          weightText = `${weightKg}kg`;
-        }
+      const num = parseFloat(String(patient.weight));
+      if (!isNaN(num)) {
+        weightKg = Math.round(num).toString();
+        weightText = `${weightKg}kg`;
       }
     }
 
     // Store complete patient data including phone and email
-    setPatientInfo({
-      ...patientInfo,
+    setPatientInfo((prev) => ({
+      ...prev,
       patientName: patient.name || "",
       patientAge: ageText,
       patientAgeYears: ageYears,
@@ -210,14 +207,14 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
       patientWeight: weightText,
       patientWeightKg: weightKg,
       patientWeightGrams: "0",
-    });
+    }));
     
     // Store additional patient data in state for later use
-    setBodyData({
-      ...bodyData,
+    setBodyData((prev: any) => ({
+      ...prev,
       patientPhone: patient.phone || "",
       patientEmail: patient.email || "",
-    });
+    }));
     
     setPatientSelected(true);
     
