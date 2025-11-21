@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from 'react';
 import { VoiceInputButton } from '@/components/prescription/VoiceInputButton';
-import { useVoiceRecording } from '@/hooks/useVoiceRecording';
+import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface VoiceContentEditableProps {
   value: string;
@@ -24,61 +25,93 @@ export const VoiceContentEditable = ({
 }: VoiceContentEditableProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [language, setLanguage] = useState<'en-US' | 'bn-BD'>('en-US');
+  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const { isRecording, audioBlob, startRecording, stopRecording, clearAudio } = useAudioRecorder();
 
-  const { isListening, isProcessing, interimTranscript, toggleListening } = useVoiceRecording({
-    language,
-    continuous: true,
-    onTranscript: (text) => {
-      if (contentRef.current) {
-        // Insert text at cursor position or end
-        const selection = window.getSelection();
-        const range = selection?.getRangeAt(0);
-        
-        if (range && contentRef.current.contains(range.commonAncestorContainer)) {
-          // Insert at cursor
-          const textNode = document.createTextNode(text + ' ');
-          range.deleteContents();
-          range.insertNode(textNode);
-          range.setStartAfter(textNode);
-          range.setEndAfter(textNode);
-          selection?.removeAllRanges();
-          selection?.addRange(range);
-        } else {
-          // Append at end
-          contentRef.current.textContent += text + ' ';
+  // Process audio when recording stops
+  useEffect(() => {
+    if (audioBlob && !isRecording) {
+      transcribeAudio(audioBlob);
+    }
+  }, [audioBlob, isRecording]);
+
+  const transcribeAudio = async (blob: Blob) => {
+    setIsProcessing(true);
+    try {
+      // Convert blob to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      
+      await new Promise((resolve) => {
+        reader.onloadend = resolve;
+      });
+
+      const base64Audio = (reader.result as string).split(',')[1];
+
+      // Send to transcription edge function
+      const { data, error } = await supabase.functions.invoke('transcribe-audio', {
+        body: { audio: base64Audio, language }
+      });
+
+      if (error) throw error;
+
+      if (data?.text) {
+        // Insert transcribed text into content editable
+        if (contentRef.current) {
+          const selection = window.getSelection();
+          const range = selection?.getRangeAt(0);
+          
+          if (range && contentRef.current.contains(range.commonAncestorContainer)) {
+            const textNode = document.createTextNode(data.text + ' ');
+            range.deleteContents();
+            range.insertNode(textNode);
+            range.setStartAfter(textNode);
+            range.setEndAfter(textNode);
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+          } else {
+            contentRef.current.textContent += data.text + ' ';
+          }
+          
+          // Trigger blur to save
+          contentRef.current.dispatchEvent(new Event('blur', { bubbles: true }));
         }
-        
-        // Trigger blur to save
-        contentRef.current.dispatchEvent(new Event('blur', { bubbles: true }));
       }
-    },
-  });
+    } catch (error) {
+      console.error('Transcription error:', error);
+      toast({
+        title: 'Transcription Failed',
+        description: error instanceof Error ? error.message : 'Could not transcribe audio',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsProcessing(false);
+      clearAudio();
+    }
+  };
 
   const handleVoiceToggle = async (lang: 'en-US' | 'bn-BD') => {
-    if (!isListening) {
-      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        toast({
-          title: 'Not Supported',
-          description: 'Voice input is only supported in Chrome, Edge, and Safari browsers.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
+    if (isRecording) {
+      stopRecording();
+    } else {
       try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
         setLanguage(lang);
-        setTimeout(() => toggleListening(), 100);
+        const success = await startRecording();
+        if (!success) {
+          toast({
+            title: 'Microphone Access Required',
+            description: 'Please allow microphone access to use voice input.',
+            variant: 'destructive',
+          });
+        }
       } catch (error) {
         toast({
-          title: 'Microphone Access Required',
-          description: 'Please allow microphone access to use voice input.',
+          title: 'Recording Failed',
+          description: 'Could not start recording. Please check microphone permissions.',
           variant: 'destructive',
         });
       }
-    } else {
-      toggleListening();
     }
   };
 
@@ -105,12 +138,12 @@ export const VoiceContentEditable = ({
         }}
       >
         <VoiceInputButton
-          isListening={isListening}
+          isListening={isRecording}
           isProcessing={isProcessing}
           onToggle={handleVoiceToggle}
         />
       </div>
-      {isListening && (
+      {(isRecording || isProcessing) && (
         <div
           className="no-print"
           style={{
@@ -126,22 +159,28 @@ export const VoiceContentEditable = ({
             color: '#666',
           }}
         >
-          <div style={{ display: 'flex', gap: '2px' }}>
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                style={{
-                  width: '2px',
-                  height: `${Math.random() * 8 + 3}px`,
-                  background: '#0056b3',
-                  borderRadius: '1px',
-                  animation: 'pulse 0.8s ease-in-out infinite',
-                  animationDelay: `${i * 0.1}s`,
-                }}
-              />
-            ))}
-          </div>
-          <span>Listening...</span>
+          {isProcessing ? (
+            <span>Processing...</span>
+          ) : (
+            <>
+              <div style={{ display: 'flex', gap: '2px' }}>
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: '2px',
+                      height: `${Math.random() * 8 + 3}px`,
+                      background: '#0056b3',
+                      borderRadius: '1px',
+                      animation: 'pulse 0.8s ease-in-out infinite',
+                      animationDelay: `${i * 0.1}s`,
+                    }}
+                  />
+                ))}
+              </div>
+              <span>Recording...</span>
+            </>
+          )}
         </div>
       )}
     </div>
