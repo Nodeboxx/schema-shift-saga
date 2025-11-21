@@ -99,6 +99,11 @@ export const SubscriptionManager = () => {
   const getRemainingDays = () => {
     if (!subscription) return 0;
 
+    // Cancelled or inactive subscriptions should show 0 days remaining
+    if (subscription.subscription_status !== "active" && subscription.subscription_status !== "trial") {
+      return 0;
+    }
+
     const endDate = subscription.subscription_status === "trial" 
       ? subscription.trial_ends_at 
       : subscription.subscription_end_date;
@@ -202,7 +207,11 @@ export const SubscriptionManager = () => {
         <div className="flex items-center justify-between">
           <CardTitle>Subscription Status</CardTitle>
           <Badge variant={subscription.subscription_status === "active" ? "default" : "secondary"}>
-            {subscription.subscription_status === "trial" ? "Free Trial" : subscription.subscription_tier}
+            {subscription.subscription_status === "trial" 
+              ? "Free Trial" 
+              : subscription.subscription_status === "active" 
+              ? subscription.subscription_tier 
+              : subscription.subscription_status}
           </Badge>
         </div>
       </CardHeader>
