@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 
 const Appointments = () => {
   const navigate = useNavigate();
@@ -130,17 +131,18 @@ const Appointments = () => {
 
   return (
     <AppLayout>
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Appointments</h1>
-            <p className="text-muted-foreground">Manage your schedule and appointment requests</p>
+      <SubscriptionGate feature="appointment management">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold">Appointments</h1>
+              <p className="text-muted-foreground">Manage your schedule and appointment requests</p>
+            </div>
+            <Button onClick={() => setDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Appointment
+            </Button>
           </div>
-          <Button onClick={() => setDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Appointment
-          </Button>
-        </div>
 
         <Tabs defaultValue="pending" className="space-y-6">
           <TabsList>
@@ -243,6 +245,7 @@ const Appointments = () => {
           selectedDate={date}
         />
       </div>
+      </SubscriptionGate>
     </AppLayout>
   );
 };

@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FileText, Search, Eye, Printer } from "lucide-react";
 import { format } from "date-fns";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 
 const PrescriptionList = () => {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
@@ -74,21 +75,22 @@ const PrescriptionList = () => {
 
   return (
     <AppLayout>
-      <div className="p-6">
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold flex items-center gap-2">
-                <FileText className="w-8 h-8" />
-                All Prescriptions
-              </h1>
-              <p className="text-muted-foreground mt-1">View and manage all saved prescriptions</p>
+      <SubscriptionGate feature="prescription history">
+        <div className="p-6">
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-3xl font-bold flex items-center gap-2">
+                  <FileText className="w-8 h-8" />
+                  All Prescriptions
+                </h1>
+                <p className="text-muted-foreground mt-1">View and manage all saved prescriptions</p>
+              </div>
+              <Button onClick={() => navigate("/prescription")} size="lg">
+                <FileText className="w-4 h-4 mr-2" />
+                New Prescription
+              </Button>
             </div>
-            <Button onClick={() => navigate("/prescription")} size="lg">
-              <FileText className="w-4 h-4 mr-2" />
-              New Prescription
-            </Button>
-          </div>
 
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -183,6 +185,7 @@ const PrescriptionList = () => {
           </CardContent>
         </Card>
       </div>
+      </SubscriptionGate>
     </AppLayout>
   );
 };

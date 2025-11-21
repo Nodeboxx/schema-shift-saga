@@ -386,7 +386,7 @@ export const AdminSubscriptions = () => {
 
             {/* Quick actions for extending subscription */}
             <div className="space-y-2">
-              <Label>Quick Extend Options</Label>
+              <Label>Quick Actions</Label>
               <div className="grid grid-cols-3 gap-2">
                 <Button
                   type="button"
@@ -434,6 +434,29 @@ export const AdminSubscriptions = () => {
                   +1 Year
                 </Button>
               </div>
+            </div>
+
+            {/* Reset trial button */}
+            <div className="p-4 bg-muted rounded-lg space-y-2">
+              <Label className="text-sm font-medium">Special Actions</Label>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="w-full"
+                onClick={() => {
+                  const statusSelect = document.querySelector('select[name="status"]') as HTMLSelectElement;
+                  const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
+                  if (statusSelect && endDateInput) {
+                    statusSelect.value = 'trial';
+                    const trialEnd = new Date();
+                    trialEnd.setDate(trialEnd.getDate() + 14);
+                    endDateInput.value = trialEnd.toISOString().split('T')[0];
+                  }
+                }}
+              >
+                Reset to 14-Day Trial
+              </Button>
             </div>
 
             <div className="flex gap-2">
