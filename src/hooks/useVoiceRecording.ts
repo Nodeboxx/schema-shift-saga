@@ -15,6 +15,7 @@ export const useVoiceRecording = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const recognitionRef = useRef<any>(null);
+  const shouldRestartRef = useRef(false);
 
   const startListening = useCallback(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -36,6 +37,7 @@ export const useVoiceRecording = ({
         setIsListening(true);
         setIsProcessing(false);
         setInterimTranscript('');
+        shouldRestartRef.current = true;
       };
 
       recognition.onresult = (event: any) => {
@@ -63,24 +65,38 @@ export const useVoiceRecording = ({
 
       recognition.onerror = (event: any) => {
         console.error('Speech recognition error:', event.error);
-        if (event.error === 'not-allowed') {
-          console.error('Microphone permission denied');
+        
+        // Don't auto-restart on these errors
+        if (event.error === 'not-allowed' || event.error === 'network' || event.error === 'no-speech') {
+          shouldRestartRef.current = false;
+          setIsListening(false);
+          setIsProcessing(false);
+          
+          if (event.error === 'network') {
+            console.error('Network error: Speech recognition service unavailable. Please check your internet connection.');
+          }
         }
-        setIsListening(false);
-        setIsProcessing(false);
       };
 
       recognition.onend = () => {
         console.log('Voice recognition ended');
-        if (isListening && continuous) {
-          // Auto-restart if continuous mode
+        
+        // Only restart if we're supposed to be listening and continuous mode is on
+        if (shouldRestartRef.current && continuous && recognitionRef.current) {
           try {
-            recognition.start();
+            setTimeout(() => {
+              if (recognitionRef.current && shouldRestartRef.current) {
+                recognitionRef.current.start();
+              }
+            }, 100);
           } catch (e) {
+            console.error('Error restarting recognition:', e);
+            shouldRestartRef.current = false;
             setIsListening(false);
             setIsProcessing(false);
           }
         } else {
+          shouldRestartRef.current = false;
           setIsListening(false);
           setIsProcessing(false);
         }
@@ -91,19 +107,25 @@ export const useVoiceRecording = ({
       return true;
     } catch (error) {
       console.error('Error starting speech recognition:', error);
+      shouldRestartRef.current = false;
       setIsListening(false);
       return false;
     }
-  }, [language, continuous, onTranscript, isListening]);
+  }, [language, continuous, onTranscript]);
 
   const stopListening = useCallback(() => {
+    shouldRestartRef.current = false;
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        console.error('Error stopping recognition:', e);
+      }
       recognitionRef.current = null;
-      setIsListening(false);
-      setIsProcessing(false);
-      setInterimTranscript('');
     }
+    setIsListening(false);
+    setIsProcessing(false);
+    setInterimTranscript('');
   }, []);
 
   const toggleListening = useCallback(() => {
