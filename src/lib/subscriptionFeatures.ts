@@ -25,6 +25,7 @@ export const TIER_FEATURES: Record<SubscriptionTier, FeatureKey[]> = {
   free: [
     'prescriptions',        // Smart Prescription Builder
     'patient_management',   // Need to add patients to create prescriptions
+    'prescription_history', // View created prescriptions
     'custom_templates',     // Customizable Templates
     'prescription_email',   // Send via WhatsApp/Email/Messenger
   ],
