@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -495,8 +496,9 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-6xl mx-auto">
+    <AppLayout>
+      <div className="min-h-screen bg-background p-8">
+        <div className="max-w-6xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <Button
             onClick={() => navigate("/dashboard")}
@@ -881,6 +883,7 @@ const Settings = () => {
         />
       </div>
     </div>
+    </AppLayout>
   );
 };
 
