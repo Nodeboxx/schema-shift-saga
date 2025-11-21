@@ -14,6 +14,7 @@ import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { SubscriptionExpiryBanner } from "@/components/subscription/SubscriptionExpiryBanner";
 import { SubscriptionHistory } from "@/components/subscription/SubscriptionHistory";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { UserGuide } from "@/components/dashboard/UserGuide";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -147,6 +148,8 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
+            <UserGuide />
+            
             <div className="flex justify-end mb-4">
               <Button onClick={() => navigate('/prescription')}>
                 <FileText className="w-4 h-4 mr-2" />
