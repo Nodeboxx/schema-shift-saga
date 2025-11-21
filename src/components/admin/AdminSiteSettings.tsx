@@ -37,7 +37,7 @@ const AdminSiteSettings = () => {
   });
   const [logo, setLogo] = useState({ url: "", alt: "" });
   const [favicon, setFavicon] = useState({ url: "/favicon.ico" });
-  const [siteName, setSiteName] = useState({ value: "HealthScribe" });
+  const [siteName, setSiteName] = useState({ value: "MedDexPro" });
   const [logoUploading, setLogoUploading] = useState(false);
   const [faviconUploading, setFaviconUploading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -326,7 +326,7 @@ const AdminSiteSettings = () => {
                   <Input
                     value={siteName.value}
                     onChange={(e) => setSiteName({ value: e.target.value })}
-                    placeholder="HealthScribe"
+                    placeholder="MedDexPro"
                   />
                   <Button onClick={saveSiteName} disabled={saving}>
                     <Save className="h-4 w-4 mr-2" />

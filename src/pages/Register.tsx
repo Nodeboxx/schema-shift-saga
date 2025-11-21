@@ -234,7 +234,7 @@ const Register = () => {
         <div className="flex justify-between items-start mb-8">
           <div className="text-center flex-1">
             <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-              Welcome to HealthScribe
+              Welcome to MedDexPro
             </h1>
             <p className="text-muted-foreground">Your complete healthcare management solution</p>
           </div>

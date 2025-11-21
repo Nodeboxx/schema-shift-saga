@@ -13,7 +13,7 @@ export const PublicLayout = ({ children }: PublicLayoutProps) => {
   const [headerContent, setHeaderContent] = useState<any>(null);
   const [footerContent, setFooterContent] = useState<any>(null);
   const [siteLogo, setSiteLogo] = useState<any>(null);
-  const [siteName, setSiteName] = useState("HealthScribe");
+  const [siteName, setSiteName] = useState("MedDexPro");
 
   useEffect(() => {
     loadSettings();
@@ -34,7 +34,7 @@ export const PublicLayout = ({ children }: PublicLayoutProps) => {
         } else if (setting.key === 'site_logo') {
           setSiteLogo(setting.value);
         } else if (setting.key === 'site_name') {
-          setSiteName(setting.value?.value || 'HealthScribe');
+          setSiteName(setting.value?.value || 'MedDexPro');
         }
       });
     } catch (error) {
