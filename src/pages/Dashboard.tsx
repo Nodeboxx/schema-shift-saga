@@ -125,14 +125,13 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <SubscriptionGate feature="analytics" customFeatureName="Prescriptions and Analytics">
-              <div className="flex justify-end mb-4">
-                <Button onClick={() => navigate('/prescription')}>
-                  <FileText className="w-4 h-4 mr-2" />
-                  New Prescription
-                </Button>
-              </div>
-              <div className="grid gap-4 md:grid-cols-3">
+            <div className="flex justify-end mb-4">
+              <Button onClick={() => navigate('/prescription')}>
+                <FileText className="w-4 h-4 mr-2" />
+                New Prescription
+              </Button>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Patients</CardTitle>
@@ -163,7 +162,6 @@ const Dashboard = () => {
                 </CardContent>
               </Card>
             </div>
-            </SubscriptionGate>
           </TabsContent>
 
           <TabsContent value="patients">
