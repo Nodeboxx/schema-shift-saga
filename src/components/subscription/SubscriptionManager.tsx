@@ -6,8 +6,19 @@ import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, CreditCard, TrendingUp, Clock } from "lucide-react";
+import { Calendar, CreditCard, TrendingUp, Clock, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { UpgradeModal } from "./UpgradeModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface SubscriptionData {
   subscription_tier: string;
@@ -21,6 +32,8 @@ interface SubscriptionData {
 export const SubscriptionManager = () => {
   const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -111,6 +124,36 @@ export const SubscriptionManager = () => {
     const totalDays = subscription.subscription_status === "trial" ? 14 : 30;
     const remaining = getRemainingDays();
     return Math.max(0, Math.min(100, (remaining / totalDays) * 100));
+  };
+
+  const handleCancelSubscription = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          subscription_status: "cancelled",
+        })
+        .eq("id", user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Subscription Cancelled",
+        description: "Your subscription has been cancelled. You can continue using features until the end of your billing period.",
+      });
+
+      loadSubscription();
+      setCancelDialogOpen(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading) {
@@ -236,12 +279,25 @@ export const SubscriptionManager = () => {
           )}
         </div>
 
-        {subscription.subscription_status !== "trial" && (
-          <Button onClick={() => navigate("/?scroll=pricing")} className="w-full">
-            <TrendingUp className="mr-2 h-4 w-4" />
-            Upgrade Plan
-          </Button>
-        )}
+        <div className="flex gap-3">
+          {subscription.subscription_status !== "trial" && (
+            <Button onClick={() => setUpgradeModalOpen(true)} className="flex-1">
+              <TrendingUp className="mr-2 h-4 w-4" />
+              Upgrade Plan
+            </Button>
+          )}
+          
+          {subscription.subscription_status === "active" && (
+            <Button 
+              onClick={() => setCancelDialogOpen(true)} 
+              variant="outline" 
+              className="flex-1"
+            >
+              <XCircle className="mr-2 h-4 w-4" />
+              Cancel Subscription
+            </Button>
+          )}
+        </div>
 
         {subscription.subscription_status === "trial" && remainingDays <= 3 && (
           <div className="rounded-lg bg-orange-500/10 p-4 border border-orange-500/20">
@@ -249,7 +305,7 @@ export const SubscriptionManager = () => {
               Your trial is ending soon! Choose a plan to continue using all features.
             </p>
             <Button 
-              onClick={() => navigate("/?scroll=pricing")} 
+              onClick={() => setUpgradeModalOpen(true)} 
               size="sm" 
               className="mt-2"
             >
@@ -258,6 +314,29 @@ export const SubscriptionManager = () => {
           </div>
         )}
       </CardContent>
+
+      <UpgradeModal 
+        open={upgradeModalOpen} 
+        onOpenChange={setUpgradeModalOpen}
+        onSuccess={loadSubscription}
+      />
+
+      <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Subscription?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to cancel your subscription? You'll continue to have access until the end of your current billing period.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCancelSubscription}>
+              Yes, Cancel
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };
