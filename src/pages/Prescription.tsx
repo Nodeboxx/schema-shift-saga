@@ -63,7 +63,8 @@ const Prescription = () => {
       .from("prescriptions")
       .select(`
         *,
-        prescription_items (*)
+        prescription_items (*),
+        patients (phone, email)
       `)
       .eq("id", prescriptionId)
       .single();
@@ -75,6 +76,12 @@ const Prescription = () => {
         variant: "destructive",
       });
       return;
+    }
+
+    // Merge patient data from patients table if available
+    if (data.patients) {
+      data.patient_phone = data.patients.phone || data.patient_phone;
+      data.patient_email = data.patients.email || data.patient_email;
     }
 
     setPrescriptionData(data);
