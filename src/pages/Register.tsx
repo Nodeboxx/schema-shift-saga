@@ -32,6 +32,11 @@ const Register = () => {
   const [selectedPlan, setSelectedPlan] = useState<string>("");
   const [plans, setPlans] = useState<PricingPlan[]>([]);
   const [searchParams] = useSearchParams();
+  const [userType, setUserType] = useState<"patient" | "doctor">("doctor");
+  const [specialty, setSpecialty] = useState("");
+  const [licenseNumber, setLicenseNumber] = useState("");
+  const [consultationFee, setConsultationFee] = useState("");
+  const [experience, setExperience] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -106,7 +111,7 @@ const Register = () => {
     setLoading(false);
   };
 
-  const handleSignupDetails = (e: React.FormEvent) => {
+  const handleSignupDetails = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password || !fullName) {
       toast({
@@ -116,7 +121,60 @@ const Register = () => {
       });
       return;
     }
-    setSignupStep("plan");
+
+    // For doctors, validate additional fields
+    if (userType === "doctor") {
+      if (!licenseNumber) {
+        toast({
+          title: "Missing License",
+          description: "Please enter your BMDC registration number",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    // Direct signup without plan selection
+    setLoading(true);
+
+    const signupRedirectUrl = searchParams.get('redirect') 
+      ? `${window.location.origin}${searchParams.get('redirect')}`
+      : `${window.location.origin}/dashboard`;
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: signupRedirectUrl,
+        data: {
+          full_name: fullName,
+          user_type: userType,
+          specialty: userType === "doctor" ? specialty : null,
+          license_number: userType === "doctor" ? `BMDC Reg. No-${licenseNumber}` : null,
+          consultation_fee: userType === "doctor" ? consultationFee : null,
+          experience: userType === "doctor" ? experience : null,
+        },
+      },
+    });
+
+    if (error) {
+      toast({
+        title: "Signup Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Success!",
+        description: "Account created successfully. Logging you in...",
+      });
+      
+      // Auto login
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+    }
+    setLoading(false);
   };
 
   const handleSignup = async () => {
@@ -239,15 +297,36 @@ const Register = () => {
               {signupStep === "details" ? (
                 <form onSubmit={handleSignupDetails} className="space-y-6 max-w-md mx-auto">
                   <div className="text-center mb-6">
-                    <h3 className="text-2xl font-bold mb-2">Create Your Account</h3>
-                    <p className="text-muted-foreground">Step 1 of 2: Your Information</p>
+                    <h3 className="text-2xl font-bold mb-2">Create Account</h3>
+                    <p className="text-muted-foreground">Sign up to get started</p>
                   </div>
+
+                  {/* User Type Toggle */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      type="button"
+                      variant={userType === "patient" ? "default" : "outline"}
+                      onClick={() => setUserType("patient")}
+                      className="w-full"
+                    >
+                      Patient
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={userType === "doctor" ? "default" : "outline"}
+                      onClick={() => setUserType("doctor")}
+                      className="w-full"
+                    >
+                      Doctor
+                    </Button>
+                  </div>
+
                   <div>
                     <Label htmlFor="signup-name">Full Name</Label>
                     <Input
                       id="signup-name"
                       type="text"
-                      placeholder="Dr. John Doe"
+                      placeholder="John Doe"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       required
@@ -259,7 +338,7 @@ const Register = () => {
                     <Input
                       id="signup-email"
                       type="email"
-                      placeholder="doctor@example.com"
+                      placeholder="you@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -278,14 +357,78 @@ const Register = () => {
                       minLength={6}
                       className="mt-2"
                     />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Minimum 6 characters
-                    </p>
                   </div>
+
+                  {userType === "doctor" && (
+                    <>
+                      <div>
+                        <Label htmlFor="specialty">Specialty</Label>
+                        <Input
+                          id="specialty"
+                          type="text"
+                          placeholder="Select specialty"
+                          value={specialty}
+                          onChange={(e) => setSpecialty(e.target.value)}
+                          className="mt-2"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="license">License Number</Label>
+                        <div className="relative mt-2">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                            BMDC Reg. No-
+                          </span>
+                          <Input
+                            id="license"
+                            type="text"
+                            placeholder="12345"
+                            value={licenseNumber}
+                            onChange={(e) => setLicenseNumber(e.target.value)}
+                            className="pl-32"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="fee">Consultation Fee ($)</Label>
+                          <Input
+                            id="fee"
+                            type="number"
+                            placeholder="100"
+                            value={consultationFee}
+                            onChange={(e) => setConsultationFee(e.target.value)}
+                            className="mt-2"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="experience">Experience (years)</Label>
+                          <Input
+                            id="experience"
+                            type="number"
+                            placeholder="5"
+                            value={experience}
+                            onChange={(e) => setExperience(e.target.value)}
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
                   <Button type="submit" className="w-full" size="lg">
-                    Continue to Plan Selection
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    Sign Up
                   </Button>
+
+                  <p className="text-center text-sm text-muted-foreground">
+                    Already have an account?{" "}
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab("login")}
+                      className="text-primary hover:underline"
+                    >
+                      Sign in
+                    </button>
+                  </p>
                 </form>
               ) : (
                 <div className="space-y-8">
