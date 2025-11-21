@@ -193,141 +193,116 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
           ` : ''}
         }
       `}</style>
-      <div className="no-print" style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        background: "#e0e0e0",
-        padding: "10px 0",
-        zIndex: 998,
-        borderBottom: "1px solid #ccc",
-        width: "100%",
-        margin: "0 auto",
-        textAlign: "center",
-        display: "block",
-      }}>
-        <div style={{ display: "flex", gap: "10px", alignItems: "center", justifyContent: "center", flexWrap: "wrap", margin: "10px auto" }}>
-          <Button
-            onClick={handleGoHome}
-            style={{
-              padding: "10px 15px",
-              backgroundColor: "#6c757d",
-              color: "white",
-              fontWeight: 600,
-            }}
-          >
-            <Home className="w-4 h-4 mr-2" />
-            Dashboard
-          </Button>
-          {onSave && (
-            <Button
-              onClick={onSave}
-              style={{
-                padding: "10px 15px",
-                backgroundColor: "#28a745",
-                color: "white",
-                fontWeight: 600,
-              }}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Save Prescription
-            </Button>
-          )}
-          <Button
-            onClick={handlePrint}
-            style={{
-              padding: "10px 15px",
-              backgroundColor: "#c00",
-              color: "white",
-              fontWeight: 600,
-            }}
-          >
-            <Printer className="w-4 h-4 mr-2" />
-            Print
-          </Button>
-          
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "0 10px" }}>
-            <Switch 
-              id="headerless" 
-              checked={headerlessPrint}
-              onCheckedChange={setHeaderlessPrint}
-            />
-            <Label htmlFor="headerless" style={{ margin: 0, cursor: "pointer", fontSize: "14px" }}>
-              Header-less Print
-            </Label>
+      <div className="no-print fixed top-0 left-0 right-0 bg-muted/50 backdrop-blur-sm border-b border-border z-[998] shadow-sm">
+        <div className="container mx-auto py-3">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {/* Primary Actions Group */}
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={handleGoHome}
+                variant="secondary"
+                size="sm"
+                className="h-9 font-medium"
+              >
+                <Home className="w-4 h-4 mr-2" />
+                Dashboard
+              </Button>
+              {onSave && (
+                <Button
+                  onClick={onSave}
+                  variant="default"
+                  size="sm"
+                  className="h-9 font-medium bg-secondary hover:bg-secondary/90"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Save
+                </Button>
+              )}
+              <Button
+                onClick={handlePrint}
+                variant="destructive"
+                size="sm"
+                className="h-9 font-medium"
+              >
+                <Printer className="w-4 h-4 mr-2" />
+                Print
+              </Button>
+            </div>
+
+            {/* Print Settings */}
+            <div className="flex items-center gap-2 px-3 py-1 rounded-md bg-background/80 border border-border">
+              <Switch 
+                id="headerless" 
+                checked={headerlessPrint}
+                onCheckedChange={setHeaderlessPrint}
+              />
+              <Label htmlFor="headerless" className="cursor-pointer text-sm font-medium text-muted-foreground">
+                Header-less
+              </Label>
+            </div>
+
+            {/* Share Actions Group */}
+            {prescriptionId && (
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleWhatsAppShare}
+                  variant="outline"
+                  size="sm"
+                  className="h-9 font-medium hover:bg-[#25D366]/10 hover:text-[#25D366] hover:border-[#25D366]/50"
+                >
+                  <Send className="w-4 h-4 mr-2" />
+                  WhatsApp
+                </Button>
+                <Button
+                  onClick={handleMessengerShare}
+                  variant="outline"
+                  size="sm"
+                  className="h-9 font-medium hover:bg-[#0084FF]/10 hover:text-[#0084FF] hover:border-[#0084FF]/50"
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Messenger
+                </Button>
+                <Button
+                  onClick={handleEmailShare}
+                  variant="outline"
+                  size="sm"
+                  className="h-9 font-medium hover:bg-[#EA4335]/10 hover:text-[#EA4335] hover:border-[#EA4335]/50"
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Email
+                </Button>
+              </div>
+            )}
+
+            {/* Secondary Actions */}
+            <div className="flex items-center gap-2">
+              {onAddPage && (
+                <Button
+                  onClick={onAddPage}
+                  variant="outline"
+                  size="sm"
+                  className="h-9 font-medium"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Page
+                </Button>
+              )}
+              <Button
+                onClick={handleLogout}
+                variant="ghost"
+                size="sm"
+                className="h-9 font-medium text-destructive hover:bg-destructive/10 hover:text-destructive"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
+            </div>
           </div>
 
-          {prescriptionId && (
-            <>
-              <Button
-                onClick={handleWhatsAppShare}
-                style={{
-                  padding: "10px 15px",
-                  backgroundColor: "#25D366",
-                  color: "white",
-                  fontWeight: 600,
-                }}
-              >
-                <Send className="w-4 h-4 mr-2" />
-                WhatsApp
-              </Button>
-              <Button
-                onClick={handleMessengerShare}
-                style={{
-                  padding: "10px 15px",
-                  backgroundColor: "#0084FF",
-                  color: "white",
-                  fontWeight: 600,
-                }}
-              >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Messenger
-              </Button>
-              <Button
-                onClick={handleEmailShare}
-                style={{
-                  padding: "10px 15px",
-                  backgroundColor: "#EA4335",
-                  color: "white",
-                  fontWeight: 600,
-                }}
-              >
-                <Mail className="w-4 h-4 mr-2" />
-                Email
-              </Button>
-            </>
-          )}
-
-          <Button
-            onClick={handleLogout}
-            style={{
-              padding: "10px 15px",
-              backgroundColor: "#dc3545",
-              color: "white",
-              fontWeight: 600,
-            }}
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
-          {onAddPage && (
-            <Button
-              onClick={onAddPage}
-              style={{
-                padding: "10px 15px",
-                backgroundColor: "#17a2b8",
-                color: "white",
-                fontWeight: 600,
-              }}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add New Page
-            </Button>
-          )}
-        </div>
-        <div style={{ marginTop: "10px", padding: "10px", background: "#f5f5f5", borderTop: "1px solid #ccc" }}>
-          <RichTextToolbar onCommand={handleCommand} />
+          {/* Rich Text Toolbar */}
+          <div className="mt-3 pt-3 border-t border-border">
+            <RichTextToolbar onCommand={handleCommand} />
+          </div>
         </div>
       </div>
     </>
