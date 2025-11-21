@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { VoiceTextarea } from "@/components/voice/VoiceTextarea";
-import { Upload, X, Plus, Trash2 } from "lucide-react";
+import { Upload, X, Plus, Trash2, Mail, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface Patient {
@@ -41,6 +42,8 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [sendingInvite, setSendingInvite] = useState(false);
+  const [sendInvitation, setSendInvitation] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [customFields, setCustomFields] = useState<CustomTestField[]>([]);
   const [formData, setFormData] = useState<Patient>({
@@ -190,6 +193,46 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
           await uploadFiles(newPatient.id);
         }
 
+        // Send invitation if requested
+        if (sendInvitation && formData.email && newPatient) {
+          setSendingInvite(true);
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("full_name")
+              .eq("id", user?.id)
+              .single();
+
+            const { data: { session } } = await supabase.auth.getSession();
+            const response = await supabase.functions.invoke("send-patient-invitation", {
+              body: {
+                patientId: newPatient.id,
+                email: formData.email,
+                doctorName: profile?.full_name || "Your Doctor",
+              },
+              headers: {
+                Authorization: `Bearer ${session?.access_token}`,
+              },
+            });
+
+            if (response.error) throw response.error;
+
+            toast({
+              title: "Invitation Sent",
+              description: `An invitation email has been sent to ${formData.email}`,
+            });
+          } catch (inviteError: any) {
+            console.error("Error sending invitation:", inviteError);
+            toast({
+              title: "Invitation Note",
+              description: "Patient created successfully. Invitation link can be shared manually.",
+            });
+          } finally {
+            setSendingInvite(false);
+          }
+        }
+
         toast({
           title: "Success",
           description: "Patient added successfully",
@@ -275,6 +318,28 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
                 required
               />
             </div>
+
+            {!patient && formData.email && (
+              <div className="col-span-2 flex items-center space-x-2 p-4 bg-muted rounded-lg">
+                <Checkbox
+                  id="sendInvitation"
+                  checked={sendInvitation}
+                  onCheckedChange={(checked) => setSendInvitation(checked as boolean)}
+                />
+                <div className="space-y-1">
+                  <Label
+                    htmlFor="sendInvitation"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                  >
+                    <Mail className="h-4 w-4 inline mr-2" />
+                    Send invitation to create patient account
+                  </Label>
+                  <p className="text-xs text-muted-foreground">
+                    Patient will receive an invitation to create their own account and access their medical records
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="col-span-2">
               <Label htmlFor="blood_group">Blood Group</Label>
@@ -407,8 +472,9 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || uploading}>
-              {loading || uploading ? "Saving..." : patient ? "Update Patient" : "Add Patient"}
+            <Button type="submit" disabled={loading || uploading || sendingInvite}>
+              {(loading || uploading || sendingInvite) && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {sendingInvite ? "Sending Invitation..." : loading || uploading ? "Saving..." : patient ? "Update Patient" : "Add Patient"}
             </Button>
           </div>
         </form>

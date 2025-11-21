@@ -14,6 +14,9 @@ import AboutUs from "./pages/public/AboutUs";
 import ContactUs from "./pages/public/ContactUs";
 import FindDoctors from "./pages/public/FindDoctors";
 import BookAppointment from "./pages/public/BookAppointment";
+import PatientDashboard from "./pages/PatientDashboard";
+import PatientInvite from "./pages/PatientInvite";
+import PatientTelemedicine from "./pages/patient/PatientTelemedicine";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -54,8 +57,11 @@ const App = () => (
               <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/contact" element={<ContactUs />} />
-          <Route path="/find-doctors" element={<FindDoctors />} />
-          <Route path="/book-appointment" element={<BookAppointment />} />
+              <Route path="/find-doctors" element={<FindDoctors />} />
+              <Route path="/book-appointment" element={<BookAppointment />} />
+              <Route path="/patient/dashboard" element={<PatientDashboard />} />
+              <Route path="/patient/telemedicine/:sessionId" element={<PatientTelemedicine />} />
+              <Route path="/patient-invite" element={<PatientInvite />} />
               <Route path="/home" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

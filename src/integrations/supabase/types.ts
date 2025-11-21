@@ -890,6 +890,47 @@ export type Database = {
           },
         ]
       }
+      patient_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          patient_id: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          invited_by: string
+          patient_id: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          patient_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "patient_invitations_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: true
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patient_journeys: {
         Row: {
           condition_name: string
@@ -1005,6 +1046,7 @@ export type Database = {
         Row: {
           age: string | null
           allergies: string | null
+          auth_user_id: string | null
           blood_group: string | null
           clinic_id: string | null
           created_at: string | null
@@ -1012,6 +1054,9 @@ export type Database = {
           doctor_id: string | null
           email: string | null
           id: string
+          invitation_accepted_at: string | null
+          invitation_sent_at: string | null
+          invitation_token: string | null
           medical_history: string | null
           name: string
           notes: string | null
@@ -1024,6 +1069,7 @@ export type Database = {
         Insert: {
           age?: string | null
           allergies?: string | null
+          auth_user_id?: string | null
           blood_group?: string | null
           clinic_id?: string | null
           created_at?: string | null
@@ -1031,6 +1077,9 @@ export type Database = {
           doctor_id?: string | null
           email?: string | null
           id?: string
+          invitation_accepted_at?: string | null
+          invitation_sent_at?: string | null
+          invitation_token?: string | null
           medical_history?: string | null
           name: string
           notes?: string | null
@@ -1043,6 +1092,7 @@ export type Database = {
         Update: {
           age?: string | null
           allergies?: string | null
+          auth_user_id?: string | null
           blood_group?: string | null
           clinic_id?: string | null
           created_at?: string | null
@@ -1050,6 +1100,9 @@ export type Database = {
           doctor_id?: string | null
           email?: string | null
           id?: string
+          invitation_accepted_at?: string | null
+          invitation_sent_at?: string | null
+          invitation_token?: string | null
           medical_history?: string | null
           name?: string
           notes?: string | null
@@ -2238,6 +2291,10 @@ export type Database = {
       }
     }
     Functions: {
+      accept_patient_invitation: {
+        Args: { invitation_token: string; user_password: string }
+        Returns: Json
+      }
       approve_appointment: {
         Args: { appointment_id: string }
         Returns: undefined
