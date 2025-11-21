@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { User, Calendar, FileText, ClipboardList, Upload, Phone, Mail, Heart } from "lucide-react";
+import { User, Calendar, FileText, ClipboardList, Upload, Phone, Mail, Heart, Download } from "lucide-react";
 
 interface Patient {
   id: string;
@@ -19,6 +19,7 @@ interface Patient {
   allergies: string | null;
   medical_history: string | null;
   created_at: string;
+  custom_test_results?: any;
 }
 
 interface Prescription {
@@ -34,6 +35,17 @@ interface Appointment {
   type: string;
 }
 
+interface MedicalFile {
+  id: string;
+  file_name: string;
+  file_path: string;
+  file_type: string;
+  uploaded_at: string;
+  description: string | null;
+  test_type: string | null;
+  test_date: string | null;
+}
+
 interface PatientDetailDialogProps {
   patient: Patient | null;
   open: boolean;
@@ -43,6 +55,7 @@ interface PatientDetailDialogProps {
 export const PatientDetailDialog = ({ patient, open, onOpenChange }: PatientDetailDialogProps) => {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [medicalFiles, setMedicalFiles] = useState<MedicalFile[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -56,7 +69,7 @@ export const PatientDetailDialog = ({ patient, open, onOpenChange }: PatientDeta
     setLoading(true);
 
     try {
-      const [prescriptionsRes, appointmentsRes] = await Promise.all([
+      const [prescriptionsRes, appointmentsRes, filesRes] = await Promise.all([
         supabase
           .from("prescriptions")
           .select("id, created_at, prescription_date")
@@ -67,14 +80,41 @@ export const PatientDetailDialog = ({ patient, open, onOpenChange }: PatientDeta
           .select("id, start_time, status, type")
           .eq("patient_id", patient.id)
           .order("start_time", { ascending: false }),
+        supabase
+          .from("patient_medical_files")
+          .select("*")
+          .eq("patient_id", patient.id)
+          .order("uploaded_at", { ascending: false }),
       ]);
 
       setPrescriptions(prescriptionsRes.data || []);
       setAppointments(appointmentsRes.data || []);
+      setMedicalFiles(filesRes.data || []);
     } catch (error) {
       console.error("Error loading patient data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const downloadFile = async (file: MedicalFile) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('patient-medical-files')
+        .download(file.file_path);
+
+      if (error) throw error;
+
+      const url = URL.createObjectURL(data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = file.file_name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading file:", error);
     }
   };
 
@@ -255,21 +295,71 @@ export const PatientDetailDialog = ({ patient, open, onOpenChange }: PatientDeta
           </TabsContent>
 
           <TabsContent value="tests" className="space-y-3">
-            <Card>
-              <CardContent className="py-12 text-center space-y-4">
-                <Upload className="h-16 w-16 mx-auto text-muted-foreground" />
-                <div>
-                  <p className="font-medium mb-2">Test Results Upload</p>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Upload lab reports, X-rays, and other test results
-                  </p>
-                  <Button>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload Files
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            {loading ? (
+              <p className="text-center text-muted-foreground py-8">Loading...</p>
+            ) : medicalFiles.length === 0 ? (
+              <Card>
+                <CardContent className="py-12 text-center space-y-4">
+                  <Upload className="h-16 w-16 mx-auto text-muted-foreground" />
+                  <div>
+                    <p className="font-medium mb-2">No Test Results Uploaded</p>
+                    <p className="text-sm text-muted-foreground">
+                      Medical files will appear here once uploaded
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-2">
+                {medicalFiles.map((file) => (
+                  <Card key={file.id}>
+                    <CardContent className="py-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-5 w-5 text-muted-foreground" />
+                          <div>
+                            <p className="font-medium">{file.file_name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {file.test_date && `Test Date: ${format(new Date(file.test_date), "PP")} • `}
+                              Uploaded {format(new Date(file.uploaded_at), "PP")}
+                            </p>
+                            {file.description && (
+                              <p className="text-sm text-muted-foreground mt-1">{file.description}</p>
+                            )}
+                          </div>
+                        </div>
+                        <Button size="sm" variant="outline" onClick={() => downloadFile(file)}>
+                          <Download className="h-4 w-4 mr-1" />
+                          Download
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {/* Custom Test Results */}
+            {patient.custom_test_results && Array.isArray(patient.custom_test_results) && patient.custom_test_results.length > 0 && (
+              <Card className="mt-4">
+                <CardHeader>
+                  <CardTitle className="text-lg">Custom Test Results</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {(patient.custom_test_results as any[]).map((test: any, idx) => (
+                      <div key={idx} className="flex justify-between items-center p-2 bg-muted rounded">
+                        <div>
+                          <p className="font-medium">{test.label}</p>
+                          {test.date && <p className="text-xs text-muted-foreground">{format(new Date(test.date), "PP")}</p>}
+                        </div>
+                        <p className="font-medium">{test.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </DialogContent>

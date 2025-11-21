@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { VoiceTextarea } from "@/components/voice/VoiceTextarea";
 
 interface AppointmentListProps {
   appointments: any[];
@@ -312,10 +313,9 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
             </p>
             <div>
               <Label htmlFor="cancel-reason">Cancellation Reason</Label>
-              <Textarea
-                id="cancel-reason"
+              <VoiceTextarea
                 value={cancelReason}
-                onChange={(e) => setCancelReason(e.target.value)}
+                onChange={(value) => setCancelReason(value)}
                 placeholder="Enter reason for cancellation..."
                 rows={3}
               />

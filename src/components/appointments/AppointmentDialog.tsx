@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { VoiceTextarea } from "@/components/voice/VoiceTextarea";
 import {
   Select,
   SelectContent,
@@ -202,10 +203,10 @@ const AppointmentDialog = ({
 
           <div>
             <Label htmlFor="notes">Notes</Label>
-            <Textarea
-              id="notes"
+            <VoiceTextarea
               value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+              onChange={(value) => setFormData({ ...formData, notes: value })}
+              placeholder="Add notes about this appointment..."
               rows={3}
             />
           </div>

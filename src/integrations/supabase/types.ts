@@ -944,6 +944,63 @@ export type Database = {
           },
         ]
       }
+      patient_medical_files: {
+        Row: {
+          description: string | null
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id: string
+          patient_id: string
+          test_date: string | null
+          test_type: string | null
+          uploaded_at: string | null
+          uploaded_by: string
+        }
+        Insert: {
+          description?: string | null
+          file_name: string
+          file_path: string
+          file_size: number
+          file_type: string
+          id?: string
+          patient_id: string
+          test_date?: string | null
+          test_type?: string | null
+          uploaded_at?: string | null
+          uploaded_by: string
+        }
+        Update: {
+          description?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          patient_id?: string
+          test_date?: string | null
+          test_type?: string | null
+          uploaded_at?: string | null
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_patient"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "patient_medical_files_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       patients: {
         Row: {
           age: string | null
@@ -951,6 +1008,7 @@ export type Database = {
           blood_group: string | null
           clinic_id: string | null
           created_at: string | null
+          custom_test_results: Json | null
           doctor_id: string | null
           email: string | null
           id: string
@@ -969,6 +1027,7 @@ export type Database = {
           blood_group?: string | null
           clinic_id?: string | null
           created_at?: string | null
+          custom_test_results?: Json | null
           doctor_id?: string | null
           email?: string | null
           id?: string
@@ -987,6 +1046,7 @@ export type Database = {
           blood_group?: string | null
           clinic_id?: string | null
           created_at?: string | null
+          custom_test_results?: Json | null
           doctor_id?: string | null
           email?: string | null
           id?: string
