@@ -119,8 +119,8 @@ const Prescription = () => {
 
   return (
     <div
-      className="prescription-root"
-      style={{ fontFamily: "'Kalpurush', 'SolaimanLipi', 'Arial', sans-serif", backgroundColor: "#e0e0e0", margin: 0, paddingTop: "100px" }}
+      className="min-h-screen bg-muted pt-24 md:pt-32 px-2 sm:px-4 lg:px-8"
+      style={{ fontFamily: "'Kalpurush', 'SolaimanLipi', 'Arial', sans-serif" }}
     >
       <PrescriptionControls 
         prescriptionId={id} 
@@ -128,7 +128,10 @@ const Prescription = () => {
         patientName={prescriptionData?.patient_name}
         patientPhone={prescriptionData?.patient?.phone}
       />
-      <div id="page-wrapper" className="prescription-page-wrapper" style={{ display: "block", paddingTop: "160px" }}>
+      <div
+        id="page-wrapper"
+        className="prescription-page-wrapper mx-auto max-w-5xl md:max-w-6xl"
+      >
         <PrescriptionPage prescriptionData={prescriptionData} userId={user?.id} />
       </div>
     </div>

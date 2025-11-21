@@ -64,55 +64,34 @@ export const PublicAppointmentBooking = () => {
     setLoading(true);
 
     try {
-      // Create or find patient record (patients are owned by the selected doctor)
-      let patientId: string;
-      
-      const { data: existingPatient } = await supabase
-        .from("patients")
-        .select("id")
-        .eq("name", patientName)
-        .eq("doctor_id", selectedDoctor)
-        .maybeSingle();
-
-      if (existingPatient) {
-        patientId = existingPatient.id;
-      } else {
-        const { data: newPatient, error: patientError } = await supabase
-          .from("patients")
-          .insert({
-            name: patientName,
-            doctor_id: selectedDoctor,
-            user_id: selectedDoctor,
-          })
-          .select()
-          .single();
-
-        if (patientError) throw patientError;
-        patientId = newPatient.id;
-      }
-
-      // Create appointment request
       const [hours, minutes] = selectedTime.split(":");
       const startTime = new Date(selectedDate);
       startTime.setHours(parseInt(hours), parseInt(minutes), 0);
-      
+
       const endTime = new Date(startTime);
       endTime.setMinutes(endTime.getMinutes() + 30);
 
-      const { error: appointmentError } = await supabase
-        .from("appointments")
-        .insert({
-          doctor_id: selectedDoctor,
-          patient_id: patientId,
-          start_time: startTime.toISOString(),
-          end_time: endTime.toISOString(),
-          status: "pending",
-          type: "in-person",
-          patient_type: "walk-in",
-          notes: `Public appointment request - Contact: ${patientPhone}${patientEmail ? `, Email: ${patientEmail}` : ""}`
-        });
+      const payload = {
+        doctorId: selectedDoctor,
+        patientName,
+        patientPhone,
+        patientEmail,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+      };
 
-      if (appointmentError) throw appointmentError;
+      console.log("PublicAppointmentBooking: invoking public-book-appointment", payload);
+
+      const { data, error } = await supabase.functions.invoke("public-book-appointment", {
+        body: payload,
+      });
+
+      if (error) {
+        console.error("PublicAppointmentBooking: function error", error);
+        throw error;
+      }
+
+      console.log("PublicAppointmentBooking: booking created", data);
 
       toast({
         title: "Appointment Requested",
@@ -127,6 +106,7 @@ export const PublicAppointmentBooking = () => {
       setSelectedDate(undefined);
       setSelectedTime("");
     } catch (error: any) {
+      console.error("PublicAppointmentBooking: error booking appointment", error);
       toast({
         title: "Error",
         description: error.message || "Failed to book appointment",
