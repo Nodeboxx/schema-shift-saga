@@ -46,11 +46,75 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
     window.open(messengerUrl, '_blank');
   };
 
-  const handleEmailShare = () => {
-    const subject = `Prescription for ${patientName || 'Patient'}`;
-    const body = `Dear Patient,\n\nYour prescription is ready. View it here:\n${window.location.origin}/verify/${prescriptionId}\n\nBest regards,\nYour Healthcare Provider`;
-    const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoUrl;
+  const handleEmailShare = async () => {
+    if (!prescriptionId) {
+      toast({
+        title: "Error",
+        description: "Please save the prescription first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Get patient email
+      const { data: prescription } = await supabase
+        .from("prescriptions")
+        .select("patient_id, patient_name")
+        .eq("id", prescriptionId)
+        .single();
+
+      if (!prescription?.patient_id) {
+        toast({
+          title: "Error",
+          description: "Patient information not found",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data: patient } = await supabase
+        .from("patients")
+        .select("email, name")
+        .eq("id", prescription.patient_id)
+        .single();
+
+      if (!patient?.email) {
+        toast({
+          title: "Error", 
+          description: "Patient email not found. Please add email to patient record.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Sending email...",
+        description: "Please wait",
+      });
+
+      const { data, error } = await supabase.functions.invoke("send-prescription-email", {
+        body: {
+          prescriptionId,
+          patientEmail: patient.email,
+          patientName: patient.name || prescription.patient_name,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Prescription email sent successfully!",
+      });
+    } catch (error: any) {
+      console.error("Email error:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send email",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleCommand = (command: string, value?: string) => {
