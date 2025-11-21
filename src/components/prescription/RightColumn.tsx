@@ -102,19 +102,28 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
       flexDirection: "column",
       overflow: "visible",
     }}>
-      <h1 style={{
-        fontFamily: "'Times New Roman', Times, serif",
-        fontSize: "36px",
-        fontWeight: "bold",
-        color: "#333",
-        margin: 0,
-        lineHeight: 1,
-      }}>
-        Rx
-      </h1>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+        <h1 style={{
+          fontFamily: "'Times New Roman', Times, serif",
+          fontSize: "36px",
+          fontWeight: "bold",
+          color: "#333",
+          margin: 0,
+          lineHeight: 1,
+        }}>
+          Rx
+        </h1>
+        <div className="no-print" style={{ display: "flex", gap: "8px" }}>
+          <Button onClick={addMedicine} variant="outline" size="sm" className="add-medicine-btn h-8 text-xs">
+            + Add Medicine
+          </Button>
+          <Button onClick={addCategory} variant="outline" size="sm" className="add-medicine-btn h-8 text-xs">
+            + Add Category
+          </Button>
+        </div>
+      </div>
 
       <div style={{
-        marginTop: "8px",
         paddingLeft: "5px",
         fontSize: "10px",
         lineHeight: "1.3",
@@ -320,14 +329,6 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
         ))}
       </div>
 
-      <div className="no-print" style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-        <Button onClick={addMedicine} variant="outline" className="add-medicine-btn">
-          + Add Medicine
-        </Button>
-        <Button onClick={addCategory} variant="outline" className="add-medicine-btn">
-          + Add Category
-        </Button>
-      </div>
     </div>
   );
 };
