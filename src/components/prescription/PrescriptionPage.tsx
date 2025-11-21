@@ -171,13 +171,61 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
   }, [prescriptionData]);
 
   const handlePatientSelect = (patient: any) => {
+    // Parse age from text (e.g., "35" or "35y" or "2y 6m")
+    let ageYears = "0";
+    let ageMonths = "0";
+    let ageDays = "0";
+    let ageText = patient.age || "";
+    
+    if (ageText) {
+      // Try to extract years, months, days
+      const yearMatch = ageText.match(/(\d+)\s*y/i);
+      const monthMatch = ageText.match(/(\d+)\s*m/i);
+      const dayMatch = ageText.match(/(\d+)\s*d/i);
+      
+      if (yearMatch) ageYears = yearMatch[1];
+      if (monthMatch) ageMonths = monthMatch[1];
+      if (dayMatch) ageDays = dayMatch[1];
+      
+      // If no format found, assume it's just years
+      if (!yearMatch && !monthMatch && !dayMatch) {
+        const numAge = parseInt(ageText);
+        if (!isNaN(numAge)) {
+          ageYears = numAge.toString();
+          ageText = numAge + "y";
+        }
+      }
+    }
+    
+    // Parse weight (e.g., "70kg" or "70")
+    let weightKg = "0";
+    let weightGrams = "0";
+    let weightText = patient.weight || "";
+    
+    if (weightText) {
+      const weightMatch = weightText.match(/(\d+\.?\d*)/);
+      if (weightMatch) {
+        const weightNum = parseFloat(weightMatch[1]);
+        weightKg = Math.floor(weightNum).toString();
+        weightGrams = Math.round((weightNum - Math.floor(weightNum)) * 1000).toString();
+        if (!weightText.includes("kg")) {
+          weightText = weightNum + "kg";
+        }
+      }
+    }
+    
     // Store complete patient data including phone and email
     setPatientInfo({
       ...patientInfo,
       patientName: patient.name || "",
-      patientAge: patient.age || "",
+      patientAge: ageText,
+      patientAgeYears: ageYears,
+      patientAgeMonths: ageMonths,
+      patientAgeDays: ageDays,
       patientSex: patient.sex || "",
-      patientWeight: patient.weight || "",
+      patientWeight: weightText,
+      patientWeightKg: weightKg,
+      patientWeightGrams: weightGrams,
     });
     
     // Store additional patient data in state for later use
