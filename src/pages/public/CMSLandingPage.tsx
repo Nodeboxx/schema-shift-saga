@@ -135,7 +135,7 @@ const CMSLandingPage = () => {
                   size="lg" 
                   variant="outline" 
                   className="text-lg px-8 py-6 border-2" 
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/demo')}
                 >
                   {hero.content.cta_secondary || "Watch Demo"}
                 </Button>
