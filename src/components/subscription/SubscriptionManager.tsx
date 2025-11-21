@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Calendar, CreditCard, TrendingUp, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SubscriptionData {
   subscription_tier: string;
@@ -163,40 +164,74 @@ export const SubscriptionManager = () => {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">
+        {/* Color-coded status bar */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">
               {remainingDays} days remaining
             </span>
-            <span className="font-medium">{Math.round(getProgressPercentage())}%</span>
+            <Badge variant={remainingDays > 7 ? "default" : remainingDays > 3 ? "secondary" : "destructive"}>
+              {remainingDays > 7 ? "Good" : remainingDays > 3 ? "Expiring Soon" : "Critical"}
+            </Badge>
           </div>
-          <Progress value={getProgressPercentage()} className={`h-2 ${getProgressColor()}`} />
+          <div className="relative h-3 bg-muted rounded-full overflow-hidden">
+            <div 
+              className={cn(
+                "h-full transition-all duration-500 rounded-full",
+                remainingDays > 7 ? "bg-green-500" : remainingDays > 3 ? "bg-orange-500" : "bg-red-500"
+              )}
+              style={{ width: `${getProgressPercentage()}%` }}
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {subscription.subscription_start_date && (
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                Start Date
+        {/* Prominent subscription details */}
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            {subscription.subscription_start_date && (
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  Start Date
+                </div>
+                <p className="text-sm font-medium">
+                  {new Date(subscription.subscription_start_date).toLocaleDateString()}
+                </p>
               </div>
-              <p className="text-sm font-medium">
-                {new Date(subscription.subscription_start_date).toLocaleDateString()}
-              </p>
-            </div>
-          )}
+            )}
 
-          {(subscription.subscription_end_date || subscription.trial_ends_at) && (
-            <div className="space-y-1">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Calendar className="h-4 w-4" />
-                {subscription.subscription_status === "trial" ? "Trial Ends" : "Renewal Date"}
+            {(subscription.subscription_end_date || subscription.trial_ends_at) && (
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  {subscription.subscription_status === "trial" ? "Trial Ends" : "Renewal Date"}
+                </div>
+                <p className="text-sm font-medium">
+                  {new Date(
+                    subscription.subscription_end_date || subscription.trial_ends_at!
+                  ).toLocaleDateString()}
+                </p>
               </div>
-              <p className="text-sm font-medium">
-                {new Date(
-                  subscription.subscription_end_date || subscription.trial_ends_at!
-                ).toLocaleDateString()}
-              </p>
+            )}
+          </div>
+
+          {/* Next billing info for active subscriptions */}
+          {subscription.subscription_status === "active" && subscription.subscription_end_date && (
+            <div className="rounded-lg bg-primary/5 p-4 border border-primary/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">Next Billing Date</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {new Date(subscription.subscription_end_date).toLocaleDateString('en-US', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </p>
+                </div>
+                <CreditCard className="h-8 w-8 text-primary" />
+              </div>
             </div>
           )}
         </div>

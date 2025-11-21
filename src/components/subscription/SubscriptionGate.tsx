@@ -60,19 +60,27 @@ export const SubscriptionGate = ({ children, feature = "this feature" }: Subscri
 
   if (!hasAccess) {
     return (
-      <Card className="p-8 text-center">
+      <Card className="p-8 text-center max-w-lg mx-auto">
         <div className="flex justify-center mb-4">
-          <div className="rounded-full bg-muted p-4">
-            <Lock className="h-8 w-8 text-muted-foreground" />
+          <div className="rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 p-6">
+            <Lock className="h-12 w-12 text-primary" />
           </div>
         </div>
-        <h3 className="text-xl font-semibold mb-2">Subscription Required</h3>
-        <p className="text-muted-foreground mb-6">
-          You need an active subscription to access {feature}. Start your free trial or choose a plan to continue.
+        <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+          Premium Feature Locked
+        </h3>
+        <p className="text-muted-foreground mb-2">
+          You need an active subscription to access <span className="font-semibold text-foreground">{feature}</span>
         </p>
-        <div className="flex gap-3 justify-center">
-          <Button onClick={() => navigate("/dashboard?tab=overview")}>
-            View Plans
+        <p className="text-sm text-muted-foreground mb-6">
+          Upgrade your plan to unlock this feature and many more powerful tools for your practice.
+        </p>
+        <div className="flex flex-col gap-3">
+          <Button onClick={() => navigate("/?scroll=pricing")} size="lg" className="w-full">
+            View Plans & Pricing
+          </Button>
+          <Button onClick={() => navigate("/dashboard?tab=overview")} variant="outline" size="lg" className="w-full">
+            Go to Dashboard
           </Button>
         </div>
       </Card>

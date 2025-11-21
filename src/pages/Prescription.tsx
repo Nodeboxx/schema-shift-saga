@@ -88,22 +88,27 @@ const Prescription = () => {
   // Show subscription gate for new prescriptions
   if (!id && !hasAccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="p-8 text-center max-w-md">
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 flex items-center justify-center p-4">
+        <Card className="p-8 text-center max-w-lg">
           <div className="flex justify-center mb-4">
-            <div className="rounded-full bg-muted p-4">
-              <Lock className="h-8 w-8 text-muted-foreground" />
+            <div className="rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 p-6">
+              <Lock className="h-12 w-12 text-primary" />
             </div>
           </div>
-          <h3 className="text-xl font-semibold mb-2">Subscription Required</h3>
-          <p className="text-muted-foreground mb-6">
-            You need an active subscription to create prescriptions. Start your free trial or choose a plan to continue.
+          <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            Subscription Required
+          </h3>
+          <p className="text-muted-foreground mb-2">
+            You need an active subscription to create prescriptions.
           </p>
-          <div className="flex gap-3 justify-center">
-            <Button onClick={() => navigate("/dashboard?tab=overview")}>
-              View Plans
+          <p className="text-sm text-muted-foreground mb-6">
+            Start your free trial or choose a plan to unlock this powerful feature.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Button onClick={() => navigate("/?scroll=pricing")} size="lg" className="w-full">
+              View Plans & Pricing
             </Button>
-            <Button variant="outline" onClick={() => navigate("/dashboard")}>
+            <Button variant="outline" onClick={() => navigate("/dashboard")} size="lg" className="w-full">
               Go to Dashboard
             </Button>
           </div>
