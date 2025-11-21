@@ -147,8 +147,8 @@ const PrescriptionList = () => {
                           {prescription.dx_text || "-"}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={prescription.is_public ? "default" : "secondary"}>
-                            {prescription.is_public ? "Public" : "Draft"}
+                          <Badge variant="default" className="bg-secondary text-secondary-foreground">
+                            Saved
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
