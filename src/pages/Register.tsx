@@ -230,9 +230,9 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-purple-500/5 to-pink-500/5 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-purple-500/5 to-pink-500/5 flex items-start justify-center px-4 py-8">
       <div className="w-full max-w-6xl">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 md:mb-8 lg:mb-10">
           <div className="text-center sm:text-left flex-1">
             <h1 className="text-3xl sm:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
               Welcome to MedDexPro
@@ -245,7 +245,7 @@ const Register = () => {
           </Button>
         </div>
 
-        <Card className="overflow-hidden shadow-2xl">
+        <Card className="overflow-hidden shadow-2xl border border-border/60 bg-card/95 backdrop-blur rounded-2xl">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 h-12 sm:h-14">
               <TabsTrigger value="login" className="text-base sm:text-lg">Login</TabsTrigger>
