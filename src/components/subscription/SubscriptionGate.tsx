@@ -45,7 +45,6 @@ export const SubscriptionGate = ({
         return;
       }
 
-      setUserTier(data.subscription_tier);
       const now = new Date();
 
       // Check if subscription period is still valid
@@ -62,14 +61,28 @@ export const SubscriptionGate = ({
 
       const hasValidSubscription = hasActiveOrCancelledSubscription || hasValidTrial;
 
-      // If feature is specified, check tier-based access
-      if (feature && hasValidSubscription) {
-        // Default to 'free' tier for trial users or users without tier set
-        const effectiveTier = data.subscription_tier || (hasValidTrial ? 'free' : null);
+      // Determine effective tier (default to 'free' for trial or null tier)
+      const effectiveTier = data.subscription_tier || 'free';
+      setUserTier(effectiveTier);
+
+      // If no feature specified, just check if subscription is valid
+      if (!feature) {
+        setHasAccess(hasValidSubscription);
+        return;
+      }
+
+      // Feature-based access: Must have valid subscription AND tier must include feature
+      if (hasValidSubscription) {
         const tierAccess = hasFeatureAccess(effectiveTier, feature);
+        console.log('SubscriptionGate:', {
+          feature,
+          effectiveTier,
+          tierAccess,
+          status: data.subscription_status
+        });
         setHasAccess(tierAccess);
       } else {
-        setHasAccess(hasValidSubscription);
+        setHasAccess(false);
       }
     } catch (error) {
       console.error("Error checking access:", error);
