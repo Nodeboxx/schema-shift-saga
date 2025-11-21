@@ -131,7 +131,7 @@ const Appointments = () => {
 
   return (
     <AppLayout>
-      <SubscriptionGate feature="appointment management">
+      <SubscriptionGate feature="appointments">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div>

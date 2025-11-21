@@ -125,7 +125,7 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <SubscriptionGate feature="prescriptions and analytics">
+            <SubscriptionGate feature="analytics" customFeatureName="Prescriptions and Analytics">
               <div className="flex justify-end mb-4">
                 <Button onClick={() => navigate('/prescription')}>
                   <FileText className="w-4 h-4 mr-2" />
@@ -167,7 +167,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="patients">
-            <SubscriptionGate feature="patient management">
+            <SubscriptionGate feature="patient_management">
               <MyPatientsTab />
             </SubscriptionGate>
           </TabsContent>
@@ -188,7 +188,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="reports">
-            <SubscriptionGate feature="reports and analytics">
+            <SubscriptionGate feature="analytics" customFeatureName="Reports and Analytics">
               <ReportsTab />
             </SubscriptionGate>
           </TabsContent>

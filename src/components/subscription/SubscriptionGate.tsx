@@ -1,22 +1,30 @@
 import { useEffect, useState, ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Lock, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { hasFeatureAccess, getMinimumTier, FEATURE_NAMES, FeatureKey } from "@/lib/subscriptionFeatures";
 
 interface SubscriptionGateProps {
   children: ReactNode;
-  feature?: string;
+  feature?: FeatureKey;
+  customFeatureName?: string;
 }
 
-export const SubscriptionGate = ({ children, feature = "this feature" }: SubscriptionGateProps) => {
+export const SubscriptionGate = ({ 
+  children, 
+  feature, 
+  customFeatureName 
+}: SubscriptionGateProps) => {
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+  const [userTier, setUserTier] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     checkAccess();
-  }, []);
+  }, [feature]);
 
   const checkAccess = async () => {
     try {
@@ -28,7 +36,7 @@ export const SubscriptionGate = ({ children, feature = "this feature" }: Subscri
 
       const { data } = await supabase
         .from("profiles")
-        .select("subscription_status, subscription_end_date, trial_ends_at")
+        .select("subscription_status, subscription_tier, subscription_end_date, trial_ends_at")
         .eq("id", user.id)
         .single();
 
@@ -37,9 +45,10 @@ export const SubscriptionGate = ({ children, feature = "this feature" }: Subscri
         return;
       }
 
+      setUserTier(data.subscription_tier);
       const now = new Date();
 
-      // Check if paid subscription period (active or cancelled) is still valid
+      // Check if subscription period is still valid
       const hasPaidPeriod =
         data.subscription_end_date && new Date(data.subscription_end_date) > now;
       const hasActiveOrCancelledSubscription =
@@ -51,7 +60,15 @@ export const SubscriptionGate = ({ children, feature = "this feature" }: Subscri
         data.trial_ends_at && 
         new Date(data.trial_ends_at) > now;
 
-      setHasAccess(hasActiveOrCancelledSubscription || hasValidTrial);
+      const hasValidSubscription = hasActiveOrCancelledSubscription || hasValidTrial;
+
+      // If feature is specified, check tier-based access
+      if (feature && hasValidSubscription) {
+        const tierAccess = hasFeatureAccess(data.subscription_tier, feature);
+        setHasAccess(tierAccess);
+      } else {
+        setHasAccess(hasValidSubscription);
+      }
     } catch (error) {
       console.error("Error checking access:", error);
       setHasAccess(false);
@@ -67,6 +84,9 @@ export const SubscriptionGate = ({ children, feature = "this feature" }: Subscri
   }
 
   if (!hasAccess) {
+    const featureName = customFeatureName || (feature ? FEATURE_NAMES[feature] : "this feature");
+    const minimumTier = feature ? getMinimumTier(feature) : 'pro';
+    
     return (
       <Card className="p-8 text-center max-w-lg mx-auto">
         <div className="flex justify-center mb-4">
@@ -75,10 +95,24 @@ export const SubscriptionGate = ({ children, feature = "this feature" }: Subscri
           </div>
         </div>
         <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-          Premium Feature Locked
+          {feature ? "Upgrade Required" : "Premium Feature Locked"}
         </h3>
+        
+        {feature && userTier && (
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Badge variant="outline" className="capitalize">
+              Current: {userTier}
+            </Badge>
+            <Zap className="h-4 w-4 text-muted-foreground" />
+            <Badge className="capitalize">
+              Required: {minimumTier}
+            </Badge>
+          </div>
+        )}
+        
         <p className="text-muted-foreground mb-2">
-          You need an active subscription to access <span className="font-semibold text-foreground">{feature}</span>
+          <span className="font-semibold text-foreground">{featureName}</span> is available on the {' '}
+          <span className="font-semibold capitalize">{minimumTier}</span> plan
         </p>
         <p className="text-sm text-muted-foreground mb-6">
           Upgrade your plan to unlock this feature and many more powerful tools for your practice.
