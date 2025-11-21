@@ -5,8 +5,9 @@ import PrescriptionHeader from "./PrescriptionHeader";
 import PatientInfoBar from "./PatientInfoBar";
 import PrescriptionBody from "./PrescriptionBody";
 import PrescriptionFooter from "./PrescriptionFooter";
+import { PatientSelector } from "./PatientSelector";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Save, Mail, MessageCircle } from "lucide-react";
 
 interface PrescriptionPageProps {
   prescriptionData?: any;
@@ -15,6 +16,7 @@ interface PrescriptionPageProps {
 
 const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) => {
   const { toast } = useToast();
+  const [patientSelected, setPatientSelected] = useState(false);
   const [pages, setPages] = useState([{ id: 1 }]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pagesData, setPagesData] = useState<Record<number, any>>({ 1: {} });
@@ -84,6 +86,9 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
 
   useEffect(() => {
     if (prescriptionData) {
+      // Mark patient as selected if loading existing prescription
+      setPatientSelected(true);
+      
       // Store prescription ID and unique hash
       setPrescriptionId(prescriptionData.id);
       setUniqueHash(prescriptionData.unique_hash);
@@ -157,6 +162,54 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
       }
     }
   }, [prescriptionData]);
+
+  const handlePatientSelect = (patient: any) => {
+    setPatientInfo({
+      ...patientInfo,
+      patientName: patient.name,
+      patientAge: patient.age || "",
+      patientSex: patient.sex || "",
+      patientWeight: patient.weight || "",
+    });
+    setPatientSelected(true);
+    
+    toast({
+      title: "Patient Selected",
+      description: `${patient.name} selected. You can now write the prescription.`,
+    });
+  };
+
+  const handleWhatsAppShare = () => {
+    if (!uniqueHash) {
+      toast({
+        title: "Save Required",
+        description: "Please save the prescription first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const message = `Prescription for ${patientInfo.patientName}\n\nView: ${window.location.origin}/verify/${uniqueHash}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+  };
+
+  const handleEmailShare = async () => {
+    if (!uniqueHash) {
+      toast({
+        title: "Save Required",
+        description: "Please save the prescription first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Here you would call an edge function to send email
+    toast({
+      title: "Email",
+      description: "Email functionality will be available soon",
+    });
+  };
 
   const handleSave = async () => {
     // Validate required patient data
@@ -394,23 +447,53 @@ const PrescriptionPage = ({ prescriptionData, userId }: PrescriptionPageProps) =
 
   return (
     <>
-      <div className="no-print flex gap-2 justify-center mb-4">
-        <Button onClick={handleSave} size="lg">
-          Save Prescription
-        </Button>
-        <Button onClick={addPage} variant="outline" size="lg" className="add-medicine-btn">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Page
-        </Button>
-        {pages.length > 1 && (
-          <Button onClick={() => removePage(currentPage)} variant="destructive" size="lg">
-            <Trash2 className="w-4 h-4 mr-2" />
-            Remove Page
-          </Button>
-        )}
-      </div>
+      {/* Patient selector - shown first if no patient selected */}
+      {!patientSelected && (
+        <div className="max-w-2xl mx-auto mb-8">
+          <PatientSelector onPatientSelect={handlePatientSelect} />
+        </div>
+      )}
 
-      {pages.map((page) => (
+      {/* Action buttons - only shown after patient selection */}
+      {patientSelected && (
+        <div className="no-print sticky top-4 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg p-4 mb-4 shadow-lg">
+          <div className="flex flex-wrap gap-2 justify-center items-center">
+            <Button onClick={handleSave} size="lg" className="flex-1 min-w-[150px]">
+              <Save className="w-4 h-4 mr-2" />
+              Save Prescription
+            </Button>
+            
+            {uniqueHash && (
+              <>
+                <Button onClick={handleEmailShare} variant="outline" size="lg">
+                  <Mail className="w-4 h-4 mr-2" />
+                  Email
+                </Button>
+                <Button onClick={handleWhatsAppShare} variant="outline" size="lg">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  WhatsApp
+                </Button>
+              </>
+            )}
+            
+            <div className="flex gap-2">
+              <Button onClick={addPage} variant="outline" size="lg">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Page
+              </Button>
+              {pages.length > 1 && (
+                <Button onClick={() => removePage(currentPage)} variant="destructive" size="lg">
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Remove Page
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Prescription pages - only shown after patient selection */}
+      {patientSelected && pages.map((page) => (
         <div
           key={page.id}
           className="prescription-page"
