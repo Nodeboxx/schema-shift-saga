@@ -24,13 +24,14 @@ export type FeatureKey =
 export const TIER_FEATURES: Record<SubscriptionTier, FeatureKey[]> = {
   free: [
     'prescriptions',        // Smart Prescription Builder
+    'patient_management',   // Need to add patients to create prescriptions
     'custom_templates',     // Customizable Templates
     'prescription_email',   // Send via WhatsApp/Email/Messenger
   ],
   pro: [
     'prescriptions',
-    'appointments',         // Online Appointment Scheduling + Calendar
     'patient_management',   // Patient Management
+    'appointments',         // Online Appointment Scheduling + Calendar
     'analytics',           // Basic Analytics
     'prescription_history', // Appointment History
     'prescription_email',
@@ -39,8 +40,8 @@ export const TIER_FEATURES: Record<SubscriptionTier, FeatureKey[]> = {
   ],
   enterprise: [
     'prescriptions',
-    'appointments',
     'patient_management',
+    'appointments',
     'analytics',
     'telemedicine',
     'patient_journey',      // Patient Journey Tracker
