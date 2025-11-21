@@ -302,34 +302,36 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
           </div>
 
           {/* Rich Text Toolbar */}
-          <div className="mt-3 pt-3 border-t border-border">
-            <RichTextToolbar onCommand={handleCommand} />
-          </div>
-
-          {/* Zoom Controls */}
-          {onZoomChange && (
-            <div className="mt-3 pt-3 border-t border-border flex items-center justify-center gap-2">
-              <Button
-                size="icon"
-                variant="secondary"
-                onClick={() => onZoomChange(Math.max(0.5, zoom - 0.1))}
-                className="h-8 w-8"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </Button>
-              <div className="bg-secondary px-3 py-1.5 rounded-md font-semibold text-sm min-w-[60px] text-center">
-                {Math.round(zoom * 100)}%
-              </div>
-              <Button
-                size="icon"
-                variant="secondary"
-                onClick={() => onZoomChange(Math.min(2, zoom + 0.1))}
-                className="h-8 w-8"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </Button>
+          <div className="mt-3 pt-3 border-t border-border flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <RichTextToolbar onCommand={handleCommand} />
             </div>
-          )}
+
+            {/* Zoom Controls */}
+            {onZoomChange && (
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => onZoomChange(Math.max(0.5, zoom - 0.1))}
+                  className="h-8 w-8"
+                >
+                  <ZoomOut className="w-4 h-4" />
+                </Button>
+                <div className="bg-secondary px-3 py-1.5 rounded-md font-semibold text-sm min-w-[60px] text-center">
+                  {Math.round(zoom * 100)}%
+                </div>
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  onClick={() => onZoomChange(Math.min(2, zoom + 0.1))}
+                  className="h-8 w-8"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
