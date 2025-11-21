@@ -76,7 +76,7 @@ export const useSubscriptionCheck = () => {
         return;
       }
 
-      // Check if subscription is active
+      // Check if subscription is active (any tier with active status)
       const hasActiveSubscription = data.subscription_status === "active";
       
       // Check if trial is still valid
@@ -85,7 +85,12 @@ export const useSubscriptionCheck = () => {
         data.trial_ends_at &&
         new Date(data.trial_ends_at) > new Date();
 
-      const hasAccess = hasActiveSubscription || hasValidTrial;
+      // Check if subscription has not expired (end date in future)
+      const hasValidEndDate = 
+        data.subscription_end_date &&
+        new Date(data.subscription_end_date) > new Date();
+
+      const hasAccess = hasActiveSubscription || hasValidTrial || hasValidEndDate;
 
       setSubscription({
         hasAccess,
