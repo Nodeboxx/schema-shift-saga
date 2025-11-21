@@ -12,17 +12,17 @@ export const QRCodeDisplay = ({ prescriptionId, uniqueHash }: QRCodeDisplayProps
   if (!qrCodeUrl) return null;
 
   return (
-    <div className="qr-code-container print:block" style={{ textAlign: 'center', marginTop: '10px' }}>
+    <div className="qr-code-container print:block" style={{ textAlign: 'center', marginTop: '5px' }}>
       <img 
         src={qrCodeUrl} 
         alt="Prescription QR Code" 
         style={{ 
-          width: '80px', 
-          height: '80px',
+          width: '50px', 
+          height: '50px',
           display: 'inline-block'
         }} 
       />
-      <div style={{ fontSize: '8px', marginTop: '4px', color: '#666' }}>
+      <div style={{ fontSize: '7px', marginTop: '2px', color: '#666' }}>
         Scan to verify
       </div>
     </div>
