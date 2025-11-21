@@ -66,6 +66,22 @@ export const SubscriptionManager = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Check if trial was already used (one-time restriction)
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("trial_started_at")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.trial_started_at) {
+        toast({
+          title: "Trial Already Used",
+          description: "You have already used your free trial. Please choose a paid plan to continue.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const trialEnd = new Date();
       trialEnd.setDate(trialEnd.getDate() + 14);
 
@@ -83,7 +99,7 @@ export const SubscriptionManager = () => {
 
       toast({
         title: "Trial Started!",
-        description: "Your 14-day free trial has been activated",
+        description: "Your 14-day free trial has been activated. This is a one-time offer.",
       });
 
       loadSubscription();

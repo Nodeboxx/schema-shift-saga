@@ -411,6 +411,13 @@ export const AdminSubscriptions = () => {
                     if (tierSelect && statusSelect) {
                       tierSelect.value = 'pro';
                       statusSelect.value = 'active';
+                      // Set end date to 1 month from now
+                      const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
+                      if (endDateInput) {
+                        const proEnd = new Date();
+                        proEnd.setMonth(proEnd.getMonth() + 1);
+                        endDateInput.value = proEnd.toISOString().split('T')[0];
+                      }
                     }
                   }}
                 >
@@ -449,13 +456,16 @@ export const AdminSubscriptions = () => {
                   onClick={() => {
                     const tierSelect = document.querySelector('select[name="tier"]') as HTMLSelectElement;
                     const statusSelect = document.querySelector('select[name="status"]') as HTMLSelectElement;
-                    const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
-                    if (tierSelect && statusSelect && endDateInput) {
+                    if (tierSelect && statusSelect) {
                       tierSelect.value = 'enterprise';
                       statusSelect.value = 'active';
-                      const lifetimeEnd = new Date();
-                      lifetimeEnd.setFullYear(lifetimeEnd.getFullYear() + 10);
-                      endDateInput.value = lifetimeEnd.toISOString().split('T')[0];
+                      // Set end date to 1 month from now
+                      const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
+                      if (endDateInput) {
+                        const enterpriseEnd = new Date();
+                        enterpriseEnd.setMonth(enterpriseEnd.getMonth() + 1);
+                        endDateInput.value = enterpriseEnd.toISOString().split('T')[0];
+                      }
                     }
                   }}
                 >
