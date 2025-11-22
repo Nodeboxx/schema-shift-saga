@@ -6,9 +6,10 @@ interface PrescriptionBodyProps {
   data?: any;
   setData?: (data: any) => void;
   templateSections?: any[];
+  onAddToNextPage?: () => void;
 }
 
-const PrescriptionBody = ({ data, setData, templateSections }: PrescriptionBodyProps) => {
+const PrescriptionBody = ({ data, setData, templateSections, onAddToNextPage }: PrescriptionBodyProps) => {
   const [leftWidth, setLeftWidth] = useState(30);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -62,7 +63,7 @@ const PrescriptionBody = ({ data, setData, templateSections }: PrescriptionBodyP
         }}
       />
 
-      <RightColumn width={100 - leftWidth} data={data} setData={setData} />
+      <RightColumn width={100 - leftWidth} data={data} setData={setData} onAddToNextPage={onAddToNextPage} />
     </div>
   );
 };
