@@ -20,6 +20,11 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
   const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
 
+  const [clinicBranding, setClinicBranding] = useState<{
+    logo_url?: string;
+    header_image_url?: string;
+  }>({});
+
   useEffect(() => {
     const loadProfile = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -27,7 +32,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("*, clinics:clinic_id(logo_url, header_image_url)")
         .eq("id", session.user.id)
         .single();
 
@@ -47,6 +52,14 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         });
         setCouncilLogoUrl(data.council_logo_url || "");
         setRegistrationNumber(data.registration_number || "");
+        
+        // Load clinic branding if user is part of a clinic
+        if (data.clinics) {
+          setClinicBranding({
+            logo_url: data.clinics.logo_url,
+            header_image_url: data.clinics.header_image_url,
+          });
+        }
       }
       setLoading(false);
     };
@@ -65,6 +78,11 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
       position: "relative",
       zIndex: 1,
       backgroundColor: "white",
+      backgroundImage: clinicBranding.header_image_url 
+        ? `linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url(${clinicBranding.header_image_url})`
+        : undefined,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
     }}>
       {doctorInfo.bismillah && (
         <div
@@ -106,7 +124,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           />
         </div>
 
-        {/* Center Column - Medical Council Logo & QR Code */}
+        {/* Center Column - Clinic Logo / Medical Council Logo & QR Code */}
         <div style={{ 
           flex: "0 0 auto", 
           display: "flex", 
@@ -116,7 +134,21 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           padding: "5px 15px",
           gap: "10px"
         }}>
-          {councilLogoUrl && (
+          {/* Clinic Logo (if available) takes priority */}
+          {clinicBranding.logo_url ? (
+            <img 
+              src={clinicBranding.logo_url} 
+              alt="Clinic Logo"
+              style={{
+                maxHeight: "60px",
+                maxWidth: "90px",
+                objectFit: "contain"
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          ) : councilLogoUrl ? (
             <>
               <img 
                 src={councilLogoUrl} 
@@ -142,7 +174,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
                 </div>
               )}
             </>
-          )}
+          ) : null}
           
           {/* QR Code for Verification */}
           {prescriptionId && uniqueHash && (

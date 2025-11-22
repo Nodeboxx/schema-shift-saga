@@ -207,6 +207,10 @@ const ClinicPrescriptions = ({ clinicId }: ClinicPrescriptionsProps) => {
               View all prescriptions from clinic doctors
             </p>
           </div>
+          <Button onClick={() => navigate("/prescription")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create Prescription
+          </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
