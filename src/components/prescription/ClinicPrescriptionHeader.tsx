@@ -82,25 +82,42 @@ const ClinicPrescriptionHeader = ({
       backgroundPosition: "center",
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
-        {/* Left Column - Clinic Branding (replaces English doctor info) */}
-        <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5" }}>
-          <h2 style={{
-            fontSize: "24px",
-            fontWeight: 700,
-            color: "#0056b3",
-            margin: 0,
-          }}>
-            {clinic?.name || "Clinic Name"}
-          </h2>
-          <div style={{ margin: 0, fontSize: "12px" }}>
-            {clinic?.address && <div>{clinic.address}</div>}
-            {clinic?.phone && <div>Phone: {clinic.phone}</div>}
-            {clinic?.email && <div>Email: {clinic.email}</div>}
-            {clinic?.website && <div>Website: {clinic.website}</div>}
+        {/* Left Column - Clinic Logo & Branding (replaces English doctor info) */}
+        <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", display: "flex", gap: "10px", alignItems: "flex-start" }}>
+          {clinic?.logo_url && (
+            <img 
+              src={clinic.logo_url} 
+              alt="Clinic Logo"
+              style={{
+                maxHeight: "50px",
+                maxWidth: "50px",
+                objectFit: "contain",
+                flexShrink: 0
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          )}
+          <div style={{ flex: 1 }}>
+            <h2 style={{
+              fontSize: "24px",
+              fontWeight: 700,
+              color: "#0056b3",
+              margin: 0,
+            }}>
+              {clinic?.name || "Clinic Name"}
+            </h2>
+            <div style={{ margin: 0, fontSize: "12px" }}>
+              {clinic?.address && <div>{clinic.address}</div>}
+              {clinic?.phone && <div>Phone: {clinic.phone}</div>}
+              {clinic?.email && <div>Email: {clinic.email}</div>}
+              {clinic?.website && <div>Website: {clinic.website}</div>}
+            </div>
           </div>
         </div>
 
-        {/* Center Column - Clinic Logo / Medical Council Logo & QR Code (unchanged from original) */}
+        {/* Center Column - Doctor's Council Logo & QR Code (unchanged, controlled by doctor) */}
         <div style={{ 
           flex: "0 0 auto", 
           display: "flex", 
@@ -110,20 +127,7 @@ const ClinicPrescriptionHeader = ({
           padding: "5px 15px",
           gap: "10px"
         }}>
-          {clinic?.logo_url ? (
-            <img 
-              src={clinic.logo_url} 
-              alt="Clinic Logo"
-              style={{
-                maxHeight: "60px",
-                maxWidth: "90px",
-                objectFit: "contain"
-              }}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          ) : councilLogoUrl ? (
+          {councilLogoUrl && (
             <>
               <img 
                 src={councilLogoUrl} 
@@ -149,14 +153,14 @@ const ClinicPrescriptionHeader = ({
                 </div>
               )}
             </>
-          ) : null}
+          )}
           
           {prescriptionId && uniqueHash && (
             <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
           )}
         </div>
 
-        {/* Right Column - Bengali Doctor Info (unchanged from original) */}
+        {/* Right Column - Bengali Doctor Info (unchanged, editable, controlled by doctor) */}
         <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
           <h2 style={{
             fontSize: "24px",
