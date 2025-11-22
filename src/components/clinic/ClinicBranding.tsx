@@ -121,7 +121,11 @@ const ClinicBranding = ({ clinic, onUpdate }: ClinicBrandingProps) => {
 
   return (
     <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Clinic Branding</h2>
+      <h2 className="text-2xl font-bold mb-6">Prescription Settings</h2>
+      <p className="text-sm text-muted-foreground mb-6">
+        Configure your clinic's branding that will appear on all prescriptions created by doctors in your clinic. 
+        The logo will appear in the prescription header, and the header image will be used as a background.
+      </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

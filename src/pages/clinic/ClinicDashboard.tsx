@@ -50,7 +50,7 @@ const menuItems = [
   { title: "Payroll", path: "/clinic/dashboard/payroll", icon: DollarSign },
   { title: "Revenue", path: "/clinic/dashboard/revenue", icon: CreditCard },
   { title: "Team", path: "/clinic/dashboard/team", icon: UsersRound },
-  { title: "Branding", path: "/clinic/dashboard/branding", icon: Palette },
+  { title: "Prescription Settings", path: "/clinic/dashboard/branding", icon: Palette },
   { title: "Subscription", path: "/clinic/dashboard/subscription", icon: Crown },
 ];
 
