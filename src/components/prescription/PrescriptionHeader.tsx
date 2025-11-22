@@ -124,7 +124,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
       
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
         {/* Left Column - English */}
-        <div style={{ flex: "2", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: 0 }}>
+        <div style={{ flex: "3", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: 0 }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -210,7 +210,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
 
         {/* Right Column - Bengali */}
-        <div style={{ flex: "2", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: 0 }}>
+        <div style={{ flex: "3", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: 0 }}>
           <h2
             contentEditable
             suppressContentEditableWarning
