@@ -5,6 +5,7 @@ export const PLAN_TIER_MAP: Record<string, SubscriptionTier> = {
   'prescription': 'free',           // Prescription Plan → Free tier
   'appointment_prescription': 'pro', // Appointment + Prescription Plan → Pro tier  
   'fullcare': 'enterprise',          // Full Care Plan → Enterprise tier
+  'clinic': 'enterprise',            // Clinic Plan → Enterprise tier (custom pricing)
   'free': 'free',
   'pro': 'pro',
   'enterprise': 'enterprise',
@@ -33,4 +34,16 @@ export const getPlanNameFromTier = (tier: SubscriptionTier): string => {
     'enterprise': 'Full Care Plan',
   };
   return nameMap[tier] || 'Free Plan';
+};
+
+// Get plan ID from plan name (for clinic)
+export const getPlanIdFromName = (name: string): string => {
+  const lowerName = name.toLowerCase();
+  if (lowerName === 'clinic') return 'clinic';
+  
+  // Reverse lookup in PLAN_TIER_MAP
+  const entry = Object.entries(PLAN_TIER_MAP).find(([id, tier]) => 
+    getPlanNameFromTier(tier).toLowerCase() === lowerName
+  );
+  return entry ? entry[0] : 'prescription';
 };
