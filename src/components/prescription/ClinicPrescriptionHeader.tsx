@@ -229,7 +229,7 @@ const ClinicPrescriptionHeader = ({
               fontSize: `${degreeBnFontSize}px`,
               fontWeight: 400,
               color: "#374151",
-              lineHeight: 1.7
+              lineHeight: 1.2
             }}
           />
         </div>
