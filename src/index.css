@@ -158,6 +158,14 @@ All colors MUST be HSL.
     padding: 0 !important;
   }
 
+  /* Reset any on-screen zoom transforms for print */
+  #page-wrapper,
+  .prescription-page-wrapper {
+    transform: none !important;
+    max-width: 210mm !important;
+    scale: 1 !important;
+  }
+
   /* Remove all parent container spacing */
   .prescription-root,
   .prescription-page-wrapper,
@@ -183,6 +191,11 @@ All colors MUST be HSL.
     overflow: hidden !important;
     position: relative !important;
     background: white !important;
+  }
+
+  /* Avoid extra blank page after the last prescription page */
+  .prescription-page:last-child {
+    page-break-after: auto !important;
   }
 
   /* Compact header with minimal spacing */
