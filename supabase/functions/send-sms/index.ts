@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,11 +22,49 @@ serve(async (req) => {
 
     console.log('Sending SMS to:', phoneNumber);
 
-    const apiKey = Deno.env.get('BULKSMS_API_KEY');
-    const senderId = Deno.env.get('BULKSMS_SENDER_ID');
+    // Initialize Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Get BulkSMS credentials from site_settings
+    const { data: settingsData, error: settingsError } = await supabaseClient
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'api_settings')
+      .maybeSingle();
+
+    if (settingsError) {
+      console.error('Error fetching settings:', settingsError);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to fetch API settings. Please configure your settings in Admin > API Settings.',
+          details: settingsError.message,
+          code: 'SETTINGS_ERROR'
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const apiKey = settingsData?.value?.bulksms_api_key;
+    const senderId = settingsData?.value?.bulksms_sender_id;
 
     if (!apiKey || !senderId) {
-      throw new Error('BulkSMS credentials not configured');
+      console.error('BulkSMS credentials not found in settings');
+      return new Response(
+        JSON.stringify({ 
+          error: 'SMS service not configured. Please add your BulkSMS BD credentials in Admin > API Settings > Email/SMS tab.',
+          code: 'MISSING_CREDENTIALS'
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
     }
 
     // Clean phone number (remove spaces, dashes, etc.)
@@ -89,11 +128,26 @@ serve(async (req) => {
       const errorMessage = errorMessages[responseCode] || 'Unknown error occurred';
       console.error('SMS Error:', errorMessage, 'Code:', responseCode);
       
+      // Add helpful messages for common errors
+      let helpText = '';
+      if (responseCode === 1007) {
+        helpText = ' Please recharge your BulkSMS BD account balance.';
+      } else if (responseCode === 1002) {
+        helpText = ' Please verify your Sender ID is approved in your BulkSMS BD account.';
+      } else if (responseCode === 1001) {
+        helpText = ' Please check the phone number format.';
+      } else if (responseCode === 1031) {
+        helpText = ' Please verify your BulkSMS BD account.';
+      } else if (responseCode === 1032) {
+        helpText = ' Please whitelist your IP address in BulkSMS BD account.';
+      }
+      
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: errorMessage,
-          code: responseCode 
+          error: errorMessage + helpText,
+          code: responseCode,
+          bulksmsCode: responseCode
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -103,8 +157,18 @@ serve(async (req) => {
     }
   } catch (error: any) {
     console.error('Error in send-sms function:', error);
+    
+    let errorMessage = 'Failed to send SMS.';
+    if (error.message?.includes('credentials') || error.message?.includes('API')) {
+      errorMessage = 'SMS credentials not configured. Please check your BulkSMS BD settings in Admin > API Settings.';
+    }
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: errorMessage,
+        details: error.message,
+        code: 'SMS_ERROR'
+      }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

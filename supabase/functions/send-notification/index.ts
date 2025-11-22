@@ -14,8 +14,6 @@ interface NotificationRequest {
   templateData: Record<string, string>;
 }
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -26,6 +24,46 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
+
+    // Get Resend API key from site_settings
+    const { data: settingsData, error: settingsError } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'api_settings')
+      .maybeSingle();
+
+    if (settingsError) {
+      console.error('Error fetching API settings:', settingsError);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to fetch API settings. Please configure your settings in Admin > API Settings.',
+          details: settingsError.message,
+          code: 'SETTINGS_ERROR'
+        }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const resendApiKey = settingsData?.value?.resend_api_key;
+    
+    if (!resendApiKey) {
+      console.error('Resend API key not found in settings');
+      return new Response(
+        JSON.stringify({ 
+          error: 'Email service not configured. Please add your Resend API key in Admin > API Settings > Email/SMS tab.',
+          code: 'MISSING_API_KEY'
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const resend = new Resend(resendApiKey);
 
     const { eventType, recipientEmail, recipientName, templateData }: NotificationRequest = await req.json();
 
@@ -42,7 +80,10 @@ serve(async (req) => {
     if (!config?.is_enabled) {
       console.log("Notification disabled for event:", eventType);
       return new Response(
-        JSON.stringify({ message: "Notification disabled" }),
+        JSON.stringify({ 
+          success: true,
+          message: 'Email notifications are disabled for this event type. Enable in Admin > Notifications.'
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
     }
@@ -70,7 +111,10 @@ serve(async (req) => {
     if (templateError || !template) {
       console.error("Template not found:", templateError);
       return new Response(
-        JSON.stringify({ error: "Email template not found" }),
+        JSON.stringify({ 
+          error: `Email template not found for "${eventType}". Please configure templates in Admin > Email Templates.`,
+          code: 'TEMPLATE_NOT_FOUND'
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 404 }
       );
     }
@@ -95,8 +139,22 @@ serve(async (req) => {
 
     if (error) {
       console.error("Error sending email:", error);
+      
+      let errorMessage = 'Failed to send email. ';
+      if (error.message?.includes('API key')) {
+        errorMessage += 'Please verify your Resend API key in Admin > API Settings.';
+      } else if (error.message?.includes('domain')) {
+        errorMessage += 'Please verify your domain in Resend dashboard.';
+      } else {
+        errorMessage += error.message;
+      }
+      
       return new Response(
-        JSON.stringify({ error: error.message }),
+        JSON.stringify({ 
+          error: errorMessage,
+          details: error.message,
+          code: 'RESEND_ERROR'
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
       );
     }
@@ -104,14 +162,32 @@ serve(async (req) => {
     console.log("Email sent successfully:", data);
 
     return new Response(
-      JSON.stringify({ success: true, messageId: data?.id }),
+      JSON.stringify({ 
+        success: true, 
+        messageId: data?.id,
+        message: 'Email sent successfully'
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error) {
     console.error("Error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    
+    let errorMessage = 'Failed to send email notification.';
+    if (error instanceof Error) {
+      if (error.message?.includes('API key')) {
+        errorMessage = 'Invalid Resend API key. Please check your configuration in Admin > API Settings.';
+      } else if (error.message?.includes('domain')) {
+        errorMessage = 'Email domain not verified. Please verify your domain in Resend dashboard.';
+      } else {
+        errorMessage = error.message;
+      }
+    }
+    
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ 
+        error: errorMessage,
+        code: 'NOTIFICATION_ERROR'
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }

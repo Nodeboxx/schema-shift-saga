@@ -27,6 +27,7 @@ export const AdminAPISettings = () => {
     paypal_secret: '',
     
     // Email Services
+    resend_api_key: '',
     sendgrid_key: '',
     mailgun_key: '',
     
@@ -218,7 +219,20 @@ export const AdminAPISettings = () => {
             <div className="space-y-4">
               <h3 className="font-semibold flex items-center gap-2">
                 <Mail className="h-5 w-5" />
-                Email Services
+                Resend (Primary Email Service)
+              </h3>
+              <Card className="p-4 bg-muted/50 mb-4">
+                <p className="text-sm text-muted-foreground">
+                  Resend is the primary email service. Get your API key from resend.com/api-keys
+                </p>
+              </Card>
+              {renderAPIField('resend_api_key', 'Resend API Key', 're_...', Key)}
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                Other Email Services
               </h3>
               {renderAPIField('sendgrid_key', 'SendGrid API Key', 'SG...', Key)}
               {renderAPIField('mailgun_key', 'Mailgun API Key', 'key-...', Key)}
