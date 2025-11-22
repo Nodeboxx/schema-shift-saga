@@ -171,9 +171,10 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
           <div
             key={med.id}
             style={{
-              marginBottom: "8px",
+              marginBottom: "12px",
               paddingLeft: "12px",
               paddingRight: "30px",
+              paddingBottom: "8px",
               position: "relative",
               borderBottom: "1px solid #f0f0f0",
             }}
@@ -299,19 +300,20 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                       </div>
                     )}
                     <div style={{ flex: 1 }}>
-                      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px", alignItems: "baseline" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", alignItems: "baseline", lineHeight: "1.6" }}>
                         <span
                           contentEditable
                           suppressContentEditableWarning
                           onBlur={(e) => updateMedicine(med.id, "name", e.currentTarget.textContent || "")}
                           className="medicine-name-print"
                           style={{ 
-                            fontSize: "13px", 
+                            fontSize: "16px", 
                             fontWeight: 700, 
                             color: "#000", 
-                            minHeight: "16px", 
+                            minHeight: "20px", 
                             outline: "none",
-                            padding: "1px"
+                            padding: "2px",
+                            lineHeight: "1.5"
                           }}
                         >
                           {med.name || "Medicine Name"}
@@ -321,12 +323,13 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                           suppressContentEditableWarning
                           onBlur={(e) => updateMedicine(med.id, "generic_name", e.currentTarget.textContent || "")}
                           style={{ 
-                            fontSize: "10px", 
+                            fontSize: "12px", 
                             color: "#0056b3", 
                             fontWeight: 600, 
-                            minHeight: "13px", 
+                            minHeight: "16px", 
                             outline: "none",
-                            padding: "1px"
+                            padding: "2px",
+                            lineHeight: "1.5"
                           }}
                         >
                           {med.generic_name || "Generic"}
@@ -335,7 +338,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                           contentEditable
                           suppressContentEditableWarning
                           onBlur={(e) => updateMedicine(med.id, "strength", e.currentTarget.textContent || "")}
-                          style={{ outline: "none", padding: "1px", minWidth: "25px", fontSize: "10px", color: "#666" }}
+                          style={{ outline: "none", padding: "2px", minWidth: "30px", fontSize: "12px", color: "#666", lineHeight: "1.5" }}
                         >
                           {med.strength || "mg"}
                         </span>
@@ -358,7 +361,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                     />
                   </div>
                 </div>
-                <div className="medicine-dose-print" style={{ fontSize: "9px", fontWeight: 500, marginBottom: "2px", marginLeft: "18px" }}>
+                <div className="medicine-dose-print" style={{ fontSize: "11px", fontWeight: 500, marginBottom: "4px", marginLeft: "18px", lineHeight: "1.6", marginTop: "2px" }}>
                   {med.dose || "Dosage"}
                   {med.duration && ` ${med.duration.replace("→ সময়কাল: ", "")}`}
                 </div>
@@ -368,14 +371,14 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                   onBlur={(value) => updateMedicine(med.id, "details", value)}
                   className="medicine-details-print"
                   style={{
-                    fontSize: "8px",
-                    lineHeight: "1.3",
+                    fontSize: "10px",
+                    lineHeight: "1.6",
                     color: "#555",
                     fontStyle: "italic",
-                    marginBottom: "4px",
+                    marginBottom: "6px",
                     marginLeft: "18px",
-                    minHeight: "12px",
-                    padding: "1px",
+                    minHeight: "16px",
+                    padding: "2px",
                     border: "1px solid transparent",
                   }}
                 />

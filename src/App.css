@@ -96,16 +96,19 @@
     opacity: 0 !important;
   }
 
-  /* Increase medicine text sizes by 2 for print */
+  /* Increase medicine text sizes for print with better spacing */
   .medicine-name-print {
-    font-size: 15px !important;
+    font-size: 18px !important;
+    line-height: 1.7 !important;
   }
 
   .medicine-dose-print {
-    font-size: 11px !important;
+    font-size: 13px !important;
+    line-height: 1.7 !important;
   }
 
   .medicine-details-print {
-    font-size: 10px !important;
+    font-size: 12px !important;
+    line-height: 1.7 !important;
   }
 }
