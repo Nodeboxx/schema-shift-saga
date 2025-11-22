@@ -32,10 +32,15 @@ interface PrescriptionData {
   profiles: {
     full_name: string | null;
     degree_en: string | null;
+    doctor_id_display: string | null;
   } | null;
   clinics: {
     name: string | null;
     logo_url: string | null;
+    clinic_id_display: string | null;
+  } | null;
+  patients: {
+    patient_id_display: string | null;
   } | null;
 }
 
@@ -63,8 +68,9 @@ const VerifyPrescription = () => {
         .select(`
           *,
           prescription_items (*),
-          profiles!prescriptions_doctor_id_fkey (full_name, degree_en),
-          clinics (name, logo_url)
+          profiles!prescriptions_doctor_id_fkey (full_name, degree_en, doctor_id_display),
+          clinics (name, logo_url, clinic_id_display),
+          patients (patient_id_display)
         `);
 
       // Try as unique_hash first
@@ -151,15 +157,27 @@ const VerifyPrescription = () => {
                   <h2 className="text-2xl font-bold mb-2 text-foreground">
                     {prescription.profiles?.full_name || "Doctor"}
                   </h2>
+                  {prescription.profiles?.doctor_id_display && (
+                    <p className="text-sm font-mono text-primary font-semibold mb-2">
+                      Doctor ID: {prescription.profiles.doctor_id_display}
+                    </p>
+                  )}
                   {prescription.profiles?.degree_en && (
                     <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
                       {prescription.profiles.degree_en.replace(/<br\s*\/?>/gi, '\n')}
                     </p>
                   )}
                   {prescription.clinics?.name && (
-                    <div className="mt-3 inline-flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full">
-                      <CheckCircle2 className="w-4 h-4 text-primary" />
-                      <p className="text-sm font-semibold text-primary">{prescription.clinics.name}</p>
+                    <div className="mt-3">
+                      <div className="inline-flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full mb-1">
+                        <CheckCircle2 className="w-4 h-4 text-primary" />
+                        <p className="text-sm font-semibold text-primary">{prescription.clinics.name}</p>
+                      </div>
+                      {prescription.clinics?.clinic_id_display && (
+                        <p className="text-xs font-mono text-muted-foreground">
+                          Clinic ID: {prescription.clinics.clinic_id_display}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -175,6 +193,11 @@ const VerifyPrescription = () => {
                 <div className="bg-background/80 rounded-md p-3">
                   <p className="text-xs font-semibold text-muted-foreground mb-1">PATIENT NAME</p>
                   <p className="font-bold text-base text-foreground">{prescription.patient_name}</p>
+                  {prescription.patients?.patient_id_display && (
+                    <p className="text-xs font-mono text-primary mt-1">
+                      ID: {prescription.patients.patient_id_display}
+                    </p>
+                  )}
                 </div>
                 {prescription.patient_age && (
                   <div className="bg-background/80 rounded-md p-3">

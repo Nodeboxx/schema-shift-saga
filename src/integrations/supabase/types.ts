@@ -347,6 +347,7 @@ export type Database = {
         Row: {
           address: string | null
           billing_cycle: string | null
+          clinic_id_display: string | null
           created_at: string | null
           email: string | null
           header_image_url: string | null
@@ -371,6 +372,7 @@ export type Database = {
         Insert: {
           address?: string | null
           billing_cycle?: string | null
+          clinic_id_display?: string | null
           created_at?: string | null
           email?: string | null
           header_image_url?: string | null
@@ -395,6 +397,7 @@ export type Database = {
         Update: {
           address?: string | null
           billing_cycle?: string | null
+          clinic_id_display?: string | null
           created_at?: string | null
           email?: string | null
           header_image_url?: string | null
@@ -1148,6 +1151,7 @@ export type Database = {
           medical_history: string | null
           name: string
           notes: string | null
+          patient_id_display: string | null
           phone: string | null
           sex: string | null
           updated_at: string | null
@@ -1171,6 +1175,7 @@ export type Database = {
           medical_history?: string | null
           name: string
           notes?: string | null
+          patient_id_display?: string | null
           phone?: string | null
           sex?: string | null
           updated_at?: string | null
@@ -1194,6 +1199,7 @@ export type Database = {
           medical_history?: string | null
           name?: string
           notes?: string | null
+          patient_id_display?: string | null
           phone?: string | null
           sex?: string | null
           updated_at?: string | null
@@ -1566,6 +1572,7 @@ export type Database = {
           degree_en: string | null
           designation: string | null
           display_order: number | null
+          doctor_id_display: string | null
           email: string
           footer_left: string | null
           footer_right: string | null
@@ -1612,6 +1619,7 @@ export type Database = {
           degree_en?: string | null
           designation?: string | null
           display_order?: number | null
+          doctor_id_display?: string | null
           email: string
           footer_left?: string | null
           footer_right?: string | null
@@ -1658,6 +1666,7 @@ export type Database = {
           degree_en?: string | null
           designation?: string | null
           display_order?: number | null
+          doctor_id_display?: string | null
           email?: string
           footer_left?: string | null
           footer_right?: string | null
