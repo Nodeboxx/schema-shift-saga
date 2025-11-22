@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import medRxProLogo from '@/assets/medrxpro-dashboard-logo.png';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { hasFeatureAccess, FeatureKey, SubscriptionTier } from '@/lib/subscriptionFeatures';
@@ -185,8 +186,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const SidebarContent = () => (
     <>
       <div className="p-6 border-b border-border">
-        <h1 className="text-2xl font-bold text-primary">MedRxPro</h1>
-        <p className="text-sm text-muted-foreground mt-1">Prescription SaaS</p>
+        <img src={medRxProLogo} alt="MedRxPro" className="h-10" />
+        <p className="text-sm text-muted-foreground mt-2">Prescription SaaS</p>
       </div>
 
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -231,7 +232,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       {isMobile && (
         <header className="flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-50">
           <div>
-            <h1 className="text-xl font-bold text-primary">MedRxPro</h1>
+            <img src={medRxProLogo} alt="MedRxPro" className="h-8 mb-1" />
             <p className="text-xs text-muted-foreground">Prescription SaaS</p>
           </div>
           <Sheet open={open} onOpenChange={setOpen}>
