@@ -126,7 +126,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             suppressContentEditableWarning
             onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
-            style={{ margin: 0, fontSize: `${degreeEnFontSize}px` }}
+            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.5" }}
           />
         </div>
 
@@ -208,7 +208,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             suppressContentEditableWarning
             onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
-            style={{ margin: 0, fontSize: `${degreeBnFontSize}px` }}
+            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.5" }}
           />
         </div>
       </div>

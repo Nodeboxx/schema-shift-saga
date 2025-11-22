@@ -50,23 +50,23 @@ const PrescriptionFooter = () => {
       boxSizing: "border-box",
       marginTop: "auto",
     }}>
-      <div style={{ width: "45%", position: "relative", textAlign: "left", fontSize: `${footerLeftFontSize}px` }}>
+      <div style={{ width: "45%", position: "relative", textAlign: "left", fontSize: `${footerLeftFontSize}px`, lineHeight: "1.5" }}>
         <div
           contentEditable
           dangerouslySetInnerHTML={{ __html: footerLeft }}
           onBlur={(e) => setFooterLeft(e.currentTarget.innerHTML)}
-          style={{ minHeight: "20px", outline: "none", textAlign: "left" }}
+          style={{ minHeight: "20px", outline: "none", textAlign: "left", lineHeight: "1.5" }}
         />
       </div>
       <div style={{ fontSize: "12px", fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}>
         Page 1
       </div>
-      <div style={{ width: "45%", position: "relative", textAlign: "right", fontSize: `${footerRightFontSize}px` }}>
+      <div style={{ width: "45%", position: "relative", textAlign: "right", fontSize: `${footerRightFontSize}px`, lineHeight: "1.5" }}>
         <div
           contentEditable
           dangerouslySetInnerHTML={{ __html: footerRight }}
           onBlur={(e) => setFooterRight(e.currentTarget.innerHTML)}
-          style={{ textAlign: "right", minHeight: "20px", outline: "none" }}
+          style={{ textAlign: "right", minHeight: "20px", outline: "none", lineHeight: "1.5" }}
         />
       </div>
     </footer>
