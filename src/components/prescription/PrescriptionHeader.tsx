@@ -16,7 +16,6 @@ interface PrescriptionHeaderProps {
 }
 
 const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueHash }: PrescriptionHeaderProps) => {
-  const [loading, setLoading] = useState(true);
   const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
   const [headerFontSize, setHeaderFontSize] = useState<string>("13");
@@ -41,7 +40,6 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
 
       if (error) {
         console.error("Error loading profile:", error);
-        setLoading(false);
         return;
       }
 
@@ -67,7 +65,6 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           });
         }
       }
-      setLoading(false);
     };
 
     loadProfile();
@@ -75,22 +72,6 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
   const handleEdit = (field: string, value: string) => {
     setDoctorInfo({ ...doctorInfo, [field]: value });
   };
-
-  if (loading) {
-    return (
-      <header className="prescription-header" style={{
-        padding: "15px",
-        borderBottom: "3px solid #0056b3",
-        minHeight: "150px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "white",
-      }}>
-        <div style={{ color: "#0056b3", fontSize: "14px" }}>Loading...</div>
-      </header>
-    );
-  }
 
   return (
     <header className="prescription-header" style={{
