@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -131,28 +131,27 @@ export const SubscriptionAuth = ({ onAuthSuccess, planId }: SubscriptionAuthProp
 
         <TabsContent value="signup">
           <form onSubmit={handleSignup} className="space-y-4">
-            {!isClinicPlan && (
-              <div className="space-y-3">
-                <Label>Account Type</Label>
-                <RadioGroup value={userType} onValueChange={(value) => setUserType(value as "doctor" | "clinic_admin")}>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="doctor" id="doctor" />
-                    <Label htmlFor="doctor" className="font-normal cursor-pointer">
-                      Doctor - Individual practice
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="clinic_admin" id="clinic_admin" />
-                    <Label htmlFor="clinic_admin" className="font-normal cursor-pointer">
-                      Clinic - Multi-doctor clinic or hospital
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="account-type">Account Type</Label>
+              <Select 
+                value={userType} 
+                onValueChange={(value) => setUserType(value as "doctor" | "clinic_admin")}
+                disabled={isClinicPlan}
+              >
+                <SelectTrigger id="account-type">
+                  <SelectValue placeholder="Select account type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="doctor">Doctor - Individual practice</SelectItem>
+                  <SelectItem value="clinic_admin">Clinic - Multi-doctor clinic or hospital</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <div>
-              <Label htmlFor="signup-name">Full Name</Label>
+              <Label htmlFor="signup-name">
+                {userType === "clinic_admin" ? "Admin Full Name" : "Full Name"}
+              </Label>
               <Input id="signup-name" name="fullName" required />
             </div>
 
