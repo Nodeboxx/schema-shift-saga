@@ -138,23 +138,18 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         )}
       </div>
 
-      {/* Clinic Details */}
-      {(clinicBranding.address || clinicBranding.phone || clinicBranding.email || clinicBranding.website) && (
-        <div style={{ 
-          fontSize: "10px", 
-          color: "#666", 
-          marginBottom: "10px",
-          lineHeight: "1.4"
-        }}>
-          {clinicBranding.address && <span>{clinicBranding.address}</span>}
-          {(clinicBranding.address && (clinicBranding.phone || clinicBranding.email || clinicBranding.website)) && <span> | </span>}
-          {clinicBranding.phone && <span>Phone: {clinicBranding.phone}</span>}
-          {(clinicBranding.phone && (clinicBranding.email || clinicBranding.website)) && <span> | </span>}
-          {clinicBranding.email && <span>Email: {clinicBranding.email}</span>}
-          {(clinicBranding.email && clinicBranding.website) && <span> | </span>}
-          {clinicBranding.website && <span>Web: {clinicBranding.website}</span>}
-        </div>
-      )}
+      {/* Clinic Details - each on separate line */}
+      <div style={{ 
+        fontSize: "10px", 
+        color: "#666", 
+        marginBottom: "10px",
+        lineHeight: "1.6"
+      }}>
+        {clinicBranding.address && <div>{clinicBranding.address}</div>}
+        {clinicBranding.phone && <div>Phone: {clinicBranding.phone}</div>}
+        {clinicBranding.email && <div>Email: {clinicBranding.email}</div>}
+        {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
+      </div>
 
       {/* Doctor details with underline */}
       <div style={{ 
