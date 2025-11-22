@@ -14,12 +14,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 interface PrescriptionPageProps {
   prescriptionData?: any;
   userId?: string;
+  clinicId?: string | null;
   onSaveReady?: (saveHandler: () => void) => void;
   onAddPageReady?: (addPageHandler: () => void) => void;
   pageLayout?: 'single' | 'double';
 }
 
-const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageReady, pageLayout = 'single' }: PrescriptionPageProps) => {
+const PrescriptionPage = ({ prescriptionData, userId, clinicId, onSaveReady, onAddPageReady, pageLayout = 'single' }: PrescriptionPageProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [patientSelected, setPatientSelected] = useState(false);
@@ -371,7 +372,7 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
       }
 
       // Save or update prescription
-      const prescriptionPayload = {
+      const prescriptionPayload: any = {
         user_id: userId,
         patient_name: patientInfo.patientName,
         patient_age: patientInfo.patientAge,
@@ -404,6 +405,11 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
           left_template_sections: currentTemplateSections, // Save current template configuration
         },
       };
+
+      // Add clinic_id if provided
+      if (clinicId) {
+        prescriptionPayload.clinic_id = clinicId;
+      }
 
       let prescriptionId = prescriptionData?.id;
 

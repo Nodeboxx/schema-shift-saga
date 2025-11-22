@@ -34,6 +34,8 @@ import Analytics from "./pages/Analytics";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ClinicDashboard from "./pages/clinic/ClinicDashboard";
 import ClinicPendingApproval from "./pages/clinic/ClinicPendingApproval";
+import ClinicPrescription from "./pages/clinic/ClinicPrescription";
+import ClinicPrescriptionList from "./pages/clinic/ClinicPrescriptionList";
 import VerifyPrescription from "./pages/VerifyPrescription";
 import Questionnaires from "./pages/Questionnaires";
 import Notifications from "./pages/Notifications";
@@ -91,6 +93,9 @@ const App = () => (
               <Route path="/clinic/dashboard" element={<ClinicDashboard />} />
               <Route path="/clinic" element={<ClinicDashboard />} />
               <Route path="/clinic/pending-approval" element={<ClinicPendingApproval />} />
+              <Route path="/clinic/prescription" element={<ClinicPrescription />} />
+              <Route path="/clinic/prescription/:id" element={<ClinicPrescription />} />
+              <Route path="/clinic/prescriptions" element={<ClinicPrescriptionList />} />
               <Route path="/verify/:id" element={<PublicVerifyPrescription />} />
               <Route path="/demo" element={<Demo />} />
               <Route path="/demo/prescription" element={<DemoPrescription />} />
