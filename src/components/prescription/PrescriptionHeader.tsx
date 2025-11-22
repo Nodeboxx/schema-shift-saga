@@ -115,30 +115,77 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      {/* Logo and Clinic Name */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
-        {clinicBranding.logo_url && (
-          <img 
-            src={clinicBranding.logo_url} 
-            alt="Clinic Logo"
-            style={{
-              maxHeight: "50px",
-              maxWidth: "80px",
-              objectFit: "contain"
-            }}
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        )}
-        {clinicBranding.name && (
-          <div style={{ fontSize: "18px", fontWeight: 700, color: "#333" }}>
-            {clinicBranding.name}
+      {/* Logo + Clinic Name on left, Doctor Names on right */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "20px", marginBottom: "5px" }}>
+        {/* Left: Logo and Clinic Name */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: "1" }}>
+          {clinicBranding.logo_url && (
+            <img 
+              src={clinicBranding.logo_url} 
+              alt="Clinic Logo"
+              style={{
+                maxHeight: "50px",
+                maxWidth: "80px",
+                objectFit: "contain"
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          )}
+          {clinicBranding.name && (
+            <div style={{ fontSize: "18px", fontWeight: 700, color: "#333" }}>
+              {clinicBranding.name}
+            </div>
+          )}
+        </div>
+
+        {/* Right: Doctor Names */}
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "20px" }}>
+          {/* English doctor name */}
+          <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "left" }}>
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleEdit("docNameEN", e.currentTarget.textContent || "")}
+              style={{
+                fontSize: "20px",
+                fontWeight: 700,
+                color: "#0056b3",
+                margin: 0,
+              }}
+            >
+              {doctorInfo.docNameEN}
+            </h2>
           </div>
-        )}
+
+          {/* Bengali doctor name */}
+          <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleEdit("docNameBN", e.currentTarget.textContent || "")}
+              style={{
+                fontSize: "20px",
+                fontWeight: 700,
+                color: "#0056b3",
+                margin: 0,
+              }}
+            >
+              {doctorInfo.docNameBN}
+            </h2>
+          </div>
+
+          {/* QR Code */}
+          {prescriptionId && uniqueHash && (
+            <div style={{ flex: "0 0 auto" }}>
+              <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Clinic Details and Doctor Info side by side */}
+      {/* Clinic Details and Doctor Degrees below */}
       <div style={{ 
         display: "flex", 
         justifyContent: "space-between", 
@@ -158,23 +205,10 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
         </div>
 
-        {/* Doctor details - right side, aligned with clinic details */}
-        <div style={{ flex: "1.5", display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "20px" }}>
-          {/* English doctor details */}
+        {/* Doctor degrees - right side */}
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "20px" }}>
+          {/* English doctor degrees */}
           <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "left" }}>
-            <h2
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => handleEdit("docNameEN", e.currentTarget.textContent || "")}
-              style={{
-                fontSize: "20px",
-                fontWeight: 700,
-                color: "#0056b3",
-                margin: 0,
-              }}
-            >
-              {doctorInfo.docNameEN}
-            </h2>
             <div
               contentEditable
               suppressContentEditableWarning
@@ -184,21 +218,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             />
           </div>
 
-          {/* Bengali doctor details */}
+          {/* Bengali doctor degrees */}
           <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
-            <h2
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => handleEdit("docNameBN", e.currentTarget.textContent || "")}
-              style={{
-                fontSize: "20px",
-                fontWeight: 700,
-                color: "#0056b3",
-                margin: 0,
-              }}
-            >
-              {doctorInfo.docNameBN}
-            </h2>
             <div
               contentEditable
               suppressContentEditableWarning
@@ -208,11 +229,9 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             />
           </div>
 
-          {/* QR Code */}
+          {/* Spacer for QR code alignment */}
           {prescriptionId && uniqueHash && (
-            <div style={{ flex: "0 0 auto" }}>
-              <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
-            </div>
+            <div style={{ width: "80px" }}></div>
           )}
         </div>
       </div>
