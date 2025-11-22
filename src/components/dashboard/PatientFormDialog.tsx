@@ -313,7 +313,7 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
                 <SelectTrigger>
                   <SelectValue placeholder="Select sex" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" sideOffset={4}>
                   <SelectItem value="Male">Male</SelectItem>
                   <SelectItem value="Female">Female</SelectItem>
                   <SelectItem value="Other">Other</SelectItem>
@@ -375,7 +375,7 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
                 <SelectTrigger>
                   <SelectValue placeholder="Select blood group" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" sideOffset={4}>
                   <SelectItem value="A+">A+</SelectItem>
                   <SelectItem value="A-">A-</SelectItem>
                   <SelectItem value="B+">B+</SelectItem>
