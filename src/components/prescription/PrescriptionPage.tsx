@@ -46,24 +46,27 @@ const PrescriptionPage = ({ prescriptionData, userId, clinicId, onSaveReady, onA
 
   const [templateSections, setTemplateSections] = useState<any[]>([]);
 
-  // Load doctor profile and template sections
+  // Load doctor profile and template sections (including all header data)
+  const [profileData, setProfileData] = useState<any>(null);
+  
   useEffect(() => {
     const loadProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select("full_name, name_bn, degree_en, degree_bn, footer_left, footer_right, left_template_sections")
+          .select("full_name, name_bn, degree_en, degree_bn, footer_left, footer_right, left_template_sections, bismillah_text, council_logo_url, registration_number, header_font_size, degree_en_font_size, degree_bn_font_size, clinic_id, clinics:clinic_id(logo_url, header_image_url)")
           .eq("id", user.id)
           .maybeSingle();
 
         if (profile) {
+          setProfileData(profile);
           setDoctorInfo({
-            bismillah: "بسم الله الرحمن الرحيم",
-            docNameEN: profile.full_name || "Dr. Rashedul Islam",
-            docDegreeEN: profile.degree_en || `MBBS(DU), MRCP(Part-1)<br/>Experienced in Neonate, children & Medicine.<br/>Register & Incharge, NICU & PICU.<br/>Delta Healthcare Jatrabari Ltd, Jatrabari, Dhaka.<br/>BMDC Reg. No-A 120051`,
-            docNameBN: profile.name_bn || "ডাঃ রাশেদুল ইসলাম",
-            docDegreeBN: profile.degree_bn || `এম.বি.বি.এস (ডি.ইউ), এম.আর.সি.পি (পার্ট-১)<br/>নবজাতক, শিশু ও মেডিসিনে অভিজ্ঞতা সম্পন্ন।<br/>রেজিস্টার এন্ড ইনচার্জ, এন.আই.সি.ইউ এন্ড পি.ই.সি.ইউ.<br/>ডেল্টা হেলথকেয়ার যাত্রাবাড়ী লিমিটেড, যাত্রাবাড়ী, ঢাকা।<br/>বি.এম.ডি.সি. রে.জি নং- এ ১২০০৫১`,
+            bismillah: profile.bismillah_text || "بسم الله الرحمن الرحيم",
+            docNameEN: profile.full_name || "",
+            docDegreeEN: profile.degree_en || "",
+            docNameBN: profile.name_bn || "",
+            docDegreeBN: profile.degree_bn || "",
           });
           setFooterInfo({
             footerLeft: profile.footer_left || "",
@@ -656,6 +659,7 @@ const PrescriptionPage = ({ prescriptionData, userId, clinicId, onSaveReady, onA
                 setDoctorInfo={setDoctorInfo}
                 prescriptionId={prescriptionId}
                 uniqueHash={uniqueHash}
+                profileData={profileData}
               />
             )}
             <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
