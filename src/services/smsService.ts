@@ -13,14 +13,23 @@ export const sendSMS = async ({ phoneNumber, message }: SendSMSParams) => {
 
     if (error) {
       console.error("Error sending SMS:", error);
-      return { success: false, error };
+      throw new Error(error.message || "Failed to send SMS");
     }
 
-    console.log("SMS sent:", data);
+    if (data?.error) {
+      console.error("SMS error:", data.error);
+      throw new Error(data.error);
+    }
+
+    if (!data?.success) {
+      throw new Error("SMS sending failed");
+    }
+
+    console.log("SMS sent successfully:", data);
     return { success: true, data };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Exception sending SMS:", error);
-    return { success: false, error };
+    throw error;
   }
 };
 

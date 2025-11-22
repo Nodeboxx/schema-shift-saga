@@ -18,10 +18,16 @@ export const sendNotification = async (params: SendNotificationParams) => {
     });
 
     if (error) {
-      console.error("Error sending notification:", error);
-    } else {
-      console.log("Email notification sent:", data);
+      console.error("Error sending email notification:", error);
+      throw new Error(error.message || "Failed to send email notification");
     }
+    
+    if (data?.error) {
+      console.error("Email notification error:", data.error);
+      throw new Error(data.error);
+    }
+    
+    console.log("Email notification sent:", data);
 
     // Send SMS if enabled and phone number provided
     if (params.sendSMS && params.recipientPhone) {

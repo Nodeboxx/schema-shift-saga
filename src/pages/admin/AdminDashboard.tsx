@@ -50,6 +50,7 @@ import { AdminAPISettings } from "@/components/admin/AdminAPISettings";
 import { AdminOrders } from "@/components/admin/AdminOrders";
 import { AdminPricingPlans } from "@/components/admin/AdminPricingPlans";
 import { AdminSubscriptions } from "@/components/admin/AdminSubscriptions";
+import { AdminAPITest } from "@/components/admin/AdminAPITest";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -322,7 +323,15 @@ const AdminDashboard = () => {
                 />
               </Card>
             )}
-            {activeTab === "api" && <AdminAPISettings />}
+            {activeTab === "api" && (
+              <div className="space-y-6">
+                <AdminAPISettings />
+                <div className="mt-8">
+                  <h2 className="text-2xl font-bold mb-4">Test API Services</h2>
+                  <AdminAPITest />
+                </div>
+              </div>
+            )}
           {activeTab === "homepage" && <VisualHomepageEditor />}
           {activeTab === "doctors" && <AdminDoctors />}
           {activeTab === "header-footer" && <VisualHeaderFooterEditor />}
