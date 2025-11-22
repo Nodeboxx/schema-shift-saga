@@ -603,6 +603,12 @@ const PrescriptionPage = ({ prescriptionData, userId, clinicId, onSaveReady, onA
               <ClinicPrescriptionHeader 
                 clinicId={clinicId}
                 prescriptionDate={patientInfo.patientDate}
+                doctorInfo={{
+                  docNameBN: doctorInfo.docNameBN,
+                  docDegreeBN: doctorInfo.docDegreeBN
+                }}
+                prescriptionId={prescriptionId}
+                uniqueHash={uniqueHash}
               />
             ) : (
               <PrescriptionHeader 
