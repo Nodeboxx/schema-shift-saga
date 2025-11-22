@@ -32,7 +32,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("*, clinics:clinic_id(logo_url, header_image_url)")
+        .select("*")
         .eq("id", session.user.id)
         .single();
 
@@ -54,11 +54,19 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         setRegistrationNumber(data.registration_number || "");
         
         // Load clinic branding if user is part of a clinic
-        if (data.clinics) {
-          setClinicBranding({
-            logo_url: data.clinics.logo_url,
-            header_image_url: data.clinics.header_image_url,
-          });
+        if (data.clinic_id) {
+          const { data: clinicData } = await supabase
+            .from("clinics")
+            .select("logo_url, header_image_url")
+            .eq("id", data.clinic_id)
+            .single();
+          
+          if (clinicData) {
+            setClinicBranding({
+              logo_url: clinicData.logo_url,
+              header_image_url: clinicData.header_image_url,
+            });
+          }
         }
       }
       setLoading(false);
