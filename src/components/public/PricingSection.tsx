@@ -88,7 +88,7 @@ export const PricingSection = ({ content }: PricingSectionProps) => {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {plans.map((plan) => {
             const displayPrice = getDisplayPrice(plan);
             
