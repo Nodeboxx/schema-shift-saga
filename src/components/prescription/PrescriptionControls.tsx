@@ -28,11 +28,32 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
   const [headerlessPrint, setHeaderlessPrint] = useState(false);
 
   const handlePrint = () => {
+    const originalZoom = zoom ?? 1;
+
+    // Temporarily reset zoom to 100% for print so scaling doesn't affect page size
+    if (onZoomChange) {
+      onZoomChange(1);
+    }
+
+    const handleAfterPrint = () => {
+      // Restore previous zoom after printing
+      if (onZoomChange) {
+        onZoomChange(originalZoom);
+      }
+
+      // Always clean up headerless class after print
+      document.body.classList.remove('print-headerless');
+      window.removeEventListener('afterprint', handleAfterPrint);
+    };
+
+    window.addEventListener('afterprint', handleAfterPrint);
+
     if (headerlessPrint) {
       document.body.classList.add('print-headerless');
     } else {
       document.body.classList.remove('print-headerless');
     }
+
     window.print();
   };
 
