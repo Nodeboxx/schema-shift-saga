@@ -152,23 +152,25 @@ export const MyPatientsTab = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Users className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-semibold">Patient Database</h3>
+      <Card className="p-4 md:p-6">
+        <div className="flex flex-col gap-4 mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <Users className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                <h3 className="text-base md:text-lg font-semibold">Patient Database</h3>
+              </div>
+              <p className="text-xs md:text-sm text-muted-foreground">
+                Add patients and send invitations to create their accounts
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Add patients and send invitations to create their accounts
-            </p>
+            <Button onClick={handleAddPatient} className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Patient
+            </Button>
           </div>
-          <Button onClick={handleAddPatient}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Patient
-          </Button>
         </div>
         
         <div className="relative">
@@ -177,13 +179,13 @@ export const MyPatientsTab = () => {
             placeholder="Search by name, phone, or email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
+            className="pl-9 text-sm"
           />
         </div>
       </Card>
 
-      {/* Patient Table */}
-      <Card>
+      {/* Patient Table - Desktop */}
+      <Card className="hidden md:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -200,7 +202,7 @@ export const MyPatientsTab = () => {
           <TableBody>
             {filteredPatients.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={8} className="text-center py-8">
                   <Users className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
                   <p className="text-muted-foreground">
                     {searchTerm ? "No patients found" : "No patients yet"}
@@ -254,9 +256,77 @@ export const MyPatientsTab = () => {
         </Table>
       </Card>
 
+      {/* Patient Cards - Mobile */}
+      <div className="md:hidden space-y-3">
+        {filteredPatients.length === 0 ? (
+          <Card className="p-8 text-center">
+            <Users className="h-12 w-12 mx-auto text-muted-foreground mb-2" />
+            <p className="text-sm text-muted-foreground">
+              {searchTerm ? "No patients found" : "No patients yet"}
+            </p>
+          </Card>
+        ) : (
+          filteredPatients.map((patient) => (
+            <Card 
+              key={patient.id} 
+              className="p-4 cursor-pointer hover:bg-muted/50"
+              onClick={() => handleViewPatient(patient)}
+            >
+              <div className="space-y-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-sm truncate">{patient.name}</h4>
+                    <div className="flex flex-wrap gap-2 mt-1 text-xs text-muted-foreground">
+                      {patient.age && <span>{patient.age} yrs</span>}
+                      {patient.sex && <span>• {patient.sex}</span>}
+                      {patient.blood_group && <span>• {patient.blood_group}</span>}
+                    </div>
+                  </div>
+                  {patient.auth_user_id ? (
+                    <Badge variant="default" className="text-xs shrink-0">✓ Registered</Badge>
+                  ) : patient.invitation_sent_at ? (
+                    <Badge variant="secondary" className="text-xs shrink-0">Invited</Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-xs shrink-0">Not Invited</Badge>
+                  )}
+                </div>
+                
+                {(patient.phone || patient.email) && (
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    {patient.phone && <div className="truncate">📞 {patient.phone}</div>}
+                    {patient.email && <div className="truncate">✉️ {patient.email}</div>}
+                  </div>
+                )}
+
+                <div className="flex gap-2 pt-2 border-t" onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleEditPatient(patient)}
+                    className="flex-1"
+                  >
+                    <Edit className="h-3 w-3 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDeleteClick(patient)}
+                    className="flex-1"
+                  >
+                    <Trash2 className="h-3 w-3 mr-1 text-destructive" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))
+        )}
+      </div>
+
       {/* Summary */}
-      <Card className="p-4">
-        <p className="text-sm text-muted-foreground">
+      <Card className="p-3 md:p-4">
+        <p className="text-xs md:text-sm text-muted-foreground">
           Showing {filteredPatients.length} of {patients.length} total patients
         </p>
       </Card>

@@ -104,82 +104,154 @@ const PrescriptionList = () => {
         </div>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Prescription History</CardTitle>
+          <CardHeader className="p-4 md:p-6">
+            <CardTitle className="text-lg md:text-xl">Prescription History</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 md:p-6 pt-0">
             {filteredPrescriptions.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                {searchTerm ? "No prescriptions match your search" : "No prescriptions found"}
+                <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p className="text-sm">{searchTerm ? "No prescriptions match your search" : "No prescriptions found"}</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Patient</TableHead>
-                      <TableHead>Age/Sex</TableHead>
-                      <TableHead>Chief Complaints</TableHead>
-                      <TableHead>Diagnosis</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredPrescriptions.map((prescription) => (
-                      <TableRow key={prescription.id}>
-                        <TableCell>
-                          {prescription.prescription_date
-                            ? format(new Date(prescription.prescription_date), "MMM dd, yyyy")
-                            : format(new Date(prescription.created_at), "MMM dd, yyyy")}
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {prescription.patient_name || "Unknown"}
-                        </TableCell>
-                        <TableCell>
-                          {prescription.patient_age || "-"} / {prescription.patient_sex || "-"}
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate">
-                          {prescription.cc_text || "-"}
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate">
-                          {prescription.dx_text || "-"}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="default" className="bg-secondary text-secondary-foreground">
+              <>
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Patient</TableHead>
+                        <TableHead>Age/Sex</TableHead>
+                        <TableHead>Chief Complaints</TableHead>
+                        <TableHead>Diagnosis</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredPrescriptions.map((prescription) => (
+                        <TableRow key={prescription.id}>
+                          <TableCell>
+                            {prescription.prescription_date
+                              ? format(new Date(prescription.prescription_date), "MMM dd, yyyy")
+                              : format(new Date(prescription.created_at), "MMM dd, yyyy")}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {prescription.patient_name || "Unknown"}
+                          </TableCell>
+                          <TableCell>
+                            {prescription.patient_age || "-"} / {prescription.patient_sex || "-"}
+                          </TableCell>
+                          <TableCell className="max-w-xs truncate">
+                            {prescription.cc_text || "-"}
+                          </TableCell>
+                          <TableCell className="max-w-xs truncate">
+                            {prescription.dx_text || "-"}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="default" className="bg-secondary text-secondary-foreground">
+                              Saved
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => navigate(`/prescription/${prescription.id}`)}
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  navigate(`/prescription/${prescription.id}`);
+                                  setTimeout(() => window.print(), 500);
+                                }}
+                              >
+                                <Printer className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden space-y-3">
+                  {filteredPrescriptions.map((prescription) => (
+                    <Card key={prescription.id} className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-semibold text-sm truncate">
+                              {prescription.patient_name || "Unknown"}
+                            </h4>
+                            <p className="text-xs text-muted-foreground">
+                              {prescription.prescription_date
+                                ? format(new Date(prescription.prescription_date), "MMM dd, yyyy")
+                                : format(new Date(prescription.created_at), "MMM dd, yyyy")}
+                            </p>
+                          </div>
+                          <Badge variant="default" className="bg-secondary text-secondary-foreground text-xs shrink-0">
                             Saved
                           </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => navigate(`/prescription/${prescription.id}`)}
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                navigate(`/prescription/${prescription.id}`);
-                                setTimeout(() => window.print(), 500);
-                              }}
-                            >
-                              <Printer className="w-4 h-4" />
-                            </Button>
+                        </div>
+
+                        <div className="text-xs space-y-1">
+                          <div className="flex gap-2">
+                            <span className="text-muted-foreground">Age/Sex:</span>
+                            <span>{prescription.patient_age || "-"} / {prescription.patient_sex || "-"}</span>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                          {prescription.cc_text && (
+                            <div>
+                              <span className="text-muted-foreground">CC:</span>
+                              <p className="line-clamp-2 mt-1">{prescription.cc_text}</p>
+                            </div>
+                          )}
+                          {prescription.dx_text && (
+                            <div>
+                              <span className="text-muted-foreground">Dx:</span>
+                              <p className="line-clamp-2 mt-1">{prescription.dx_text}</p>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex gap-2 pt-2 border-t">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => navigate(`/prescription/${prescription.id}`)}
+                            className="flex-1"
+                          >
+                            <Eye className="w-3 h-3 mr-1" />
+                            View
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              navigate(`/prescription/${prescription.id}`);
+                              setTimeout(() => window.print(), 500);
+                            }}
+                            className="flex-1"
+                          >
+                            <Printer className="w-3 h-3 mr-1" />
+                            Print
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </>
             )}
 
-            <div className="mt-4 text-sm text-muted-foreground">
+            <div className="mt-4 text-xs md:text-sm text-muted-foreground">
               Showing {filteredPrescriptions.length} of {prescriptions.length} prescriptions
             </div>
           </CardContent>

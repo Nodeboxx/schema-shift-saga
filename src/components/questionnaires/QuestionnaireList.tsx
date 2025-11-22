@@ -91,28 +91,28 @@ export const QuestionnaireList = ({ onView }: { onView: (template: Template) => 
     <div className="space-y-4">
       {templates.map((template) => (
         <Card key={template.id}>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <CardTitle className="flex items-center gap-2">
-                  {template.title}
-                  <Badge variant={template.is_active ? "default" : "secondary"}>
+          <CardHeader className="p-4 md:p-6">
+            <div className="flex flex-col gap-3">
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <CardTitle className="text-base md:text-lg">{template.title}</CardTitle>
+                  <Badge variant={template.is_active ? "default" : "secondary"} className="text-xs">
                     {template.is_active ? "Active" : "Inactive"}
                   </Badge>
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">{template.description}</p>
+                </div>
+                <p className="text-xs md:text-sm text-muted-foreground">{template.description}</p>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span>Category: {template.category}</span>
-                <span>{template.questions.length} questions</span>
-                <span>Created: {new Date(template.created_at).toLocaleDateString()}</span>
+          <CardContent className="p-4 md:p-6 pt-0">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm text-muted-foreground">
+                <span className="whitespace-nowrap">Category: {template.category}</span>
+                <span className="whitespace-nowrap">{template.questions.length} questions</span>
+                <span className="whitespace-nowrap">Created: {new Date(template.created_at).toLocaleDateString()}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => onView(template)}>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => onView(template)} className="flex-1 sm:flex-initial">
                   <Eye className="w-4 h-4 mr-2" />
                   Preview
                 </Button>
@@ -120,19 +120,28 @@ export const QuestionnaireList = ({ onView }: { onView: (template: Template) => 
                   variant="outline"
                   size="sm"
                   onClick={() => toggleActive(template.id, template.is_active)}
+                  className="flex-1 sm:flex-initial"
                 >
                   {template.is_active ? (
-                    <ToggleRight className="w-4 h-4" />
+                    <>
+                      <ToggleRight className="w-4 h-4 mr-2" />
+                      <span className="hidden sm:inline">Active</span>
+                    </>
                   ) : (
-                    <ToggleLeft className="w-4 h-4" />
+                    <>
+                      <ToggleLeft className="w-4 h-4 mr-2" />
+                      <span className="hidden sm:inline">Inactive</span>
+                    </>
                   )}
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => deleteTemplate(template.id)}
+                  className="flex-1 sm:flex-initial"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Delete</span>
                 </Button>
               </div>
             </div>
