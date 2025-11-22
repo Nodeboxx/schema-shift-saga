@@ -217,6 +217,17 @@ const TelemedicineSession = ({ session, onEnd }: TelemedicineSessionProps) => {
     });
   };
 
+  if (!session?.appointments?.patients) {
+    return (
+      <div className="container mx-auto p-6">
+        <Card className="p-8 text-center">
+          <p className="text-muted-foreground">Unable to load session information</p>
+          <Button onClick={onEnd} className="mt-4">Return to Sessions</Button>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
