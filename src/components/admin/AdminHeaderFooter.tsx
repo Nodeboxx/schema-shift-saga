@@ -100,10 +100,10 @@ const AdminHeaderFooter = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div>
-        <h2 className="text-3xl font-bold">Header & Footer Editor</h2>
-        <p className="text-muted-foreground">Customize your site's header and footer with rich text</p>
+        <h2 className="text-2xl md:text-3xl font-bold">Header & Footer Editor</h2>
+        <p className="text-sm md:text-base text-muted-foreground">Customize your site's header and footer with rich text</p>
       </div>
 
       <Tabs defaultValue="header" className="w-full">
@@ -113,7 +113,7 @@ const AdminHeaderFooter = () => {
         </TabsList>
 
         <TabsContent value="header" className="space-y-4">
-          <Card className="p-6">
+          <Card className="p-4 md:p-6">
             <div className="space-y-4">
               <div>
                 <Label>Header Content (HTML)</Label>
@@ -152,7 +152,7 @@ const AdminHeaderFooter = () => {
         </TabsContent>
 
         <TabsContent value="footer" className="space-y-4">
-          <Card className="p-6">
+          <Card className="p-4 md:p-6">
             <div className="space-y-4">
               <div>
                 <Label>Footer Content (HTML)</Label>

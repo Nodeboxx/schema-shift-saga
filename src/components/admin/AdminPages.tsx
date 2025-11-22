@@ -145,17 +145,17 @@ const AdminPages = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold">Page Management</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl md:text-3xl font-bold">Page Management</h2>
+          <p className="text-sm md:text-base text-muted-foreground">
             Edit your website pages (About Us, Contact, Privacy Policy, Terms of Service)
           </p>
         </div>
       </div>
 
-      <Card>
+      <Card className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -221,7 +221,7 @@ const AdminPages = () => {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] md:max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Page: {editingPage?.title}</DialogTitle>
           </DialogHeader>

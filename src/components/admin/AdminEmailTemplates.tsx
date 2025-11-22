@@ -131,17 +131,17 @@ export const AdminEmailTemplates = () => {
   }
 
   return (
-    <Card className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Email Templates</h2>
+    <Card className="p-4 md:p-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3">
+        <h2 className="text-xl md:text-2xl font-bold">Email Templates</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNewTemplate}>
+            <Button onClick={openNewTemplate} className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               New Template
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-[95vw] md:max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingTemplate?.id ? 'Edit Template' : 'New Template'}
@@ -218,7 +218,8 @@ export const AdminEmailTemplates = () => {
         </Dialog>
       </div>
 
-      <Table>
+      <div className="overflow-x-auto">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
@@ -259,9 +260,10 @@ export const AdminEmailTemplates = () => {
                 </Button>
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </Card>
   );
 };

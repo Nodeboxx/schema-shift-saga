@@ -71,10 +71,11 @@ export const AdminAuditLogs = () => {
   }
 
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Audit Logs</h2>
+    <Card className="p-4 md:p-6">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Audit Logs</h2>
 
-      <Table>
+      <div className="overflow-x-auto">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Timestamp</TableHead>
@@ -102,9 +103,10 @@ export const AdminAuditLogs = () => {
           ))}
         </TableBody>
       </Table>
+      </div>
 
       {logs.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-8 text-sm text-muted-foreground">
           No audit logs found
         </div>
       )}

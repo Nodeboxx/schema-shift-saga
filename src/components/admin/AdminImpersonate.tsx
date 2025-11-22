@@ -100,11 +100,11 @@ export const AdminImpersonate = () => {
   }
 
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">User Impersonation</h2>
+    <Card className="p-4 md:p-6">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">User Impersonation</h2>
       
-      <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <p className="text-sm text-yellow-800">
+      <div className="mb-3 md:mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-3 md:p-4">
+        <p className="text-xs md:text-sm text-yellow-800">
           <strong>Warning:</strong> Impersonation allows you to view the system as another user. 
           All actions are logged for security and audit purposes.
         </p>
@@ -114,10 +114,11 @@ export const AdminImpersonate = () => {
         placeholder="Search users by name or email..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-4"
+        className="mb-3 md:mb-4"
       />
 
-      <Table>
+      <div className="overflow-x-auto">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
@@ -143,9 +144,10 @@ export const AdminImpersonate = () => {
                 </Button>
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </Card>
   );
 };

@@ -49,10 +49,11 @@ const AdminClinics = () => {
   }
 
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Clinic Management</h2>
+    <Card className="p-4 md:p-6">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Clinic Management</h2>
 
-      <Table>
+      <div className="overflow-x-auto">
+        <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Clinic Name</TableHead>
@@ -84,6 +85,7 @@ const AdminClinics = () => {
           ))}
         </TableBody>
       </Table>
+      </div>
     </Card>
   );
 };

@@ -83,9 +83,9 @@ const AdminUsers = () => {
 
   return (
     <>
-      <Card className="p-6">
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold mb-4">User Management</h2>
+      <Card className="p-4 md:p-6">
+        <div className="mb-4 md:mb-6">
+          <h2 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">User Management</h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
@@ -97,7 +97,8 @@ const AdminUsers = () => {
           </div>
         </div>
 
-        <Table>
+        <div className="overflow-x-auto">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -149,11 +150,12 @@ const AdminUsers = () => {
                     </Button>
                   </div>
                 </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+        </div>
+    </Card>
 
       <AdminUserEdit
         userId={editUserId}
