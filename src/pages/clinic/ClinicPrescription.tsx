@@ -32,26 +32,40 @@ const ClinicPrescription = () => {
         }
 
         setUser(session.user);
-        
-        // Get user's clinic
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("clinic_id, role")
-          .eq("id", session.user.id)
-          .single();
 
-        if (profileError) {
-          console.error("Profile fetch error:", profileError);
-          toast({
-            title: "Error",
-            description: "Failed to load profile information",
-            variant: "destructive",
-          });
-          navigate("/clinic/dashboard");
-          return;
+        let resolvedClinicId: string | null = null;
+
+        // First, try to find a clinic owned by this user (clinic admin)
+        const { data: ownedClinic, error: ownedClinicError } = await supabase
+          .from("clinics")
+          .select("id")
+          .eq("owner_id", session.user.id)
+          .maybeSingle();
+
+        if (ownedClinicError && ownedClinicError.code !== "PGRST116") {
+          console.error("Owned clinic fetch error:", ownedClinicError);
+          throw ownedClinicError;
         }
 
-        if (!profile?.clinic_id) {
+        if (ownedClinic?.id) {
+          resolvedClinicId = ownedClinic.id;
+        } else {
+          // Fallback: use clinic_id from profile for clinic doctors/staff
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("clinic_id")
+            .eq("id", session.user.id)
+            .maybeSingle();
+
+          if (profileError && profileError.code !== "PGRST116") {
+            console.error("Profile fetch error:", profileError);
+            throw profileError;
+          }
+
+          resolvedClinicId = profile?.clinic_id ?? null;
+        }
+
+        if (!resolvedClinicId) {
           toast({
             title: "Access Denied",
             description: "You must be part of a clinic to access this feature",
@@ -61,16 +75,16 @@ const ClinicPrescription = () => {
           return;
         }
 
-        setClinicId(profile.clinic_id);
+        setClinicId(resolvedClinicId);
 
         if (id) {
-          await loadPrescription(id, profile.clinic_id);
+          await loadPrescription(id, resolvedClinicId);
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Init error:", error);
         toast({
           title: "Error",
-          description: "An unexpected error occurred",
+          description: error.message || "An unexpected error occurred",
           variant: "destructive",
         });
         navigate("/clinic/dashboard");
