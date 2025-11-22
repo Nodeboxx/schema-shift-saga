@@ -25,6 +25,7 @@ const ClinicPrescriptionHeader = ({
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
   const [doctorNameBN, setDoctorNameBN] = useState<string>("");
   const [doctorDegreeBN, setDoctorDegreeBN] = useState<string>("");
+  const [headerFontSize, setHeaderFontSize] = useState<string>("13");
 
   useEffect(() => {
     const loadClinicAndDoctor = async () => {
@@ -44,7 +45,7 @@ const ClinicPrescriptionHeader = ({
         if (session) {
           const { data: profileData, error: profileError } = await supabase
             .from("profiles")
-            .select("council_logo_url, registration_number, name_bn, degree_bn")
+            .select("council_logo_url, registration_number, name_bn, degree_bn, header_font_size")
             .eq("id", session.user.id)
             .maybeSingle();
 
@@ -58,6 +59,7 @@ const ClinicPrescriptionHeader = ({
             // Right side: ONLY from profile settings - NO fallback
             setDoctorNameBN(profileData.name_bn || "");
             setDoctorDegreeBN(profileData.degree_bn || "");
+            setHeaderFontSize(profileData.header_font_size || "13");
           }
         }
       } catch (error) {
@@ -101,7 +103,7 @@ const ClinicPrescriptionHeader = ({
         {/* Left Column - Clinic Logo & Branding */}
         <div style={{ 
           flex: "1", 
-          fontSize: "13px", 
+          fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           display: "flex", 
           gap: "12px", 
@@ -203,7 +205,7 @@ const ClinicPrescriptionHeader = ({
         {/* Right Column - Bengali Doctor Info (Controlled by Profile Settings) */}
         <div style={{ 
           flex: "1", 
-          fontSize: "13px", 
+          fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           textAlign: "right",
           minWidth: 0
