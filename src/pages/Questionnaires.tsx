@@ -16,24 +16,24 @@ const Questionnaires = () => {
   return (
     <AppLayout>
       <SubscriptionGate feature="questionnaires">
-        <div className="container mx-auto p-6 space-y-6">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto p-4 md:p-6 space-y-4 md:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold">Patient Questionnaires</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-2xl md:text-3xl font-bold">Patient Questionnaires</h1>
+              <p className="text-sm text-muted-foreground">
                 Create and manage pre-consultation questionnaires for patients
               </p>
             </div>
-            <Button onClick={() => setShowBuilder(true)}>
+            <Button onClick={() => setShowBuilder(true)} className="w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               New Template
             </Button>
           </div>
 
           <Tabs defaultValue="templates">
-            <TabsList>
-              <TabsTrigger value="templates">My Templates</TabsTrigger>
-              <TabsTrigger value="responses">Patient Responses</TabsTrigger>
+            <TabsList className="w-full grid grid-cols-2">
+              <TabsTrigger value="templates" className="text-xs sm:text-sm">My Templates</TabsTrigger>
+              <TabsTrigger value="responses" className="text-xs sm:text-sm">Patient Responses</TabsTrigger>
             </TabsList>
 
             <TabsContent value="templates" className="mt-6">

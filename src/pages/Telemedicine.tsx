@@ -211,11 +211,11 @@ const Telemedicine = () => {
   return (
     <AppLayout>
       <SubscriptionGate feature="telemedicine">
-        <div className="container mx-auto p-6 space-y-6">
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto p-4 md:p-6 space-y-4 md:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold">Telemedicine</h1>
-              <p className="text-muted-foreground">Manage your virtual consultations</p>
+              <h1 className="text-2xl md:text-3xl font-bold">Telemedicine</h1>
+              <p className="text-sm text-muted-foreground">Manage your virtual consultations</p>
             </div>
             <div className="flex items-center gap-2">
               <Video className="h-5 w-5 text-primary" />
@@ -223,19 +223,20 @@ const Telemedicine = () => {
             </div>
           </div>
 
-          <Tabs defaultValue="active" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="active">
-                <Users className="h-4 w-4 mr-2" />
-                Active & Waiting
+          <Tabs defaultValue="active" className="space-y-4 md:space-y-6">
+            <TabsList className="w-full grid grid-cols-3">
+              <TabsTrigger value="active" className="text-xs sm:text-sm">
+                <Users className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Active & Waiting</span>
+                <span className="sm:hidden">Active</span>
               </TabsTrigger>
-              <TabsTrigger value="scheduled">
-                <Clock className="h-4 w-4 mr-2" />
-                Scheduled
+              <TabsTrigger value="scheduled" className="text-xs sm:text-sm">
+                <Clock className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Scheduled</span>
               </TabsTrigger>
-              <TabsTrigger value="completed">
-                <CheckCircle2 className="h-4 w-4 mr-2" />
-                Completed
+              <TabsTrigger value="completed" className="text-xs sm:text-sm">
+                <CheckCircle2 className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Completed</span>
               </TabsTrigger>
             </TabsList>
 
@@ -249,33 +250,34 @@ const Telemedicine = () => {
                 filterSessions(["waiting", "in_progress"]).map((session) => {
                   if (!session.appointments?.patients) return null;
                   return (
-                  <Card key={session.id} className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-3">
-                          <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
+                  <Card key={session.id} className="p-4 md:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                          <h3 className="text-lg md:text-xl font-semibold">{session.appointments.patients.name}</h3>
                           {getStatusBadge(session.status)}
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                           <span>Age: {session.appointments.patients.age || "N/A"}</span>
                           <span>Phone: {session.appointments.patients.phone || "N/A"}</span>
-                          <span>Scheduled: {format(new Date(session.appointments.start_time), "PPp")}</span>
+                          <span className="hidden sm:inline">Scheduled: {format(new Date(session.appointments.start_time), "PPp")}</span>
+                          <span className="sm:hidden">Scheduled: {format(new Date(session.appointments.start_time), "P")}</span>
                         </div>
                       </div>
                       <div className="flex gap-2">
                         {session.status === "waiting" && (
-                          <Button onClick={() => startSession(session.id)}>
+                          <Button onClick={() => startSession(session.id)} className="flex-1 sm:flex-initial">
                             <Video className="h-4 w-4 mr-2" />
-                            Start Session
+                            Start
                           </Button>
                         )}
                         {session.status === "in_progress" && (
                           <>
-                            <Button onClick={() => setActiveSession(session.id)}>
-                              Open Session
+                            <Button onClick={() => setActiveSession(session.id)} className="flex-1 sm:flex-initial">
+                              Open
                             </Button>
-                            <Button variant="destructive" onClick={() => endSession(session.id)}>
-                              <XCircle className="h-4 w-4 mr-2" />
+                            <Button variant="destructive" onClick={() => endSession(session.id)} className="flex-1 sm:flex-initial">
+                              <XCircle className="h-4 w-4 mr-1" />
                               End
                             </Button>
                           </>
@@ -297,15 +299,16 @@ const Telemedicine = () => {
                 filterSessions(["scheduled"]).map((session) => {
                   if (!session.appointments?.patients) return null;
                   return (
-                  <Card key={session.id} className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-3">
-                          <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
+                  <Card key={session.id} className="p-4 md:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                          <h3 className="text-lg md:text-xl font-semibold">{session.appointments.patients.name}</h3>
                           {getStatusBadge(session.status)}
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span>Scheduled: {format(new Date(session.appointments.start_time), "PPp")}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                          <span className="hidden sm:inline">Scheduled: {format(new Date(session.appointments.start_time), "PPp")}</span>
+                          <span className="sm:hidden">Scheduled: {format(new Date(session.appointments.start_time), "P")}</span>
                         </div>
                       </div>
                     </div>
@@ -324,14 +327,14 @@ const Telemedicine = () => {
                 filterSessions(["completed"]).map((session) => {
                   if (!session.appointments?.patients) return null;
                   return (
-                  <Card key={session.id} className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-3">
-                          <h3 className="text-xl font-semibold">{session.appointments.patients.name}</h3>
+                  <Card key={session.id} className="p-4 md:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div className="space-y-2 flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                          <h3 className="text-lg md:text-xl font-semibold">{session.appointments.patients.name}</h3>
                           {getStatusBadge(session.status)}
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                           <span>Completed: {session.end_time ? format(new Date(session.end_time), "PPp") : "N/A"}</span>
                           {session.start_time && session.end_time && (
                             <span>

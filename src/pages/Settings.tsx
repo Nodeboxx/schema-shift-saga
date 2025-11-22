@@ -514,45 +514,46 @@ const Settings = () => {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-background p-8">
+      <div className="min-h-screen bg-background p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
+        <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
           <Button
             onClick={() => navigate("/dashboard")}
             variant="outline"
             size="icon"
+            className="flex-shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-4xl font-bold text-foreground">Profile Settings</h1>
+          <h1 className="text-2xl md:text-4xl font-bold text-foreground">Profile Settings</h1>
         </div>
 
-        <Tabs defaultValue="account" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="account">Account Settings</TabsTrigger>
-            <TabsTrigger value="profile">Profile Information</TabsTrigger>
-            <TabsTrigger value="templates">Prescription Templates</TabsTrigger>
+        <Tabs defaultValue="account" className="space-y-4 md:space-y-6">
+          <TabsList className="w-full grid grid-cols-3">
+            <TabsTrigger value="account" className="text-xs sm:text-sm">Account</TabsTrigger>
+            <TabsTrigger value="profile" className="text-xs sm:text-sm">Profile</TabsTrigger>
+            <TabsTrigger value="templates" className="text-xs sm:text-sm">Templates</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="account" className="space-y-6">
+          <TabsContent value="account" className="space-y-4 md:space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Account Settings</CardTitle>
-                <CardDescription>Manage your account credentials and avatar</CardDescription>
+                <CardTitle className="text-xl md:text-2xl">Account Settings</CardTitle>
+                <CardDescription className="text-sm">Manage your account credentials and avatar</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 md:space-y-6">
                 {/* Avatar Section */}
                 <div className="space-y-4">
                   <Label>Profile Avatar</Label>
-                  <div className="flex items-center gap-6">
-                    <div className="w-24 h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-border">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden bg-muted flex items-center justify-center border-2 border-border flex-shrink-0">
                       {avatarPreview ? (
                         <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                       ) : (
-                        <User className="w-12 h-12 text-muted-foreground" />
+                        <User className="w-10 h-10 md:w-12 md:h-12 text-muted-foreground" />
                       )}
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 w-full">
                       <Input
                         type="file"
                         accept="image/*"
@@ -567,10 +568,10 @@ const Settings = () => {
                 </div>
 
                 {/* Email Section */}
-                <div className="border-t pt-6 space-y-4">
+                <div className="border-t pt-4 md:pt-6 space-y-4">
                   <div className="flex items-center gap-2">
                     <Mail className="w-5 h-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Change Email</h3>
+                    <h3 className="text-base md:text-lg font-semibold">Change Email</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -595,7 +596,7 @@ const Settings = () => {
                     <Button
                       onClick={handleUpdateEmail}
                       disabled={saving || !accountSettings.newEmail}
-                      className="gap-2"
+                      className="gap-2 w-full sm:w-auto"
                     >
                       <Mail className="w-4 h-4" />
                       Update Email
@@ -604,10 +605,10 @@ const Settings = () => {
                 </div>
 
                 {/* Password Section */}
-                <div className="border-t pt-6 space-y-4">
+                <div className="border-t pt-4 md:pt-6 space-y-4">
                   <div className="flex items-center gap-2">
                     <Lock className="w-5 h-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Change Password</h3>
+                    <h3 className="text-base md:text-lg font-semibold">Change Password</h3>
                   </div>
                   <div className="space-y-4">
                     <div>
@@ -633,7 +634,7 @@ const Settings = () => {
                     <Button
                       onClick={handleUpdatePassword}
                       disabled={saving || !accountSettings.newPassword || !accountSettings.confirmPassword}
-                      className="gap-2"
+                      className="gap-2 w-full sm:w-auto"
                     >
                       <Lock className="w-4 h-4" />
                       Update Password
@@ -654,13 +655,13 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="profile" className="space-y-6">
+          <TabsContent value="profile" className="space-y-4 md:space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Doctor Information</CardTitle>
-                <CardDescription>Update your professional details</CardDescription>
+                <CardTitle className="text-xl md:text-2xl">Doctor Information</CardTitle>
+                <CardDescription className="text-sm">Update your professional details</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-4 md:space-y-6">
                 <div>
                   <Label htmlFor="full_name">Doctor Name (English)</Label>
                   <Input
@@ -783,24 +784,25 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="templates" className="space-y-6">
+          <TabsContent value="templates" className="space-y-4 md:space-y-6">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <CardTitle>Select Prescription Template</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-xl md:text-2xl">Select Prescription Template</CardTitle>
+                    <CardDescription className="text-sm">
                       Choose a template based on your medical specialty. Each template includes relevant sections and fields.
                     </CardDescription>
                   </div>
-                  <Button onClick={() => setCustomBuilderOpen(true)} variant="outline">
+                  <Button onClick={() => setCustomBuilderOpen(true)} variant="outline" className="w-full sm:w-auto">
                     <Wand2 className="w-4 h-4 mr-2" />
-                    Build Custom Template
+                    <span className="hidden sm:inline">Build Custom Template</span>
+                    <span className="sm:hidden">Build Custom</span>
                   </Button>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                   {/* Built-in Templates */}
                   {prescriptionTemplates.map((template) => (
                     <Card

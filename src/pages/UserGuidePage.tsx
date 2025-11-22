@@ -4,7 +4,7 @@ import { UserGuide } from "@/components/dashboard/UserGuide";
 const UserGuidePage = () => {
   return (
     <AppLayout>
-      <div className="container mx-auto p-6 max-w-7xl">
+      <div className="container mx-auto p-4 md:p-6 max-w-7xl">
         <UserGuide />
       </div>
     </AppLayout>

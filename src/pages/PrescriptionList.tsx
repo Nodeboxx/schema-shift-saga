@@ -76,17 +76,17 @@ const PrescriptionList = () => {
   return (
     <AppLayout>
       <SubscriptionGate feature="prescription_history">
-        <div className="p-6">
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
+        <div className="p-4 md:p-6">
+          <div className="mb-4 md:mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
               <div>
-                <h1 className="text-3xl font-bold flex items-center gap-2">
-                  <FileText className="w-8 h-8" />
+                <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
+                  <FileText className="w-6 h-6 md:w-8 md:h-8" />
                   All Prescriptions
                 </h1>
-                <p className="text-muted-foreground mt-1">View and manage all saved prescriptions</p>
+                <p className="text-sm text-muted-foreground mt-1">View and manage all saved prescriptions</p>
               </div>
-              <Button onClick={() => navigate("/prescription")} size="lg">
+              <Button onClick={() => navigate("/prescription")} size="lg" className="w-full sm:w-auto">
                 <FileText className="w-4 h-4 mr-2" />
                 New Prescription
               </Button>
