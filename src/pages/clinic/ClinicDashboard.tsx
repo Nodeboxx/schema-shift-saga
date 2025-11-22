@@ -14,7 +14,6 @@ import ClinicPatients from "@/components/clinic/ClinicPatients";
 import { ClinicSubscriptionExpiryBanner } from "@/components/clinic/ClinicSubscriptionExpiryBanner";
 import { ClinicSubscriptionLock } from "@/components/clinic/ClinicSubscriptionLock";
 import { 
-  ArrowLeft, 
   LayoutDashboard, 
   Users, 
   Calendar, 
@@ -180,16 +179,7 @@ const ClinicDashboard = () => {
             </SidebarGroup>
           </SidebarContent>
 
-          <div className="p-4 border-t mt-auto space-y-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full"
-              onClick={() => navigate("/dashboard")}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to App
-            </Button>
+          <div className="p-4 border-t mt-auto">
             <Button 
               variant="ghost" 
               size="sm" 
