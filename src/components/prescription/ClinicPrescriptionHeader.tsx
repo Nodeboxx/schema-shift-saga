@@ -73,63 +73,87 @@ const ClinicPrescriptionHeader = ({
 
   return (
     <header style={{
-      padding: "15px",
+      padding: "20px 24px",
       borderBottom: "3px solid #0056b3",
       overflow: "hidden",
       position: "relative",
       zIndex: 1,
       backgroundColor: "white",
       backgroundImage: clinic?.header_image_url 
-        ? `linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url(${clinic.header_image_url})`
+        ? `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url(${clinic.header_image_url})`
         : undefined,
       backgroundSize: "cover",
       backgroundPosition: "center",
+      boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
     }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
-        {/* Left Column - Clinic Logo & Branding (replaces English doctor info) */}
-        <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", display: "flex", gap: "10px", alignItems: "flex-start" }}>
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "flex-start", 
+        gap: "24px",
+        maxWidth: "100%"
+      }}>
+        {/* Left Column - Clinic Logo & Branding */}
+        <div style={{ 
+          flex: "1", 
+          fontSize: "13px", 
+          lineHeight: "1.6", 
+          display: "flex", 
+          gap: "12px", 
+          alignItems: "flex-start",
+          minWidth: 0
+        }}>
           {clinic?.logo_url && (
             <img 
               src={clinic.logo_url} 
               alt="Clinic Logo"
               style={{
-                maxHeight: "50px",
-                maxWidth: "50px",
+                maxHeight: "60px",
+                maxWidth: "60px",
                 objectFit: "contain",
-                flexShrink: 0
+                flexShrink: 0,
+                filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.1))"
               }}
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
               }}
             />
           )}
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <h2 style={{
-              fontSize: "24px",
+              fontSize: "26px",
               fontWeight: 700,
               color: "#0056b3",
-              margin: 0,
+              margin: "0 0 6px 0",
+              lineHeight: 1.2,
+              letterSpacing: "-0.01em"
             }}>
               {clinic?.name || "Clinic Name"}
             </h2>
-            <div style={{ margin: 0, fontSize: "12px" }}>
-              {clinic?.address && <div>{clinic.address}</div>}
-              {clinic?.phone && <div>Phone: {clinic.phone}</div>}
-              {clinic?.email && <div>Email: {clinic.email}</div>}
-              {clinic?.website && <div>Website: {clinic.website}</div>}
+            <div style={{ 
+              margin: 0, 
+              fontSize: "12px",
+              color: "#374151",
+              lineHeight: 1.7
+            }}>
+              {clinic?.address && <div style={{ marginBottom: "2px" }}>{clinic.address}</div>}
+              {clinic?.phone && <div style={{ marginBottom: "2px" }}><strong>Phone:</strong> {clinic.phone}</div>}
+              {clinic?.email && <div style={{ marginBottom: "2px" }}><strong>Email:</strong> {clinic.email}</div>}
+              {clinic?.website && <div><strong>Website:</strong> {clinic.website}</div>}
             </div>
           </div>
         </div>
 
-        {/* Center Column - Doctor's Council Logo & QR Code (unchanged, controlled by doctor) */}
+        {/* Center Column - Medical Council Logo & QR Code */}
         <div style={{ 
           flex: "0 0 auto", 
           display: "flex", 
           flexDirection: "column", 
           alignItems: "center",
           justifyContent: "center",
-          padding: "5px 15px",
-          gap: "10px"
+          padding: "8px 20px",
+          gap: "12px",
+          minWidth: "100px"
         }}>
           {councilLogoUrl && (
             <>
@@ -137,9 +161,10 @@ const ClinicPrescriptionHeader = ({
                 src={councilLogoUrl} 
                 alt="Medical Council Logo"
                 style={{
-                  maxHeight: "50px",
-                  maxWidth: "70px",
-                  objectFit: "contain"
+                  maxHeight: "65px",
+                  maxWidth: "80px",
+                  objectFit: "contain",
+                  filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"
                 }}
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
@@ -147,11 +172,15 @@ const ClinicPrescriptionHeader = ({
               />
               {registrationNumber && (
                 <div style={{
-                  fontSize: "9px",
+                  fontSize: "10px",
                   fontWeight: 600,
-                  color: "#333",
+                  color: "#1f2937",
                   textAlign: "center",
-                  whiteSpace: "nowrap"
+                  whiteSpace: "nowrap",
+                  padding: "4px 8px",
+                  backgroundColor: "#f3f4f6",
+                  borderRadius: "4px",
+                  letterSpacing: "0.02em"
                 }}>
                   {registrationNumber}
                 </div>
@@ -160,23 +189,37 @@ const ClinicPrescriptionHeader = ({
           )}
           
           {prescriptionId && uniqueHash && (
-            <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
+            <div style={{ marginTop: "4px" }}>
+              <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
+            </div>
           )}
         </div>
 
-        {/* Right Column - Bengali Doctor Info (controlled by doctor's profile settings) */}
-        <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
+        {/* Right Column - Bengali Doctor Info */}
+        <div style={{ 
+          flex: "1", 
+          fontSize: "13px", 
+          lineHeight: "1.6", 
+          textAlign: "right",
+          minWidth: 0
+        }}>
           <h2 style={{
-            fontSize: "24px",
+            fontSize: "26px",
             fontWeight: 700,
             color: "#0056b3",
-            margin: 0,
+            margin: "0 0 6px 0",
+            lineHeight: 1.2,
+            letterSpacing: "-0.01em"
           }}>
             {doctorNameBN || doctorInfo.docNameBN}
           </h2>
           <div
             dangerouslySetInnerHTML={{ __html: doctorDegreeBN || doctorInfo.docDegreeBN }}
-            style={{ margin: 0 }}
+            style={{ 
+              margin: 0,
+              color: "#374151",
+              lineHeight: 1.7
+            }}
           />
         </div>
       </div>
