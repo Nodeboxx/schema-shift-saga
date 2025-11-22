@@ -78,9 +78,9 @@ const ClinicSubscription = ({ clinic }: ClinicSubscriptionProps) => {
           </p>
         )}
 
-        <Button onClick={() => navigate("/checkout/pro")}>
+        <Button onClick={() => navigate("/checkout/clinic")}>
           <CreditCard className="mr-2 h-4 w-4" />
-          Upgrade Plan
+          Manage Subscription
         </Button>
       </Card>
 
