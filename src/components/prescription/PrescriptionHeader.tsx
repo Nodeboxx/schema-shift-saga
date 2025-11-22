@@ -122,9 +122,9 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px", position: "relative" }}>
         {/* Left Column - English */}
-        <div style={{ flex: "1 1 auto", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: "0" }}>
+        <div style={{ flex: "1 1 0", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: "0" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -154,7 +154,9 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
 
         {/* Center Column - Logo, Registration & QR Code */}
         <div style={{ 
-          flex: "0 0 auto", 
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
           display: "flex", 
           flexDirection: "column", 
           alignItems: "center",
@@ -162,7 +164,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           padding: "0 8px",
           gap: "6px",
           minWidth: "90px",
-          maxWidth: "110px"
+          maxWidth: "110px",
+          zIndex: 10
         }}>
           {clinicBranding.logo_url ? (
             <img 
@@ -212,7 +215,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
 
         {/* Right Column - Bengali */}
-        <div style={{ flex: "1 1 auto", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: "0" }}>
+        <div style={{ flex: "1 1 0", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: "0" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
