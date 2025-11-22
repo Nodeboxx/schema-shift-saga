@@ -16,9 +16,10 @@ interface PrescriptionPageProps {
   userId?: string;
   onSaveReady?: (saveHandler: () => void) => void;
   onAddPageReady?: (addPageHandler: () => void) => void;
+  pageLayout?: 'single' | 'double';
 }
 
-const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageReady }: PrescriptionPageProps) => {
+const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageReady, pageLayout = 'single' }: PrescriptionPageProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [patientSelected, setPatientSelected] = useState(false);
@@ -555,50 +556,58 @@ const PrescriptionPage = ({ prescriptionData, userId, onSaveReady, onAddPageRead
       {/* Action buttons removed - moved to top toolbar */}
 
       {/* Prescription pages - only shown after patient selection */}
-      {patientSelected && pages.map((page) => (
-        <div
-          key={page.id}
-          className="prescription-page"
-          style={{
-            width: "800px",
-            minHeight: "1120px",
-            margin: "20px auto",
-            backgroundColor: "#ffffff",
-            border: "1px solid #aaa",
-            boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
-            position: "relative",
-            boxSizing: "border-box",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          {/* Delete button for additional pages */}
-          {page.id > 1 && (
-            <Button
-              size="icon"
-              variant="destructive"
-              className="absolute -top-3 -right-3 z-10 print:hidden"
-              onClick={() => removePage(page.id)}
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          )}
-          
-          <PrescriptionHeader 
-            doctorInfo={doctorInfo} 
-            setDoctorInfo={setDoctorInfo}
-            prescriptionId={prescriptionId}
-            uniqueHash={uniqueHash}
-          />
-          <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
-          <PrescriptionBody 
-            data={page.id === 1 ? bodyData : pagesData[page.id]}
-            setData={page.id === 1 ? setBodyData : (data: any) => setPagesData({ ...pagesData, [page.id]: data })}
-            templateSections={templateSections}
-          />
-          <PrescriptionFooter />
-        </div>
-      ))}
+      <div style={{
+        display: pageLayout === 'double' ? 'grid' : 'block',
+        gridTemplateColumns: pageLayout === 'double' ? 'repeat(2, 1fr)' : 'none',
+        gap: pageLayout === 'double' ? '20px' : '0',
+        maxWidth: pageLayout === 'double' ? '1640px' : '800px',
+        margin: '0 auto',
+      }}>
+        {patientSelected && pages.map((page) => (
+          <div
+            key={page.id}
+            className="prescription-page"
+            style={{
+              width: "800px",
+              minHeight: "1120px",
+              margin: pageLayout === 'single' ? "20px auto" : "20px 0",
+              backgroundColor: "#ffffff",
+              border: "1px solid #aaa",
+              boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
+              position: "relative",
+              boxSizing: "border-box",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            {/* Delete button for additional pages */}
+            {page.id > 1 && (
+              <Button
+                size="icon"
+                variant="destructive"
+                className="absolute -top-3 -right-3 z-10 print:hidden"
+                onClick={() => removePage(page.id)}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            )}
+            
+            <PrescriptionHeader 
+              doctorInfo={doctorInfo} 
+              setDoctorInfo={setDoctorInfo}
+              prescriptionId={prescriptionId}
+              uniqueHash={uniqueHash}
+            />
+            <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
+            <PrescriptionBody 
+              data={page.id === 1 ? bodyData : pagesData[page.id]}
+              setData={page.id === 1 ? setBodyData : (data: any) => setPagesData({ ...pagesData, [page.id]: data })}
+              templateSections={templateSections}
+            />
+            <PrescriptionFooter />
+          </div>
+        ))}
+      </div>
     </>
   );
 };

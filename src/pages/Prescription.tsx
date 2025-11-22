@@ -15,7 +15,8 @@ const Prescription = () => {
   const [prescriptionData, setPrescriptionData] = useState<any>(null);
   const [onSave, setOnSave] = useState<(() => void) | undefined>();
   const [onAddPage, setOnAddPage] = useState<(() => void) | undefined>();
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(1.3); // Default 130%
+  const [pageLayout, setPageLayout] = useState<'single' | 'double'>('single');
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast } = useToast();
@@ -141,18 +142,25 @@ const Prescription = () => {
         onAddPage={onAddPage}
         zoom={zoom}
         onZoomChange={setZoom}
+        pageLayout={pageLayout}
+        onPageLayoutChange={setPageLayout}
       />
 
       <div
         id="page-wrapper"
-        className="prescription-page-wrapper mx-auto max-w-5xl md:max-w-6xl transition-transform duration-200"
-        style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
+        className="prescription-page-wrapper mx-auto transition-transform duration-200"
+        style={{ 
+          transform: `scale(${zoom})`, 
+          transformOrigin: 'top center',
+          maxWidth: pageLayout === 'double' ? '1700px' : '850px'
+        }}
       >
         <PrescriptionPage 
           prescriptionData={prescriptionData} 
           userId={user?.id}
           onSaveReady={(handler) => setOnSave(() => handler)}
           onAddPageReady={(handler) => setOnAddPage(() => handler)}
+          pageLayout={pageLayout}
         />
       </div>
     </div>
