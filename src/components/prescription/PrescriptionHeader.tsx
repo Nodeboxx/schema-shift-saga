@@ -76,6 +76,22 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
     setDoctorInfo({ ...doctorInfo, [field]: value });
   };
 
+  if (loading) {
+    return (
+      <header className="prescription-header" style={{
+        padding: "15px",
+        borderBottom: "3px solid #0056b3",
+        minHeight: "150px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "white",
+      }}>
+        <div style={{ color: "#0056b3", fontSize: "14px" }}>Loading...</div>
+      </header>
+    );
+  }
+
   return (
     <header className="prescription-header" style={{
       padding: "15px",
