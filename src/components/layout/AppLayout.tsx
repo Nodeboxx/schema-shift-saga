@@ -191,7 +191,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
         {navItems.map((item) => {
           if (!item.show) return null;
           
-          const isLocked = item.feature && !hasFeatureAccess(userTier, item.feature);
+          // Clinic-managed doctors have full access (no locks)
+          const isLocked = !isClinicDoctor && item.feature && !hasFeatureAccess(userTier, item.feature);
           
           return (
             <NavLink

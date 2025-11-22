@@ -15,6 +15,7 @@ import { SubscriptionExpiryBanner } from "@/components/subscription/Subscription
 import { SubscriptionHistory } from "@/components/subscription/SubscriptionHistory";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { DoctorClinicSubscriptionLock } from "@/components/subscription/DoctorClinicSubscriptionLock";
+import { ClinicManagedBanner } from "@/components/subscription/ClinicManagedBanner";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Dashboard = () => {
   const [clinicSubscriptionExpired, setClinicSubscriptionExpired] = useState(false);
   const [clinicInfo, setClinicInfo] = useState<any>(null);
   const [clinicId, setClinicId] = useState<string | null>(null);
+  const [isClinicManaged, setIsClinicManaged] = useState(false);
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalPrescriptions: 0,
@@ -77,6 +79,8 @@ const Dashboard = () => {
 
       if (profile?.clinic_id) {
         setClinicId(profile.clinic_id);
+        setIsClinicManaged(true);
+        
         // Check clinic subscription status
         const { data: clinic } = await supabase
           .from("clinics")
@@ -167,8 +171,14 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold">Dashboard</h1>
         </div>
 
-        <SubscriptionExpiryBanner />
-        <SubscriptionManager />
+        {isClinicManaged && clinicInfo ? (
+          <ClinicManagedBanner clinicName={clinicInfo.name} />
+        ) : (
+          <>
+            <SubscriptionExpiryBanner />
+            <SubscriptionManager />
+          </>
+        )}
 
         {hasActiveSubscription === false ? (
           <Card className="border-dashed border-2">
@@ -238,9 +248,13 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="patients">
-            <SubscriptionGate feature="patient_management">
+            {isClinicManaged ? (
               <MyPatientsTab />
-            </SubscriptionGate>
+            ) : (
+              <SubscriptionGate feature="patient_management">
+                <MyPatientsTab />
+              </SubscriptionGate>
+            )}
           </TabsContent>
 
           <TabsContent value="verify">
@@ -259,13 +273,17 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="reports">
-            <SubscriptionGate feature="analytics" customFeatureName="Reports and Analytics">
+            {isClinicManaged ? (
               <ReportsTab />
-            </SubscriptionGate>
+            ) : (
+              <SubscriptionGate feature="analytics" customFeatureName="Reports and Analytics">
+                <ReportsTab />
+              </SubscriptionGate>
+            )}
           </TabsContent>
         </Tabs>
 
-        <SubscriptionHistory />
+        {!isClinicManaged && <SubscriptionHistory />}
           </>
         )}
 
