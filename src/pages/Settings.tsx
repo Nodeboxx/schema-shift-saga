@@ -173,15 +173,21 @@ const Settings = () => {
     }
 
     if (data) {
+      // Convert <br> tags back to newlines for editing in textarea
+      const degreeEn = (data.degree_en || "").replace(/<br\s*\/?>/gi, '\n');
+      const degreeBn = (data.degree_bn || "").replace(/<br\s*\/?>/gi, '\n');
+      const footerLeft = (data.footer_left || "").replace(/<br\s*\/?>/gi, '\n');
+      const footerRight = (data.footer_right || "").replace(/<br\s*\/?>/gi, '\n');
+
       setProfile({
         full_name: data.full_name || "",
         name_bn: data.name_bn || "",
-        degree_en: data.degree_en || "",
-        degree_bn: data.degree_bn || "",
+        degree_en: degreeEn,
+        degree_bn: degreeBn,
         council_logo_url: data.council_logo_url || "",
         registration_number: data.registration_number || "",
-        footer_left: data.footer_left || "",
-        footer_right: data.footer_right || "",
+        footer_left: footerLeft,
+        footer_right: footerRight,
         bismillah_text: data.bismillah_text || "بسم الله الرحمن الرحيم",
         left_template_sections: Array.isArray(data.left_template_sections) ? data.left_template_sections : [],
         active_template: data.active_template || "general_medicine",
@@ -310,17 +316,23 @@ const Settings = () => {
         }
       }
 
+      // Convert newlines to <br> tags for HTML display
+      const degreeEnHtml = profile.degree_en.replace(/\n/g, '<br>');
+      const degreeBnHtml = profile.degree_bn.replace(/\n/g, '<br>');
+      const footerLeftHtml = profile.footer_left.replace(/\n/g, '<br>');
+      const footerRightHtml = profile.footer_right.replace(/\n/g, '<br>');
+
       const { error } = await supabase
         .from("profiles")
         .update({
           full_name: profile.full_name,
           name_bn: profile.name_bn,
-          degree_en: profile.degree_en,
-          degree_bn: profile.degree_bn,
+          degree_en: degreeEnHtml,
+          degree_bn: degreeBnHtml,
           council_logo_url: profile.council_logo_url,
           registration_number: profile.registration_number,
-          footer_left: profile.footer_left,
-          footer_right: profile.footer_right,
+          footer_left: footerLeftHtml,
+          footer_right: footerRightHtml,
           bismillah_text: profile.bismillah_text,
           avatar_url: avatarUrl,
         })
@@ -680,7 +692,7 @@ const Settings = () => {
                     className="font-mono text-sm"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Use &lt;br/&gt; for line breaks
+                    Press Enter for line breaks (will be saved automatically)
                   </p>
                 </div>
 
@@ -695,7 +707,7 @@ const Settings = () => {
                     className="font-mono text-sm"
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Use &lt;br/&gt; for line breaks
+                    Press Enter for line breaks (will be saved automatically)
                   </p>
                 </div>
 
