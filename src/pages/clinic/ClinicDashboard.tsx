@@ -10,6 +10,8 @@ import ClinicSubscription from "@/components/clinic/ClinicSubscription";
 import ClinicDoctors from "@/components/clinic/ClinicDoctors";
 import ClinicRevenue from "@/components/clinic/ClinicRevenue";
 import ClinicPayroll from "@/components/clinic/ClinicPayroll";
+import ClinicAppointments from "@/components/clinic/ClinicAppointments";
+import ClinicPatients from "@/components/clinic/ClinicPatients";
 import { ArrowLeft } from "lucide-react";
 
 const ClinicDashboard = () => {
@@ -82,15 +84,32 @@ const ClinicDashboard = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="doctors" className="space-y-6">
-          <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:grid-cols-6 gap-1">
-            <TabsTrigger value="doctors" className="text-xs sm:text-sm">Doctors</TabsTrigger>
-            <TabsTrigger value="payroll" className="text-xs sm:text-sm">Payroll</TabsTrigger>
-            <TabsTrigger value="revenue" className="text-xs sm:text-sm">Revenue</TabsTrigger>
-            <TabsTrigger value="team" className="text-xs sm:text-sm">Team</TabsTrigger>
-            <TabsTrigger value="branding" className="text-xs sm:text-sm">Branding</TabsTrigger>
-            <TabsTrigger value="subscription" className="text-xs sm:text-sm">Plan</TabsTrigger>
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="w-full overflow-x-auto flex sm:inline-flex">
+            <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap">Overview</TabsTrigger>
+            <TabsTrigger value="patients" className="text-xs sm:text-sm whitespace-nowrap">Patients</TabsTrigger>
+            <TabsTrigger value="appointments" className="text-xs sm:text-sm whitespace-nowrap">Appointments</TabsTrigger>
+            <TabsTrigger value="doctors" className="text-xs sm:text-sm whitespace-nowrap">Doctors</TabsTrigger>
+            <TabsTrigger value="payroll" className="text-xs sm:text-sm whitespace-nowrap">Payroll</TabsTrigger>
+            <TabsTrigger value="revenue" className="text-xs sm:text-sm whitespace-nowrap">Revenue</TabsTrigger>
+            <TabsTrigger value="team" className="text-xs sm:text-sm whitespace-nowrap">Team</TabsTrigger>
+            <TabsTrigger value="branding" className="text-xs sm:text-sm whitespace-nowrap">Branding</TabsTrigger>
+            <TabsTrigger value="subscription" className="text-xs sm:text-sm whitespace-nowrap">Plan</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="overview">
+            <div className="grid gap-6">
+              <ClinicRevenue clinicId={clinic.id} />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="patients">
+            <ClinicPatients clinicId={clinic.id} />
+          </TabsContent>
+
+          <TabsContent value="appointments">
+            <ClinicAppointments clinicId={clinic.id} />
+          </TabsContent>
 
           <TabsContent value="doctors">
             <ClinicDoctors clinicId={clinic.id} />
