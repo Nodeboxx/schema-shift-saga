@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Mail, Phone, CheckCircle2, LogOut, Home } from "lucide-react";
-import logo from "@/assets/meddexpro-logo.png";
+import logo from "@/assets/medrxpro-logo.png";
 
 const ClinicPendingApproval = () => {
   const navigate = useNavigate();

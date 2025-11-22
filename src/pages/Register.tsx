@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Check, ArrowRight, Home, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/meddexpro-logo.png";
+import logo from "@/assets/medrxpro-logo.png";
 
 interface PricingPlan {
   id: string;
