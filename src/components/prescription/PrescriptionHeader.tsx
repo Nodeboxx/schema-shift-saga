@@ -151,15 +151,15 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
       </div>
 
-      {/* Doctor details with underline */}
+      {/* Doctor details on right side */}
       <div style={{ 
-        borderTop: "2px solid #0056b3", 
-        paddingTop: "10px",
         display: "flex", 
         justifyContent: "space-between", 
         alignItems: "flex-start", 
         gap: "20px" 
       }}>
+        <div style={{ flex: "1" }}></div>
+        
         <div style={{ flex: "1", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
           {/* English doctor details */}
           <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5" }}>
