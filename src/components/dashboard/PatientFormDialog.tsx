@@ -176,12 +176,20 @@ export const PatientFormDialog = ({ patient, open, onOpenChange, onSuccess }: Pa
         });
       } else {
         // Create new patient
+        // Get clinic_id if user is part of a clinic
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("clinic_id")
+          .eq("id", user.id)
+          .single();
+
         const { data: newPatient, error } = await supabase
           .from("patients")
           .insert({
             ...dataToSave,
             user_id: user.id,
             doctor_id: user.id,
+            clinic_id: profile?.clinic_id || null,
           })
           .select()
           .single();
