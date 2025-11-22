@@ -200,7 +200,7 @@ const Dashboard = () => {
         ) : (
           <>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
-          <TabsList className="w-full grid grid-cols-2 lg:grid-cols-4 bg-blue-50 p-1 mb-4 md:mb-6">
+          <TabsList className="w-full grid grid-cols-2 lg:grid-cols-4 bg-blue-50 p-1">
             <TabsTrigger 
               value="overview" 
               className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
@@ -227,8 +227,8 @@ const Dashboard = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-4 md:space-y-6 mt-0">
-            <div className="flex justify-end">
+          <TabsContent value="overview" className="space-y-4 md:space-y-6 mt-6">
+            <div className="flex justify-end mb-4">
               <Button onClick={() => navigate(clinicId ? '/clinic/doctor/prescription' : '/prescription')} className="w-full sm:w-auto">
                 <FileText className="w-4 h-4 mr-2" />
                 New Prescription
@@ -267,7 +267,7 @@ const Dashboard = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="patients" className="mt-0">
+          <TabsContent value="patients" className="mt-6">
             {isClinicManaged ? (
               <MyPatientsTab />
             ) : (
@@ -277,13 +277,13 @@ const Dashboard = () => {
             )}
           </TabsContent>
 
-          <TabsContent value="verify" className="mt-0">
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-2">
+          <TabsContent value="verify" className="mt-6">
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-4 bg-muted/30 rounded-lg">
                 <ScanLine className="h-5 w-5 md:h-6 md:w-6 text-primary flex-shrink-0" />
                 <div>
                   <h2 className="text-lg md:text-2xl font-bold">Verify Prescription</h2>
-                  <p className="text-xs md:text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground mt-1">
                     Scan QR codes from prescriptions to verify authenticity and view patient details
                   </p>
                 </div>
@@ -292,7 +292,7 @@ const Dashboard = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="reports" className="mt-0">
+          <TabsContent value="reports" className="mt-6">
             {isClinicManaged ? (
               <ReportsTab />
             ) : (
