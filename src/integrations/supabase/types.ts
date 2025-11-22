@@ -2394,6 +2394,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      count_clinic_doctors: { Args: { clinic_uuid: string }; Returns: number }
       get_prescription_qr_url: {
         Args: { prescription_id: string }
         Returns: string
