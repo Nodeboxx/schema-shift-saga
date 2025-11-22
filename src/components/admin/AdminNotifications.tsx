@@ -19,12 +19,22 @@ export const AdminNotifications = () => {
   const { toast } = useToast();
 
   const notificationTypes = [
+    // Email Notifications
+    { channel: 'email', event_type: 'prescription_created', label: 'Prescription Created (Email)' },
     { channel: 'email', event_type: 'appointment_created', label: 'Appointment Created (Email)' },
+    { channel: 'email', event_type: 'appointment_approved', label: 'Appointment Approved (Email)' },
     { channel: 'email', event_type: 'appointment_reminder', label: 'Appointment Reminder (Email)' },
-    { channel: 'email', event_type: 'prescription_ready', label: 'Prescription Ready (Email)' },
+    { channel: 'email', event_type: 'appointment_rescheduled', label: 'Appointment Rescheduled (Email)' },
+    { channel: 'email', event_type: 'health_advice_sent', label: 'Health Advice (Email)' },
+    
+    // SMS Notifications
+    { channel: 'sms', event_type: 'prescription_created', label: 'Prescription Created (SMS)' },
     { channel: 'sms', event_type: 'appointment_created', label: 'Appointment Created (SMS)' },
+    { channel: 'sms', event_type: 'appointment_approved', label: 'Appointment Approved (SMS)' },
     { channel: 'sms', event_type: 'appointment_reminder', label: 'Appointment Reminder (SMS)' },
-    { channel: 'push', event_type: 'appointment_created', label: 'Appointment Created (Push)' },
+    { channel: 'sms', event_type: 'appointment_rescheduled', label: 'Appointment Rescheduled (SMS)' },
+    { channel: 'sms', event_type: 'otp_verification', label: 'OTP Verification (SMS)' },
+    { channel: 'sms', event_type: 'password_reset', label: 'Password Reset (SMS)' },
   ];
 
   useEffect(() => {
