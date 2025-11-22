@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { Users, FileText, Calendar, Sparkles, ScanLine } from "lucide-react";
-import medRxProLogo from "@/assets/medrxpro-dashboard-logo.png";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MyPatientsTab } from "@/components/dashboard/MyPatientsTab";
@@ -167,10 +166,9 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto p-6 space-y-6">
+      <div className="container mx-auto p-4 md:p-6 space-y-4 md:space-y-6">
         <div className="flex items-center justify-between">
-          <img src={medRxProLogo} alt="MedRxPro" className="h-10" />
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-bold">Dashboard</h1>
         </div>
 
         {isClinicManaged && clinicInfo ? (
@@ -184,16 +182,16 @@ const Dashboard = () => {
 
         {hasActiveSubscription === false ? (
           <Card className="border-dashed border-2">
-            <CardContent className="p-12 text-center space-y-6">
-              <Sparkles className="h-16 w-16 mx-auto text-primary" />
+            <CardContent className="p-6 md:p-12 text-center space-y-4 md:space-y-6">
+              <Sparkles className="h-12 w-12 md:h-16 md:w-16 mx-auto text-primary" />
               <div>
-                <h2 className="text-2xl font-bold mb-2">Welcome to MedRxPro!</h2>
-                <p className="text-muted-foreground">
+                <h2 className="text-xl md:text-2xl font-bold mb-2">Welcome to MedRxPro!</h2>
+                <p className="text-sm md:text-base text-muted-foreground">
                   Subscribe to a plan or start your free trial to unlock all features and create prescriptions.
                 </p>
               </div>
-              <div className="flex justify-center gap-4">
-                <Button onClick={() => navigate("/demo")} variant="outline" size="lg">
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <Button onClick={() => navigate("/demo")} variant="outline" size="lg" className="w-full sm:w-auto">
                   Try Demo
                 </Button>
               </div>
@@ -201,22 +199,22 @@ const Dashboard = () => {
           </Card>
         ) : (
           <>
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="patients">My Patients</TabsTrigger>
-            <TabsTrigger value="verify">Verify Patient</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
+          <TabsList className="w-full grid grid-cols-2 lg:grid-cols-4">
+            <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+            <TabsTrigger value="patients" className="text-xs sm:text-sm">My Patients</TabsTrigger>
+            <TabsTrigger value="verify" className="text-xs sm:text-sm">Verify Patient</TabsTrigger>
+            <TabsTrigger value="reports" className="text-xs sm:text-sm">Reports</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent value="overview" className="space-y-4 md:space-y-6">
             <div className="flex justify-end mb-4">
-              <Button onClick={() => navigate(clinicId ? '/clinic/doctor/prescription' : '/prescription')}>
+              <Button onClick={() => navigate(clinicId ? '/clinic/doctor/prescription' : '/prescription')} className="w-full sm:w-auto">
                 <FileText className="w-4 h-4 mr-2" />
                 New Prescription
               </Button>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Patients</CardTitle>
@@ -261,10 +259,10 @@ const Dashboard = () => {
 
           <TabsContent value="verify">
             <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <ScanLine className="h-6 w-6 text-primary" />
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-2 mb-4">
+                <ScanLine className="h-6 w-6 text-primary flex-shrink-0" />
                 <div>
-                  <h2 className="text-2xl font-bold">Verify Prescription</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">Verify Prescription</h2>
                   <p className="text-sm text-muted-foreground">
                     Scan QR codes from prescriptions to verify authenticity and view patient details
                   </p>

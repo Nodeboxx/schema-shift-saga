@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { NavLink } from '@/components/NavLink';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import medRxProLogo from '@/assets/medrxpro-dashboard-logo.png';
+import { HeartPulse } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { hasFeatureAccess, FeatureKey, SubscriptionTier } from '@/lib/subscriptionFeatures';
@@ -186,8 +186,17 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const SidebarContent = () => (
     <>
       <div className="p-6 border-b border-border">
-        <img src={medRxProLogo} alt="MedRxPro" className="h-10" />
-        <p className="text-sm text-muted-foreground mt-2">Prescription SaaS</p>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-purple-600">
+            <HeartPulse className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              MedRxPro
+            </h1>
+            <p className="text-xs text-muted-foreground">Prescription SaaS</p>
+          </div>
+        </div>
       </div>
 
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -231,9 +240,16 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Mobile Header */}
       {isMobile && (
         <header className="flex items-center justify-between p-4 border-b border-border bg-card sticky top-0 z-50">
-          <div>
-            <img src={medRxProLogo} alt="MedRxPro" className="h-8 mb-1" />
-            <p className="text-xs text-muted-foreground">Prescription SaaS</p>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-purple-600">
+              <HeartPulse className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                MedRxPro
+              </h1>
+              <p className="text-xs text-muted-foreground">Prescription SaaS</p>
+            </div>
           </div>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
