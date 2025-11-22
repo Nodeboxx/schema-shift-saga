@@ -55,8 +55,10 @@ serve(async (req) => {
 
     // Prepare prompt based on language
     const languagePrompt = language === 'bn-BD' 
-      ? 'Transcribe this audio in Bengali language. Return only the transcribed text, nothing else.' 
-      : 'Transcribe this audio in English language. Return only the transcribed text, nothing else.'
+      ? 'Listen carefully to this Bengali/Bangla audio recording and transcribe exactly what is being said in Bengali script (বাংলা). Only return the transcribed Bengali text, nothing else. Do not translate to English.' 
+      : 'Listen to this English audio and transcribe exactly what is being said. Return only the transcribed English text, nothing else.'
+    
+    console.log('[Edge Function] 📝 Using prompt:', languagePrompt)
 
     // Send to Lovable AI Gateway (using google/gemini-2.5-flash)
     console.log('[Edge Function] 🚀 Sending request to Lovable AI Gateway...')

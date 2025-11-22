@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthProvider } from "./contexts/AuthContext";
+import { VoiceRecordingProvider } from "./contexts/VoiceRecordingContext";
 import { RoleRedirect } from "./components/guards/RoleRedirect";
 import CMSLandingPage from "./pages/public/CMSLandingPage";
 import PublicVerifyPrescription from "./pages/public/PublicVerifyPrescription";
@@ -47,12 +48,13 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <RoleRedirect />
-            <Routes>
+        <VoiceRecordingProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <RoleRedirect />
+              <Routes>
               <Route path="/" element={<CMSLandingPage />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -90,9 +92,10 @@ const App = () => (
               <Route path="/demo/prescription" element={<DemoPrescription />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </VoiceRecordingProvider>
       </AuthProvider>
     </QueryClientProvider>
   </ErrorBoundary>
