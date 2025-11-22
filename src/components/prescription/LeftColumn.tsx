@@ -143,7 +143,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {hasCCSection && (
         <div key="cc">
           <h4 style={{
-            fontSize: "12px",
+            fontSize: "13px",
             fontWeight: 700,
             color: "#0056b3",
             borderBottom: "1px solid #aaa",
@@ -175,7 +175,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
               }
             }}
             style={{
-              fontSize: "9px",
+              fontSize: "11px",
               lineHeight: "1.4",
               display: "block",
               overflow: "visible",
@@ -203,7 +203,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           return (
             <div key={section.id}>
               <h4 style={{
-                fontSize: "12px",
+                fontSize: "13px",
                 fontWeight: 700,
                 color: "#0056b3",
                 borderBottom: "1px solid #aaa",
@@ -222,7 +222,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
               }}>
                 {section.fields.map((field: any, index: number) => (
                   <div key={index} style={{ display: "flex", alignItems: "center", gap: "2px" }}>
-                    <label style={{ fontSize: "7px", fontWeight: 600, color: "#333", minWidth: "50px" }}>
+                    <label style={{ fontSize: "8px", fontWeight: 600, color: "#333", minWidth: "50px" }}>
                       {field.label}:
                     </label>
                     <div
@@ -232,7 +232,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
                         handleSectionFieldEdit(section.id, field.label, e.currentTarget.textContent || "")
                       }
                       style={{
-                        fontSize: "7px",
+                        fontSize: "8px",
                         fontWeight: 500,
                         borderBottom: "1px solid #ddd",
                         minHeight: "12px",
@@ -255,7 +255,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           <div key={section.id}>
             <h4
               style={{
-                fontSize: "12px",
+                fontSize: "13px",
                 fontWeight: 700,
                 color: "#0056b3",
                 borderBottom: "1px solid #aaa",
@@ -270,7 +270,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
               value={customSectionContent[section.id] || ""}
               onBlur={(value) => handleCustomSectionChange(section.id, value)}
               style={{
-                fontSize: "9px",
+                fontSize: "11px",
                 lineHeight: "1.4",
                 display: "block",
                 overflow: "visible",
@@ -288,7 +288,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {/* FIXED: Always render On Examination section with standard vitals */}
       <div key="oe">
         <h4 style={{
-          fontSize: "12px",
+          fontSize: "13px",
           fontWeight: 700,
           color: "#0056b3",
           borderBottom: "1px solid #aaa",
@@ -403,7 +403,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {hasDXSection && (
         <div key="dx">
           <h4 style={{
-            fontSize: "12px",
+            fontSize: "13px",
             fontWeight: 700,
             color: "#0056b3",
             borderBottom: "1px solid #aaa",
@@ -417,7 +417,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
             value={data?.dxText || ""}
             onBlur={(value) => handleContentChange("dxText", value)}
             style={{
-              fontSize: "9px",
+              fontSize: "11px",
               lineHeight: "1.4",
               display: "block",
               overflow: "visible",
@@ -435,7 +435,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {hasADVSection && (
         <div key="adv">
           <h4 style={{
-            fontSize: "12px",
+            fontSize: "13px",
             fontWeight: 700,
             color: "#0056b3",
             borderBottom: "1px solid #aaa",
@@ -487,7 +487,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
               }
             }}
             style={{
-              fontSize: "9px",
+              fontSize: "11px",
               lineHeight: "1.4",
               display: "block",
               overflow: "visible",
@@ -505,7 +505,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {hasFollowUpSection && (
         <div key="followup">
           <h4 style={{
-            fontSize: "12px",
+            fontSize: "13px",
             fontWeight: 700,
             color: "#0056b3",
             borderBottom: "1px solid #aaa",
@@ -519,7 +519,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
             value={data?.followUpText || ""}
             onBlur={(value) => handleContentChange("followUpText", value)}
             style={{
-              fontSize: "9px",
+              fontSize: "11px",
               lineHeight: "1.4",
               display: "block",
               overflow: "visible",

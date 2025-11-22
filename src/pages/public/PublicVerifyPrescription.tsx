@@ -92,26 +92,48 @@ const PublicVerifyPrescription = () => {
 
           {/* Clinic/Doctor Info */}
           {prescription.doctor && (
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-6 rounded-lg mb-4 border border-primary/20">
-              <div className="flex items-start gap-4">
+            <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-8 rounded-xl mb-4 border-2 border-primary/30 shadow-lg">
+              <div className="flex items-start gap-6">
                 {prescription.clinic?.logo_url && (
                   <img 
                     src={prescription.clinic.logo_url} 
                     alt="Clinic Logo" 
-                    className="w-20 h-20 object-contain rounded-lg bg-background p-2 border border-border shadow-sm"
+                    className="w-24 h-24 object-contain rounded-xl bg-background p-3 border-2 border-border shadow-md"
                   />
                 )}
                 <div className="flex-1">
-                  <h2 className="font-bold text-xl text-foreground mb-2">{prescription.doctor?.full_name}</h2>
+                  <h2 className="font-bold text-2xl text-foreground mb-3">{prescription.doctor?.full_name}</h2>
                   {prescription.doctor?.degree_en && (
-                    <p className="text-sm text-muted-foreground mb-3 whitespace-pre-line leading-relaxed">
+                    <p className="text-base text-muted-foreground mb-4 whitespace-pre-line leading-relaxed">
                       {prescription.doctor.degree_en.replace(/<br\s*\/?>/gi, '\n')}
                     </p>
                   )}
-                  {prescription.clinic?.name && (
-                    <div className="inline-flex items-center gap-2 bg-primary px-3 py-1.5 rounded-full">
-                      <CheckCircle className="w-4 h-4 text-primary-foreground" />
-                      <span className="text-sm font-semibold text-primary-foreground">{prescription.clinic.name}</span>
+                  {prescription.doctor?.specialization && (
+                    <p className="text-sm text-primary font-medium mb-3">
+                      Specialization: {prescription.doctor.specialization}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-3">
+                    {prescription.clinic?.name && (
+                      <div className="inline-flex items-center gap-2 bg-primary px-4 py-2 rounded-full shadow-md">
+                        <CheckCircle className="w-5 h-5 text-primary-foreground" />
+                        <span className="text-base font-semibold text-primary-foreground">{prescription.clinic.name}</span>
+                      </div>
+                    )}
+                    {prescription.clinic?.address && (
+                      <div className="inline-flex items-center gap-2 bg-secondary px-4 py-2 rounded-full">
+                        <span className="text-sm text-secondary-foreground">{prescription.clinic.address}</span>
+                      </div>
+                    )}
+                  </div>
+                  {(prescription.clinic?.phone || prescription.clinic?.email) && (
+                    <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                      {prescription.clinic?.phone && (
+                        <span>📞 {prescription.clinic.phone}</span>
+                      )}
+                      {prescription.clinic?.email && (
+                        <span>✉️ {prescription.clinic.email}</span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -172,12 +194,12 @@ const PublicVerifyPrescription = () => {
 
         {/* Medicines */}
         {prescription.prescription_items && prescription.prescription_items.length > 0 && (
-          <Card className="p-6 mb-4">
-            <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
+          <Card className="p-8 mb-4 bg-gradient-to-br from-background to-primary/5">
+            <h3 className="font-bold text-2xl mb-6 flex items-center gap-3 text-primary">
+              <FileText className="w-7 h-7" />
               Prescribed Medications
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {prescription.prescription_items
                 .filter((item: any) => item.item_type === 'medicine')
                 .map((item: any, index: number) => {
@@ -192,50 +214,56 @@ const PublicVerifyPrescription = () => {
                   }
 
                   return (
-                    <div key={item.id} className="bg-gradient-to-br from-background to-muted/30 rounded-lg p-5 border border-border shadow-sm hover:shadow-md transition-shadow">
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-sm font-bold text-primary">{index + 1}</span>
+                    <div key={item.id} className="bg-background rounded-xl p-6 border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all">
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-md">
+                          <span className="text-lg font-bold text-primary-foreground">{index + 1}</span>
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-bold text-base text-foreground mb-1">{item.name}</h4>
-                          {parsedDetails.generic_name && (
-                            <p className="text-sm text-primary font-medium">
-                              Generic: {parsedDetails.generic_name}
-                            </p>
-                          )}
-                          {parsedDetails.strength && (
-                            <p className="text-sm text-muted-foreground">
-                              Strength: {parsedDetails.strength}
-                            </p>
-                          )}
+                          <h4 className="font-bold text-xl text-foreground mb-2">{item.name}</h4>
+                          <div className="grid md:grid-cols-2 gap-3 text-sm">
+                            {parsedDetails.generic_name && (
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-primary min-w-[80px]">Generic:</span>
+                                <span className="text-foreground">{parsedDetails.generic_name}</span>
+                              </div>
+                            )}
+                            {parsedDetails.strength && (
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-primary min-w-[80px]">Strength:</span>
+                                <span className="text-foreground">{parsedDetails.strength}</span>
+                              </div>
+                            )}
+                            {parsedDetails.manufacturer_name && (
+                              <div className="flex items-start gap-2 md:col-span-2">
+                                <span className="font-semibold text-primary min-w-[80px]">Manufacturer:</span>
+                                <span className="text-muted-foreground">{parsedDetails.manufacturer_name}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                       
                       {item.dose && (
-                        <div className="bg-primary/5 rounded-md p-3 mb-2 border-l-4 border-primary">
-                          <p className="text-xs font-semibold text-primary mb-1">DOSAGE</p>
-                          <p className="text-sm font-medium text-foreground">{item.dose}</p>
+                        <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-4 mb-3 border-l-4 border-primary shadow-sm">
+                          <p className="text-xs font-bold text-primary mb-2 uppercase tracking-wide">DOSAGE INSTRUCTIONS</p>
+                          <p className="text-base font-semibold text-foreground leading-relaxed">{item.dose}</p>
                         </div>
                       )}
                       
                       {item.duration && (
-                        <div className="bg-secondary/50 rounded-md p-3 mb-2 border-l-4 border-secondary">
-                          <p className="text-xs font-semibold text-secondary-foreground mb-1">DURATION</p>
-                          <p className="text-sm font-medium text-foreground">{item.duration.replace('→ সময়কাল: ', '')}</p>
+                        <div className="bg-gradient-to-r from-secondary/10 to-secondary/5 rounded-lg p-4 mb-3 border-l-4 border-secondary shadow-sm">
+                          <p className="text-xs font-bold text-secondary-foreground mb-2 uppercase tracking-wide">DURATION</p>
+                          <p className="text-base font-semibold text-foreground">{item.duration.replace('→ সময়কাল: ', '')}</p>
                         </div>
                       )}
                       
                       {parsedDetails.details && (
-                        <p className="text-sm text-muted-foreground italic mt-2 pl-3 border-l-2 border-muted">
-                          {parsedDetails.details}
-                        </p>
-                      )}
-                      
-                      {parsedDetails.manufacturer_name && (
-                        <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1">
-                          <span className="font-semibold">Manufacturer:</span> {parsedDetails.manufacturer_name}
-                        </p>
+                        <div className="bg-muted/30 rounded-lg p-4 border-l-4 border-muted">
+                          <p className="text-sm text-muted-foreground italic leading-relaxed">
+                            <span className="font-semibold text-foreground">Note:</span> {parsedDetails.details}
+                          </p>
+                        </div>
                       )}
                     </div>
                   );
