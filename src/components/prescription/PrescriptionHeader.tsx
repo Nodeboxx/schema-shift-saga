@@ -116,7 +116,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
       )}
       
       {/* Logo and Clinic Name */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "5px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
         {clinicBranding.logo_url && (
           <img 
             src={clinicBranding.logo_url} 
@@ -138,28 +138,27 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         )}
       </div>
 
-      {/* Clinic Details - each on separate line */}
-      <div style={{ 
-        fontSize: "10px", 
-        color: "#666", 
-        marginBottom: "10px",
-        lineHeight: "1.6"
-      }}>
-        {clinicBranding.address && <div>{clinicBranding.address}</div>}
-        {clinicBranding.phone && <div>Phone: {clinicBranding.phone}</div>}
-        {clinicBranding.email && <div>Email: {clinicBranding.email}</div>}
-        {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
-      </div>
-
-      {/* Doctor details on right side */}
+      {/* Clinic Details and Doctor Info side by side */}
       <div style={{ 
         display: "flex", 
         justifyContent: "space-between", 
         alignItems: "flex-start", 
         gap: "20px" 
       }}>
-        <div style={{ flex: "1" }}></div>
-        
+        {/* Clinic Details - left side */}
+        <div style={{ 
+          flex: "1",
+          fontSize: "10px", 
+          color: "#666", 
+          lineHeight: "1.6"
+        }}>
+          {clinicBranding.address && <div>{clinicBranding.address}</div>}
+          {clinicBranding.phone && <div>Phone: {clinicBranding.phone}</div>}
+          {clinicBranding.email && <div>Email: {clinicBranding.email}</div>}
+          {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
+        </div>
+
+        {/* Doctor details - right side */}
         <div style={{ flex: "1", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
           {/* English doctor details */}
           <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5" }}>
