@@ -117,6 +117,9 @@ const ClinicDoctors = ({ clinicId }: ClinicDoctorsProps) => {
     setLoading(true);
 
     try {
+      // Get current clinic owner (inviter)
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+
       // Create auth user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: newDoctor.email,
@@ -154,6 +157,19 @@ const ClinicDoctors = ({ clinicId }: ClinicDoctorsProps) => {
           .insert({ user_id: authData.user.id, role: "doctor" });
 
         if (roleError) console.error("Role assignment error:", roleError);
+
+        // Add to clinic_members for usage tracking and permissions
+        const { error: memberError } = await supabase
+          .from("clinic_members")
+          .insert({
+            clinic_id: clinicId,
+            user_id: authData.user.id,
+            role: "doctor",
+            is_active: true,
+            invited_by: currentUser?.id || null,
+          });
+
+        if (memberError) console.error("Clinic member assignment error:", memberError);
       }
 
       toast({
@@ -193,6 +209,15 @@ const ClinicDoctors = ({ clinicId }: ClinicDoctorsProps) => {
         .eq("id", doctorId);
 
       if (error) throw error;
+
+      // Also deactivate clinic_members entry
+      const { error: memberError } = await supabase
+        .from("clinic_members")
+        .update({ is_active: false })
+        .eq("clinic_id", clinicId)
+        .eq("user_id", doctorId);
+
+      if (memberError) console.error("Clinic member deactivate error:", memberError);
 
       toast({
         title: "Success",

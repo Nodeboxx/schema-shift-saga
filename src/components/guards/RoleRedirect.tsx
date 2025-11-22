@@ -83,8 +83,14 @@ export const RoleRedirect = () => {
     const isClinicDoctor = isDoctor && !!clinicId && !isClinicAdmin && !isSuperAdmin;
 
     if (isClinicDoctor) {
-      // Redirect base dashboard to clinic doctor dashboard
+      // Redirect base doctor dashboard to clinic doctor dashboard
       if (location.pathname === '/dashboard') {
+        navigate('/clinic/doctor/dashboard', { replace: true });
+        return;
+      }
+
+      // Prevent access to clinic admin dashboards
+      if (location.pathname === '/clinic' || location.pathname.startsWith('/clinic/dashboard')) {
         navigate('/clinic/doctor/dashboard', { replace: true });
         return;
       }
