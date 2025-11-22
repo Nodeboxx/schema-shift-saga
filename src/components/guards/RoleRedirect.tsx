@@ -73,22 +73,27 @@ export const RoleRedirect = () => {
       return;
     }
 
-    // Clinic admin accessing regular dashboard -> redirect to clinic
+    // Clinic admin accessing regular dashboard -> redirect to clinic admin dashboard
     if (isClinicAdmin && !isSuperAdmin && location.pathname === '/dashboard') {
       navigate('/clinic/dashboard', { replace: true });
       return;
     }
 
-    // Doctor who is part of a clinic -> redirect to clinic dashboard
-    if (isDoctor && clinicId && !isSuperAdmin) {
-      // If trying to access regular doctor pages, redirect to clinic equivalents
+    // Clinic-managed doctors (members of a clinic, not clinic admins)
+    const isClinicDoctor = isDoctor && !!clinicId && !isClinicAdmin && !isSuperAdmin;
+
+    if (isClinicDoctor) {
+      // Redirect base dashboard to clinic doctor dashboard
       if (location.pathname === '/dashboard') {
-        navigate('/clinic/dashboard', { replace: true });
+        navigate('/clinic/doctor/dashboard', { replace: true });
         return;
       }
+
+      // Redirect prescriptions to clinic-branded prescriptions
       if (location.pathname === '/prescription' || location.pathname.startsWith('/prescription/')) {
-        // Extract prescription ID if it exists
-        const prescriptionId = location.pathname.split('/')[2];
+        const parts = location.pathname.split('/');
+        const prescriptionId = parts.length > 2 ? parts[2] : undefined;
+
         if (prescriptionId && prescriptionId !== 'new') {
           navigate(`/clinic/prescription/${prescriptionId}`, { replace: true });
         } else {
@@ -96,6 +101,7 @@ export const RoleRedirect = () => {
         }
         return;
       }
+
       if (location.pathname === '/prescriptions') {
         navigate('/clinic/prescriptions', { replace: true });
         return;

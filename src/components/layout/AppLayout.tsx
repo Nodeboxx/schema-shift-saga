@@ -82,12 +82,12 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
     navigate('/login');
   };
 
-  // Determine if this is a clinic doctor
-  const isClinicDoctor = isDoctor && !!clinicId;
+  // Determine if this is a clinic-managed doctor (member of a clinic, not the clinic admin)
+  const isClinicDoctor = isDoctor && !!clinicId && !isClinicAdmin && !isSuperAdmin;
   
   const navItems = [
     { 
-      to: isClinicDoctor ? '/clinic/dashboard' : '/dashboard', 
+      to: isClinicDoctor ? '/clinic/doctor/dashboard' : '/dashboard', 
       icon: LayoutDashboard, 
       label: 'Dashboard',
       show: true,
@@ -101,14 +101,14 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       feature: 'prescription_history' as FeatureKey
     },
     { 
-      to: isClinicDoctor ? '/clinic/dashboard/patients' : '/dashboard?tab=patients', 
+      to: isClinicDoctor ? '/clinic/doctor/dashboard?tab=patients' : '/dashboard?tab=patients', 
       icon: Users, 
       label: 'My Patients',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
       feature: 'patient_management' as FeatureKey
     },
     { 
-      to: isClinicDoctor ? '/clinic/dashboard/appointments' : '/appointments', 
+      to: '/appointments', 
       icon: Calendar, 
       label: 'Appointments',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
