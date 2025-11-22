@@ -82,7 +82,7 @@ const ClinicPrescriptionHeader = ({
       backgroundPosition: "center",
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
-        {/* Left Column - Clinic Branding */}
+        {/* Left Column - Clinic Branding (replaces English doctor info) */}
         <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5" }}>
           <h2 style={{
             fontSize: "24px",
@@ -92,19 +92,15 @@ const ClinicPrescriptionHeader = ({
           }}>
             {clinic?.name || "Clinic Name"}
           </h2>
-          {clinic?.address && (
-            <div style={{ fontSize: "12px", marginTop: "4px", color: "#666" }}>
-              {clinic.address}
-            </div>
-          )}
-          <div style={{ fontSize: "11px", marginTop: "6px", color: "#666" }}>
+          <div style={{ margin: 0, fontSize: "12px" }}>
+            {clinic?.address && <div>{clinic.address}</div>}
             {clinic?.phone && <div>Phone: {clinic.phone}</div>}
             {clinic?.email && <div>Email: {clinic.email}</div>}
-            {clinic?.website && <div>Web: {clinic.website}</div>}
+            {clinic?.website && <div>Website: {clinic.website}</div>}
           </div>
         </div>
 
-        {/* Center Column - Clinic Logo / Medical Council Logo & QR Code */}
+        {/* Center Column - Clinic Logo / Medical Council Logo & QR Code (unchanged from original) */}
         <div style={{ 
           flex: "0 0 auto", 
           display: "flex", 
@@ -160,7 +156,7 @@ const ClinicPrescriptionHeader = ({
           )}
         </div>
 
-        {/* Right Column - Doctor Bengali Info */}
+        {/* Right Column - Bengali Doctor Info (unchanged from original) */}
         <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
           <h2 style={{
             fontSize: "24px",
