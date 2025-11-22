@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Home, LogOut, Printer, Send, MessageCircle, Mail, Save, Plus, ZoomIn, ZoomOut } from "lucide-react";
+import { Home, LogOut, Printer, Send, MessageCircle, Mail, Save, Plus, ZoomIn, ZoomOut, Columns2, File } from "lucide-react";
 import RichTextToolbar from "../RichTextToolbar";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
@@ -18,9 +18,11 @@ interface PrescriptionControlsProps {
   onAddPage?: () => void;
   zoom?: number;
   onZoomChange?: (zoom: number) => void;
+  pageLayout?: 'single' | 'double';
+  onPageLayoutChange?: (layout: 'single' | 'double') => void;
 }
 
-const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone, onSave, onAddPage, zoom = 1, onZoomChange }: PrescriptionControlsProps) => {
+const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone, onSave, onAddPage, zoom = 1.3, onZoomChange, pageLayout = 'single', onPageLayoutChange }: PrescriptionControlsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [headerlessPrint, setHeaderlessPrint] = useState(false);
@@ -190,6 +192,11 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
             visibility: hidden !important;
             opacity: 0 !important;
           }
+          /* Reset double page layout for print */
+          .prescription-page {
+            margin: 0 auto !important;
+            page-break-after: always;
+          }
           body.print-headerless .prescription-header {
             display: none !important;
           }
@@ -313,6 +320,30 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
             {/* Zoom Controls */}
             {onZoomChange && (
               <div className="flex items-center gap-2 flex-shrink-0">
+                {/* Page Layout Toggle */}
+                {onPageLayoutChange && (
+                  <div className="flex items-center gap-1 mr-2">
+                    <Button
+                      size="icon"
+                      variant={pageLayout === 'single' ? 'default' : 'outline'}
+                      onClick={() => onPageLayoutChange('single')}
+                      className="h-8 w-8"
+                      title="Single page view"
+                    >
+                      <File className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant={pageLayout === 'double' ? 'default' : 'outline'}
+                      onClick={() => onPageLayoutChange('double')}
+                      className="h-8 w-8"
+                      title="Two page view"
+                    >
+                      <Columns2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+                
                 <Button
                   size="icon"
                   variant="secondary"
