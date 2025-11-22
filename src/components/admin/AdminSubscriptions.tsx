@@ -41,6 +41,7 @@ interface ClinicSubscription {
   subscription_end_date: string | null;
   created_at: string;
   owner_email?: string;
+  billing_cycle?: string;
 }
 
 export const AdminSubscriptions = () => {
@@ -99,6 +100,7 @@ export const AdminSubscriptions = () => {
           subscription_status, 
           subscription_start_date, 
           subscription_end_date, 
+          billing_cycle,
           created_at,
           owner:owner_id(email)
         `)
@@ -141,15 +143,16 @@ export const AdminSubscriptions = () => {
     if (!editingClinic) return;
 
     const formData = new FormData(e.currentTarget);
-    const tier = formData.get("tier") as string;
+    const billing_cycle = formData.get("billing_cycle") as string;
     const status = formData.get("status") as string;
     const startDate = formData.get("start_date") as string;
     const endDate = formData.get("end_date") as string;
 
     try {
       const updates: any = {
-        subscription_tier: tier,
+        subscription_tier: 'enterprise', // Always enterprise for clinics
         subscription_status: status,
+        billing_cycle: billing_cycle,
       };
 
       if (startDate) {
@@ -705,17 +708,28 @@ export const AdminSubscriptions = () => {
             <DialogTitle>Manage Subscription - {editingClinic?.name}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleUpdateClinicSubscription} className="space-y-4">
+            {/* Fixed Enterprise Tier Display */}
+            <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-sm font-medium">Subscription Plan</Label>
+                  <div className="text-2xl font-bold text-primary mt-1">Enterprise</div>
+                  <p className="text-xs text-muted-foreground mt-1">Up to 50 doctors • Full features</p>
+                </div>
+                <Badge variant="default" className="text-lg px-4 py-2">Enterprise</Badge>
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label>Tier</Label>
-                <Select name="tier" defaultValue={editingClinic?.subscription_tier || "enterprise"}>
+                <Label>Billing Cycle</Label>
+                <Select name="billing_cycle" defaultValue={editingClinic?.billing_cycle || "monthly"}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="free">Free</SelectItem>
-                    <SelectItem value="pro">Pro</SelectItem>
-                    <SelectItem value="enterprise">Enterprise</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="yearly">Yearly</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -728,7 +742,6 @@ export const AdminSubscriptions = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="pending_approval">Pending Approval</SelectItem>
-                    <SelectItem value="trial">Trial</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                     <SelectItem value="cancelled">Cancelled</SelectItem>
@@ -759,7 +772,7 @@ export const AdminSubscriptions = () => {
 
             <div className="space-y-2">
               <Label>Quick Extend</Label>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   type="button"
                   variant="outline"
@@ -774,36 +787,6 @@ export const AdminSubscriptions = () => {
                   }}
                 >
                   +1 Month
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
-                    if (endDateInput) {
-                      const currentDate = new Date(endDateInput.value || new Date());
-                      currentDate.setMonth(currentDate.getMonth() + 3);
-                      endDateInput.value = currentDate.toISOString().split('T')[0];
-                    }
-                  }}
-                >
-                  +3 Months
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
-                    if (endDateInput) {
-                      const currentDate = new Date(endDateInput.value || new Date());
-                      currentDate.setMonth(currentDate.getMonth() + 6);
-                      endDateInput.value = currentDate.toISOString().split('T')[0];
-                    }
-                  }}
-                >
-                  +6 Months
                 </Button>
                 <Button
                   type="button"
@@ -831,28 +814,38 @@ export const AdminSubscriptions = () => {
                   variant="secondary"
                   size="sm"
                   onClick={() => {
-                    const tierSelect = document.querySelector('select[name="tier"]') as HTMLSelectElement;
+                    const cycleSelect = document.querySelector('select[name="billing_cycle"]') as HTMLSelectElement;
                     const statusSelect = document.querySelector('select[name="status"]') as HTMLSelectElement;
-                    if (tierSelect && statusSelect) {
-                      tierSelect.value = 'enterprise';
+                    const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
+                    if (cycleSelect && statusSelect && endDateInput) {
+                      cycleSelect.value = 'monthly';
                       statusSelect.value = 'active';
+                      const monthlyEnd = new Date();
+                      monthlyEnd.setMonth(monthlyEnd.getMonth() + 1);
+                      endDateInput.value = monthlyEnd.toISOString().split('T')[0];
                     }
                   }}
                 >
-                  Activate Enterprise
+                  Activate Monthly
                 </Button>
                 <Button
                   type="button"
                   variant="secondary"
                   size="sm"
                   onClick={() => {
+                    const cycleSelect = document.querySelector('select[name="billing_cycle"]') as HTMLSelectElement;
                     const statusSelect = document.querySelector('select[name="status"]') as HTMLSelectElement;
-                    if (statusSelect) {
-                      statusSelect.value = 'pending_approval';
+                    const endDateInput = document.querySelector('input[name="end_date"]') as HTMLInputElement;
+                    if (cycleSelect && statusSelect && endDateInput) {
+                      cycleSelect.value = 'yearly';
+                      statusSelect.value = 'active';
+                      const yearlyEnd = new Date();
+                      yearlyEnd.setFullYear(yearlyEnd.getFullYear() + 1);
+                      endDateInput.value = yearlyEnd.toISOString().split('T')[0];
                     }
                   }}
                 >
-                  Set to Free
+                  Activate Yearly
                 </Button>
                 <Button
                   type="button"
@@ -874,11 +867,11 @@ export const AdminSubscriptions = () => {
                   onClick={() => {
                     const statusSelect = document.querySelector('select[name="status"]') as HTMLSelectElement;
                     if (statusSelect) {
-                      statusSelect.value = 'inactive';
+                      statusSelect.value = 'pending_approval';
                     }
                   }}
                 >
-                  Deactivate
+                  Pending Approval
                 </Button>
               </div>
             </div>
