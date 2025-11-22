@@ -143,7 +143,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {hasCCSection && (
         <div key="cc">
           <h4 style={{
-            fontSize: "10px",
+            fontSize: "12px",
             fontWeight: 700,
             color: "#0056b3",
             borderBottom: "1px solid #aaa",
@@ -203,7 +203,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           return (
             <div key={section.id}>
               <h4 style={{
-                fontSize: "10px",
+                fontSize: "12px",
                 fontWeight: 700,
                 color: "#0056b3",
                 borderBottom: "1px solid #aaa",
@@ -255,7 +255,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
           <div key={section.id}>
             <h4
               style={{
-                fontSize: "10px",
+                fontSize: "12px",
                 fontWeight: 700,
                 color: "#0056b3",
                 borderBottom: "1px solid #aaa",
@@ -288,7 +288,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {/* FIXED: Always render On Examination section with standard vitals */}
       <div key="oe">
         <h4 style={{
-          fontSize: "10px",
+          fontSize: "12px",
           fontWeight: 700,
           color: "#0056b3",
           borderBottom: "1px solid #aaa",
@@ -403,7 +403,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {hasDXSection && (
         <div key="dx">
           <h4 style={{
-            fontSize: "10px",
+            fontSize: "12px",
             fontWeight: 700,
             color: "#0056b3",
             borderBottom: "1px solid #aaa",
@@ -435,7 +435,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {hasADVSection && (
         <div key="adv">
           <h4 style={{
-            fontSize: "10px",
+            fontSize: "12px",
             fontWeight: 700,
             color: "#0056b3",
             borderBottom: "1px solid #aaa",
@@ -505,7 +505,7 @@ const LeftColumn = ({ width, data, setData, templateSections }: LeftColumnProps)
       {hasFollowUpSection && (
         <div key="followup">
           <h4 style={{
-            fontSize: "10px",
+            fontSize: "12px",
             fontWeight: 700,
             color: "#0056b3",
             borderBottom: "1px solid #aaa",

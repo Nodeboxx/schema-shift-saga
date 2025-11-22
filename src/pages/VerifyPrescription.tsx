@@ -136,67 +136,73 @@ const VerifyPrescription = () => {
 
         {/* Main Prescription Card */}
         <Card className="overflow-hidden">
-          {/* Clinic Branding */}
-          {prescription.clinics?.logo_url && (
-            <div className="bg-primary/5 p-4 border-b">
-              <img
-                src={prescription.clinics.logo_url}
-                alt={prescription.clinics.name || "Clinic Logo"}
-                className="h-16 mx-auto object-contain"
-              />
-            </div>
-          )}
-
           <div className="p-6 md:p-8">
             {/* Doctor Info */}
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold mb-1">
-                {prescription.profiles?.full_name || "Doctor"}
-              </h2>
-              {prescription.profiles?.degree_en && (
-                <p className="text-sm text-muted-foreground whitespace-pre-line">
-                  {prescription.profiles.degree_en.replace(/<br\s*\/?>/gi, '\n')}
-                </p>
-              )}
-              {prescription.clinics?.name && (
-                <p className="text-sm font-medium mt-2">{prescription.clinics.name}</p>
-              )}
+            <div className="mb-6 pb-6 border-b border-border">
+              <div className="flex items-start gap-4">
+                {prescription.clinics?.logo_url && (
+                  <img
+                    src={prescription.clinics.logo_url}
+                    alt={prescription.clinics.name || "Clinic Logo"}
+                    className="h-16 w-16 object-contain rounded border border-border"
+                  />
+                )}
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold mb-2 text-foreground">
+                    {prescription.profiles?.full_name || "Doctor"}
+                  </h2>
+                  {prescription.profiles?.degree_en && (
+                    <p className="text-sm text-muted-foreground whitespace-pre-line leading-relaxed">
+                      {prescription.profiles.degree_en.replace(/<br\s*\/?>/gi, '\n')}
+                    </p>
+                  )}
+                  {prescription.clinics?.name && (
+                    <div className="mt-3 inline-flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full">
+                      <CheckCircle2 className="w-4 h-4 text-primary" />
+                      <p className="text-sm font-semibold text-primary">{prescription.clinics.name}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             <Separator className="my-6" />
 
             {/* Patient Information */}
-            <div className="grid md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <p className="text-sm text-muted-foreground">Patient Name</p>
-                <p className="font-semibold text-lg">{prescription.patient_name}</p>
+            <div className="bg-gradient-to-br from-background to-muted/50 rounded-lg p-5 border border-border shadow-sm mb-6">
+              <h3 className="font-semibold text-lg mb-4 text-foreground">Patient Information</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-background/80 rounded-md p-3">
+                  <p className="text-xs font-semibold text-muted-foreground mb-1">PATIENT NAME</p>
+                  <p className="font-bold text-base text-foreground">{prescription.patient_name}</p>
+                </div>
+                {prescription.patient_age && (
+                  <div className="bg-background/80 rounded-md p-3">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">AGE</p>
+                    <p className="font-semibold text-foreground">{prescription.patient_age}</p>
+                  </div>
+                )}
+                {prescription.patient_sex && (
+                  <div className="bg-background/80 rounded-md p-3">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">SEX</p>
+                    <p className="font-semibold capitalize text-foreground">{prescription.patient_sex}</p>
+                  </div>
+                )}
+                {prescription.patient_weight && (
+                  <div className="bg-background/80 rounded-md p-3">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">WEIGHT</p>
+                    <p className="font-semibold text-foreground">{prescription.patient_weight}</p>
+                  </div>
+                )}
+                {prescription.prescription_date && (
+                  <div className="bg-background/80 rounded-md p-3">
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">DATE</p>
+                    <p className="font-semibold text-foreground">
+                      {new Date(prescription.prescription_date).toLocaleDateString('en-GB')}
+                    </p>
+                  </div>
+                )}
               </div>
-              {prescription.patient_age && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Age</p>
-                  <p className="font-semibold">{prescription.patient_age}</p>
-                </div>
-              )}
-              {prescription.patient_sex && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Sex</p>
-                  <p className="font-semibold capitalize">{prescription.patient_sex}</p>
-                </div>
-              )}
-              {prescription.patient_weight && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Weight</p>
-                  <p className="font-semibold">{prescription.patient_weight}</p>
-                </div>
-              )}
-              {prescription.prescription_date && (
-                <div>
-                  <p className="text-sm text-muted-foreground">Date</p>
-                  <p className="font-semibold">
-                    {new Date(prescription.prescription_date).toLocaleDateString('en-GB')}
-                  </p>
-                </div>
-              )}
             </div>
 
             {/* Vitals */}
@@ -204,33 +210,37 @@ const VerifyPrescription = () => {
               <>
                 <Separator className="my-6" />
                 <div>
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <Activity className="w-5 h-5" />
-                    Vitals
+                  <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-primary" />
+                    Vital Signs
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {prescription.oe_bp_s && prescription.oe_bp_d && (
-                      <div>
-                        <p className="text-xs text-muted-foreground">BP</p>
-                        <p className="font-medium">{prescription.oe_bp_s}/{prescription.oe_bp_d} mmHg</p>
+                      <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950 dark:to-red-900 rounded-lg p-3 border border-red-200 dark:border-red-800">
+                        <p className="text-xs font-semibold text-red-700 dark:text-red-300 mb-1">Blood Pressure</p>
+                        <p className="font-bold text-lg text-red-900 dark:text-red-100">{prescription.oe_bp_s}/{prescription.oe_bp_d}</p>
+                        <p className="text-xs text-red-600 dark:text-red-400">mmHg</p>
                       </div>
                     )}
                     {prescription.oe_pulse && (
-                      <div>
-                        <p className="text-xs text-muted-foreground">Pulse</p>
-                        <p className="font-medium">{prescription.oe_pulse} bpm</p>
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 rounded-lg p-3 border border-blue-200 dark:border-blue-800">
+                        <p className="text-xs font-semibold text-blue-700 dark:text-blue-300 mb-1">Pulse Rate</p>
+                        <p className="font-bold text-lg text-blue-900 dark:text-blue-100">{prescription.oe_pulse}</p>
+                        <p className="text-xs text-blue-600 dark:text-blue-400">bpm</p>
                       </div>
                     )}
                     {prescription.oe_temp && (
-                      <div>
-                        <p className="text-xs text-muted-foreground">Temperature</p>
-                        <p className="font-medium">{prescription.oe_temp}°C</p>
+                      <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 rounded-lg p-3 border border-orange-200 dark:border-orange-800">
+                        <p className="text-xs font-semibold text-orange-700 dark:text-orange-300 mb-1">Temperature</p>
+                        <p className="font-bold text-lg text-orange-900 dark:text-orange-100">{prescription.oe_temp}</p>
+                        <p className="text-xs text-orange-600 dark:text-orange-400">°C</p>
                       </div>
                     )}
                     {prescription.oe_spo2 && (
-                      <div>
-                        <p className="text-xs text-muted-foreground">SpO₂</p>
-                        <p className="font-medium">{prescription.oe_spo2}%</p>
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 rounded-lg p-3 border border-green-200 dark:border-green-800">
+                        <p className="text-xs font-semibold text-green-700 dark:text-green-300 mb-1">Oxygen Saturation</p>
+                        <p className="font-bold text-lg text-green-900 dark:text-green-100">{prescription.oe_spo2}</p>
+                        <p className="text-xs text-green-600 dark:text-green-400">%</p>
                       </div>
                     )}
                   </div>
@@ -242,9 +252,11 @@ const VerifyPrescription = () => {
             {prescription.cc_text && (
               <>
                 <Separator className="my-6" />
-                <div>
-                  <h3 className="font-semibold mb-2">Chief Complaints</h3>
-                  <p className="whitespace-pre-wrap text-sm">{prescription.cc_text}</p>
+                <div className="bg-blue-50/50 dark:bg-blue-950/20 rounded-lg p-5 border border-blue-200 dark:border-blue-800">
+                  <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-100">Chief Complaints</h3>
+                  <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: prescription.cc_text.replace(/\n/g, '<br/>') }}
+                  />
                 </div>
               </>
             )}
@@ -253,43 +265,86 @@ const VerifyPrescription = () => {
             {prescription.dx_text && (
               <>
                 <Separator className="my-6" />
-                <div>
-                  <h3 className="font-semibold mb-2">Diagnosis</h3>
-                  <p className="whitespace-pre-wrap text-sm">{prescription.dx_text}</p>
+                <div className="bg-rose-50/50 dark:bg-rose-950/20 rounded-lg p-5 border border-rose-200 dark:border-rose-800">
+                  <h3 className="font-semibold text-lg mb-3 text-rose-900 dark:text-rose-100">Diagnosis</h3>
+                  <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: prescription.dx_text.replace(/\n/g, '<br/>') }}
+                  />
                 </div>
               </>
             )}
 
-            {/* Medicines */}
             {prescription.prescription_items && prescription.prescription_items.length > 0 && (
               <>
                 <Separator className="my-6" />
                 <div>
-                  <h3 className="font-semibold mb-4 flex items-center gap-2">
-                    <Pill className="w-5 h-5" />
+                  <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                    <Pill className="w-5 h-5 text-primary" />
                     Prescribed Medications
                   </h3>
-                  <div className="space-y-3">
-                    {prescription.prescription_items.map((item, index) => (
-                      <div key={index} className="bg-muted/50 rounded-lg p-4">
-                        <p className="font-medium">{item.name}</p>
-                        {item.dose && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            Dose: {item.dose}
-                          </p>
-                        )}
-                        {item.duration && (
-                          <p className="text-sm text-muted-foreground">
-                            Duration: {item.duration}
-                          </p>
-                        )}
-                        {item.details && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {item.details}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                  <div className="space-y-4">
+                    {prescription.prescription_items
+                      .filter((item: any) => item.item_type === 'medicine')
+                      .map((item: any, index: number) => {
+                        // Parse details if it's JSON
+                        let parsedDetails: any = {};
+                        try {
+                          if (item.details) {
+                            parsedDetails = JSON.parse(item.details);
+                          }
+                        } catch (e) {
+                          parsedDetails = { details: item.details };
+                        }
+
+                        return (
+                          <div key={index} className="bg-gradient-to-br from-background to-muted/30 rounded-lg p-5 border border-border shadow-sm hover:shadow-md transition-shadow">
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span className="text-sm font-bold text-primary">{index + 1}</span>
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-bold text-base text-foreground mb-1">{item.name}</h4>
+                                {parsedDetails.generic_name && (
+                                  <p className="text-sm text-primary font-medium">
+                                    Generic: {parsedDetails.generic_name}
+                                  </p>
+                                )}
+                                {parsedDetails.strength && (
+                                  <p className="text-sm text-muted-foreground">
+                                    Strength: {parsedDetails.strength}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {item.dose && (
+                              <div className="bg-primary/5 rounded-md p-3 mb-2 border-l-4 border-primary">
+                                <p className="text-xs font-semibold text-primary mb-1">DOSAGE</p>
+                                <p className="text-sm font-medium text-foreground">{item.dose}</p>
+                              </div>
+                            )}
+                            
+                            {item.duration && (
+                              <div className="bg-secondary/50 rounded-md p-3 mb-2 border-l-4 border-secondary">
+                                <p className="text-xs font-semibold text-secondary-foreground mb-1">DURATION</p>
+                                <p className="text-sm font-medium text-foreground">{item.duration.replace('→ সময়কাল: ', '')}</p>
+                              </div>
+                            )}
+                            
+                            {parsedDetails.details && (
+                              <p className="text-sm text-muted-foreground italic mt-2 pl-3 border-l-2 border-muted">
+                                {parsedDetails.details}
+                              </p>
+                            )}
+                            
+                            {parsedDetails.manufacturer_name && (
+                              <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1">
+                                <span className="font-semibold">Manufacturer:</span> {parsedDetails.manufacturer_name}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
               </>
@@ -299,9 +354,11 @@ const VerifyPrescription = () => {
             {prescription.adv_text && (
               <>
                 <Separator className="my-6" />
-                <div>
-                  <h3 className="font-semibold mb-2">Advice</h3>
-                  <p className="whitespace-pre-wrap text-sm">{prescription.adv_text}</p>
+                <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-lg p-5 border border-amber-200 dark:border-amber-800">
+                  <h3 className="font-semibold text-lg mb-3 text-amber-900 dark:text-amber-100">Medical Advice</h3>
+                  <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: prescription.adv_text.replace(/\n/g, '<br/>') }}
+                  />
                 </div>
               </>
             )}
@@ -310,9 +367,11 @@ const VerifyPrescription = () => {
             {prescription.follow_up_text && (
               <>
                 <Separator className="my-6" />
-                <div>
-                  <h3 className="font-semibold mb-2">Follow Up</h3>
-                  <p className="whitespace-pre-wrap text-sm">{prescription.follow_up_text}</p>
+                <div className="bg-purple-50/50 dark:bg-purple-950/20 rounded-lg p-5 border border-purple-200 dark:border-purple-800">
+                  <h3 className="font-semibold text-lg mb-3 text-purple-900 dark:text-purple-100">Follow Up Instructions</h3>
+                  <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: prescription.follow_up_text.replace(/\n/g, '<br/>') }}
+                  />
                 </div>
               </>
             )}
@@ -320,9 +379,14 @@ const VerifyPrescription = () => {
         </Card>
 
         {/* Footer Note */}
-        <p className="text-center text-sm text-muted-foreground">
-          This is a verified digital prescription. For any queries, please contact the issuing clinic.
-        </p>
+        <Card className="p-6 text-center bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-primary/20">
+          <p className="text-sm font-medium text-foreground mb-1">
+            ✓ This is a verified digital prescription
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Authenticated and secured by MedDexPro. For queries, please contact the issuing clinic.
+          </p>
+        </Card>
       </div>
     </div>
   );
