@@ -48,7 +48,25 @@ const PublicVerifyPrescription = () => {
       if (error) throw error;
 
       if (data) {
-        setPrescription(data);
+        let enriched = data as any;
+
+        // Fallback: if joined doctor is missing but user_id is present, load doctor profile separately
+        if (!enriched.doctor && enriched.user_id) {
+          const { data: doctorProfile } = await supabase
+            .from('profiles')
+            .select('full_name, degree_en, specialization, registration_number, license_number, phone, address')
+            .eq('id', enriched.user_id)
+            .maybeSingle();
+
+          if (doctorProfile) {
+            enriched = {
+              ...enriched,
+              doctor: doctorProfile,
+            };
+          }
+        }
+
+        setPrescription(enriched);
         setValid(true);
       } else {
         setValid(false);
