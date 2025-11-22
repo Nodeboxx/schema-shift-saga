@@ -346,6 +346,7 @@ export type Database = {
       clinics: {
         Row: {
           address: string | null
+          billing_cycle: string | null
           created_at: string | null
           email: string | null
           header_image_url: string | null
@@ -369,6 +370,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          billing_cycle?: string | null
           created_at?: string | null
           email?: string | null
           header_image_url?: string | null
@@ -392,6 +394,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          billing_cycle?: string | null
           created_at?: string | null
           email?: string | null
           header_image_url?: string | null
