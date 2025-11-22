@@ -115,7 +115,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      {/* Row 1: Logo + Clinic Name, English Doctor Name, Bengali Doctor Name - all aligned */}
+      {/* Row 1: Logo + Clinic Name, Doctor Names with QR in middle */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "3px" }}>
         {/* Left: Logo and Clinic Name */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: "1" }}>
@@ -140,8 +140,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           )}
         </div>
 
-        {/* Right: Doctor Names - English and Bengali */}
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "30px" }}>
+        {/* Center-Right: Doctor Names with QR Code in between */}
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "20px" }}>
           {/* English doctor name */}
           <h2
             contentEditable
@@ -156,6 +156,27 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           >
             {doctorInfo.docNameEN}
           </h2>
+
+          {/* Middle Logo / QR Code */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            {councilLogoUrl && (
+              <img 
+                src={councilLogoUrl} 
+                alt="Council Logo"
+                style={{
+                  maxHeight: "50px",
+                  maxWidth: "50px",
+                  objectFit: "contain"
+                }}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            )}
+            {prescriptionId && uniqueHash && (
+              <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
+            )}
+          </div>
 
           {/* Bengali doctor name */}
           <h2
@@ -172,13 +193,6 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           >
             {doctorInfo.docNameBN}
           </h2>
-
-          {/* QR Code */}
-          {prescriptionId && uniqueHash && (
-            <div style={{ flex: "0 0 auto" }}>
-              <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
-            </div>
-          )}
         </div>
       </div>
 
@@ -193,7 +207,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         <div style={{ flex: "1" }}></div>
 
         {/* Doctor degrees - right side */}
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "30px" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "20px" }}>
           {/* English doctor degrees */}
           <div
             contentEditable
@@ -203,6 +217,9 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             style={{ fontSize: "13px", lineHeight: "1.5", margin: 0 }}
           />
 
+          {/* Spacer for middle logo/QR alignment */}
+          <div style={{ width: "70px" }}></div>
+
           {/* Bengali doctor degrees */}
           <div
             contentEditable
@@ -211,11 +228,6 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
             style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "right", margin: 0 }}
           />
-
-          {/* Spacer for QR code alignment */}
-          {prescriptionId && uniqueHash && (
-            <div style={{ width: "80px" }}></div>
-          )}
         </div>
       </div>
 
