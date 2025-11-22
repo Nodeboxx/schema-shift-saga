@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useId } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { VoiceInputButton } from '@/components/prescription/VoiceInputButton';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useVoiceRecordingContext } from '@/contexts/VoiceRecordingContext';
 
 interface VoiceTextareaProps {
   value: string;
@@ -21,10 +22,12 @@ export const VoiceTextarea = ({
   rows = 4,
 }: VoiceTextareaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const componentId = useId();
   const [language, setLanguage] = useState<'en-US' | 'bn-BD'>('en-US');
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const { isRecording, audioBlob, startRecording, stopRecording, clearAudio } = useAudioRecorder();
+  const { requestRecording, releaseRecording } = useVoiceRecordingContext();
 
   // Process audio when recording stops
   useEffect(() => {
@@ -33,6 +36,16 @@ export const VoiceTextarea = ({
       transcribeAudio(audioBlob);
     }
   }, [audioBlob, isRecording]);
+
+  // Cleanup: release recording lock when component unmounts or stops recording
+  useEffect(() => {
+    if (!isRecording) {
+      releaseRecording(componentId);
+    }
+    return () => {
+      releaseRecording(componentId);
+    };
+  }, [isRecording, componentId, releaseRecording]);
 
   const transcribeAudio = async (blob: Blob) => {
     setIsProcessing(true);
@@ -107,15 +120,29 @@ export const VoiceTextarea = ({
 
   const handleVoiceToggle = async (lang: 'en-US' | 'bn-BD') => {
     if (isRecording) {
-      console.log('[VoiceTextarea] 🛑 User clicked to stop recording');
+      console.log('[VoiceTextarea] 🛑 User clicked to stop recording, component:', componentId);
       stopRecording();
+      releaseRecording(componentId);
     } else {
-      console.log('[VoiceTextarea] 🎤 User clicked to start recording, language:', lang);
+      console.log('[VoiceTextarea] 🎤 User clicked to start recording, language:', lang, 'component:', componentId);
+      
+      // Check if another recorder is already active
+      if (!requestRecording(componentId)) {
+        toast({
+          title: 'Another Recording Active',
+          description: 'Please stop the other recording before starting a new one.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      
       try {
         setLanguage(lang);
+        console.log('[VoiceTextarea] 🌐 Language set to:', lang);
         const success = await startRecording();
         if (!success) {
           console.error('[VoiceTextarea] ❌ Failed to start recording');
+          releaseRecording(componentId);
           toast({
             title: 'Microphone Access Required',
             description: 'Please allow microphone access to use voice input.',
@@ -126,6 +153,7 @@ export const VoiceTextarea = ({
         }
       } catch (error) {
         console.error('[VoiceTextarea] ❌ Exception during recording start:', error);
+        releaseRecording(componentId);
         toast({
           title: 'Recording Failed',
           description: 'Could not start recording. Please check microphone permissions.',
