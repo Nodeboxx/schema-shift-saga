@@ -94,7 +94,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       feature: null
     },
     { 
-      to: isClinicDoctor ? '/clinic/prescriptions' : '/prescriptions', 
+      to: isClinicDoctor ? '/clinic/doctor/prescriptions' : '/prescriptions', 
       icon: FileText, 
       label: 'All Prescriptions',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
@@ -108,28 +108,28 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       feature: 'patient_management' as FeatureKey
     },
     { 
-      to: '/appointments', 
+      to: isClinicDoctor ? '/clinic/doctor/appointments' : '/appointments', 
       icon: Calendar, 
       label: 'Appointments',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
       feature: 'appointments' as FeatureKey
     },
     { 
-      to: '/analytics', 
+      to: isClinicDoctor ? '/clinic/doctor/analytics' : '/analytics', 
       icon: BarChart3, 
       label: 'Analytics',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
       feature: 'analytics' as FeatureKey
     },
     { 
-      to: '/questionnaires', 
+      to: isClinicDoctor ? '/clinic/doctor/questionnaires' : '/questionnaires', 
       icon: ClipboardList, 
       label: 'Questionnaires',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
       feature: 'questionnaires' as FeatureKey
     },
     { 
-      to: '/notifications', 
+      to: isClinicDoctor ? '/clinic/doctor/notifications' : '/notifications', 
       icon: Bell, 
       label: 'Notifications',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
@@ -143,7 +143,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       feature: null
     },
     { 
-      to: '/telemedicine',
+      to: isClinicDoctor ? '/clinic/doctor/telemedicine' : '/telemedicine',
       icon: Video, 
       label: 'Telemedicine',
       show: isDoctor || isSuperAdmin || isClinicAdmin,

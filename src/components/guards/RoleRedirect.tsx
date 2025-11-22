@@ -95,21 +95,47 @@ export const RoleRedirect = () => {
         return;
       }
 
-      // Redirect prescriptions to clinic-branded prescriptions
+      // Redirect prescriptions to clinic doctor prescriptions
       if (location.pathname === '/prescription' || location.pathname.startsWith('/prescription/')) {
         const parts = location.pathname.split('/');
         const prescriptionId = parts.length > 2 ? parts[2] : undefined;
 
         if (prescriptionId && prescriptionId !== 'new') {
-          navigate(`/clinic/prescription/${prescriptionId}`, { replace: true });
+          navigate(`/clinic/doctor/prescription/${prescriptionId}`, { replace: true });
         } else {
-          navigate('/clinic/prescription', { replace: true });
+          navigate('/clinic/doctor/prescription', { replace: true });
         }
         return;
       }
 
       if (location.pathname === '/prescriptions') {
-        navigate('/clinic/prescriptions', { replace: true });
+        navigate('/clinic/doctor/prescriptions', { replace: true });
+        return;
+      }
+
+      // Redirect all other doctor routes to clinic doctor routes
+      if (location.pathname === '/appointments') {
+        navigate('/clinic/doctor/appointments', { replace: true });
+        return;
+      }
+
+      if (location.pathname === '/analytics') {
+        navigate('/clinic/doctor/analytics', { replace: true });
+        return;
+      }
+
+      if (location.pathname === '/questionnaires') {
+        navigate('/clinic/doctor/questionnaires', { replace: true });
+        return;
+      }
+
+      if (location.pathname === '/notifications') {
+        navigate('/clinic/doctor/notifications', { replace: true });
+        return;
+      }
+
+      if (location.pathname === '/telemedicine') {
+        navigate('/clinic/doctor/telemedicine', { replace: true });
         return;
       }
     }

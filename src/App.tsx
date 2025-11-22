@@ -92,8 +92,20 @@ const App = () => (
               <Route path="/clinic/dashboard/*" element={<ClinicDashboard />} />
               <Route path="/clinic/dashboard" element={<ClinicDashboard />} />
               <Route path="/clinic" element={<ClinicDashboard />} />
-              <Route path="/clinic/doctor/dashboard" element={<Dashboard />} />
               <Route path="/clinic/pending-approval" element={<ClinicPendingApproval />} />
+              
+              {/* Clinic Doctor Routes - Separate system for clinic-managed doctors */}
+              <Route path="/clinic/doctor/dashboard" element={<Dashboard />} />
+              <Route path="/clinic/doctor/prescriptions" element={<ClinicPrescriptionList />} />
+              <Route path="/clinic/doctor/prescription" element={<ClinicPrescription />} />
+              <Route path="/clinic/doctor/prescription/:id" element={<ClinicPrescription />} />
+              <Route path="/clinic/doctor/appointments" element={<Appointments />} />
+              <Route path="/clinic/doctor/analytics" element={<Analytics />} />
+              <Route path="/clinic/doctor/questionnaires" element={<Questionnaires />} />
+              <Route path="/clinic/doctor/notifications" element={<Notifications />} />
+              <Route path="/clinic/doctor/telemedicine" element={<Telemedicine />} />
+              
+              {/* Clinic Admin Routes */}
               <Route path="/clinic/prescription" element={<ClinicPrescription />} />
               <Route path="/clinic/prescription/:id" element={<ClinicPrescription />} />
               <Route path="/clinic/prescriptions" element={<ClinicPrescriptionList />} />
