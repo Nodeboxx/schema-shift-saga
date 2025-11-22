@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Check, ArrowRight, Home, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -348,32 +349,31 @@ const Register = () => {
                   </div>
 
                   <form onSubmit={handleSignupDetails} className="space-y-4">
-                    {/* User Type Toggle */}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                      <Button
-                        type="button"
-                        variant={userType === "clinic_admin" ? "default" : "outline"}
-                        onClick={() => setUserType("clinic_admin")}
-                        className="w-full h-10 text-sm rounded-xl"
+                    {/* Account Type Selector */}
+                    <div className="space-y-2">
+                      <Label htmlFor="account-type" className="text-sm font-medium">Account Type</Label>
+                      <Select 
+                        value={userType} 
+                        onValueChange={(value) => setUserType(value as "doctor" | "clinic_admin")}
                       >
-                        Clinic
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={userType === "doctor" ? "default" : "outline"}
-                        onClick={() => setUserType("doctor")}
-                        className="w-full h-10 text-sm rounded-xl"
-                      >
-                        Doctor
-                      </Button>
+                        <SelectTrigger id="account-type" className="h-11 rounded-xl">
+                          <SelectValue placeholder="Select account type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="doctor">Doctor - Individual practice</SelectItem>
+                          <SelectItem value="clinic_admin">Clinic - Multi-doctor clinic or hospital</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="signup-name" className="text-sm font-medium">Full Name</Label>
+                      <Label htmlFor="signup-name" className="text-sm font-medium">
+                        {userType === "clinic_admin" ? "Admin Full Name" : "Full Name"}
+                      </Label>
                       <Input
                         id="signup-name"
                         type="text"
-                        placeholder="Dr. John Doe"
+                        placeholder={userType === "clinic_admin" ? "Admin Name" : "Dr. John Doe"}
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         required
