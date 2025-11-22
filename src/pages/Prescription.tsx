@@ -17,7 +17,6 @@ const Prescription = () => {
   const [onAddPage, setOnAddPage] = useState<(() => void) | undefined>();
   const [zoom, setZoom] = useState(1); // Default 100%
   const [pageLayout, setPageLayout] = useState<'single' | 'double'>('single');
-  const [clinicId, setClinicId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast } = useToast();
@@ -29,17 +28,6 @@ const Prescription = () => {
       
       if (session) {
         setUser(session.user);
-        
-        // Check if user is part of a clinic
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("clinic_id")
-          .eq("id", session.user.id)
-          .maybeSingle();
-        
-        if (profile?.clinic_id) {
-          setClinicId(profile.clinic_id);
-        }
         
         if (id) {
           await loadPrescription(id);
@@ -171,7 +159,6 @@ const Prescription = () => {
         <PrescriptionPage 
           prescriptionData={prescriptionData} 
           userId={user?.id}
-          clinicId={clinicId}
           onSaveReady={(handler) => setOnSave(() => handler)}
           onAddPageReady={(handler) => setOnAddPage(() => handler)}
           pageLayout={pageLayout}
