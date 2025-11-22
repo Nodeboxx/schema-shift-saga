@@ -33,6 +33,7 @@ import Appointments from "./pages/Appointments";
 import Analytics from "./pages/Analytics";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ClinicDashboard from "./pages/clinic/ClinicDashboard";
+import ClinicPendingApproval from "./pages/clinic/ClinicPendingApproval";
 import VerifyPrescription from "./pages/VerifyPrescription";
 import Questionnaires from "./pages/Questionnaires";
 import Notifications from "./pages/Notifications";
@@ -87,6 +88,7 @@ const App = () => (
               <Route path="/checkout/:plan" element={<Checkout />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/clinic" element={<ClinicDashboard />} />
+              <Route path="/clinic/pending-approval" element={<ClinicPendingApproval />} />
               <Route path="/verify/:id" element={<PublicVerifyPrescription />} />
               <Route path="/demo" element={<Demo />} />
               <Route path="/demo/prescription" element={<DemoPrescription />} />

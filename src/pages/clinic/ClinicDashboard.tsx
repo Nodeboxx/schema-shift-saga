@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import ClinicMembers from "@/components/clinic/ClinicMembers";
 import ClinicBranding from "@/components/clinic/ClinicBranding";
 import ClinicSubscription from "@/components/clinic/ClinicSubscription";
+import ClinicDoctors from "@/components/clinic/ClinicDoctors";
+import ClinicRevenue from "@/components/clinic/ClinicRevenue";
 import { ArrowLeft } from "lucide-react";
 
 const ClinicDashboard = () => {
@@ -79,14 +81,24 @@ const ClinicDashboard = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="members" className="space-y-6">
-          <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
-            <TabsTrigger value="members" className="text-xs sm:text-sm">Team</TabsTrigger>
+        <Tabs defaultValue="doctors" className="space-y-6">
+          <TabsList className="w-full sm:w-auto grid grid-cols-5 sm:inline-flex">
+            <TabsTrigger value="doctors" className="text-xs sm:text-sm">Doctors</TabsTrigger>
+            <TabsTrigger value="revenue" className="text-xs sm:text-sm">Revenue</TabsTrigger>
+            <TabsTrigger value="team" className="text-xs sm:text-sm">Team</TabsTrigger>
             <TabsTrigger value="branding" className="text-xs sm:text-sm">Branding</TabsTrigger>
-            <TabsTrigger value="subscription" className="text-xs sm:text-sm">Subscription</TabsTrigger>
+            <TabsTrigger value="subscription" className="text-xs sm:text-sm">Plan</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="members">
+          <TabsContent value="doctors">
+            <ClinicDoctors clinicId={clinic.id} />
+          </TabsContent>
+
+          <TabsContent value="revenue">
+            <ClinicRevenue clinicId={clinic.id} />
+          </TabsContent>
+
+          <TabsContent value="team">
             <ClinicMembers clinicId={clinic.id} />
           </TabsContent>
 
