@@ -53,12 +53,30 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         setCouncilLogoUrl(data.council_logo_url || "");
         setRegistrationNumber(data.registration_number || "");
         
-        // Load clinic branding if user is part of a clinic
-        if (data.clinic_id) {
+        // Load clinic branding - check if user is clinic owner OR clinic member
+        let clinicId = data.clinic_id;
+        
+        // If no clinic_id in profile, check if user owns a clinic
+        if (!clinicId) {
+          const { data: ownedClinic } = await supabase
+            .from("clinics")
+            .select("id, logo_url, header_image_url")
+            .eq("owner_id", session.user.id)
+            .single();
+          
+          if (ownedClinic) {
+            clinicId = ownedClinic.id;
+            setClinicBranding({
+              logo_url: ownedClinic.logo_url,
+              header_image_url: ownedClinic.header_image_url,
+            });
+          }
+        } else {
+          // User is a clinic member, load clinic branding
           const { data: clinicData } = await supabase
             .from("clinics")
             .select("logo_url, header_image_url")
-            .eq("id", data.clinic_id)
+            .eq("id", clinicId)
             .single();
           
           if (clinicData) {
