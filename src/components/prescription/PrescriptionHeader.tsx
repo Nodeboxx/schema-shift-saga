@@ -26,71 +26,93 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
   }>({});
 
   useEffect(() => {
-    const loadProfile = async () => {
+    const loadProfileAndBranding = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      const { data, error } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) {
-        console.error("Error loading profile:", error);
+      if (profileError) {
+        console.error("Error loading profile:", profileError);
         setLoading(false);
         return;
       }
 
-      if (data) {
+      if (profile) {
         setDoctorInfo({
-          bismillah: data.bismillah_text || "",
-          docNameEN: data.full_name || "Dr. [Your Name]",
-          docDegreeEN: data.degree_en || "MBBS<br/>Experienced Physician",
-          docNameBN: data.name_bn || "ডাঃ [আপনার নাম]",
-          docDegreeBN: data.degree_bn || "এম.বি.বি.এস<br/>অভিজ্ঞ চিকিৎসক",
+          bismillah: profile.bismillah_text || "",
+          docNameEN: profile.full_name || "Dr. [Your Name]",
+          docDegreeEN: profile.degree_en || "MBBS<br/>Experienced Physician",
+          docNameBN: profile.name_bn || "ডাঃ [আপনার নাম]",
+          docDegreeBN: profile.degree_bn || "এম.বি.বি.এস<br/>অভিজ্ঞ চিকিৎসক",
         });
-        setCouncilLogoUrl(data.council_logo_url || "");
-        setRegistrationNumber(data.registration_number || "");
-        
-        // Load clinic branding - check if user is clinic owner OR clinic member
-        let clinicId = data.clinic_id;
-        
-        // If no clinic_id in profile, check if user owns a clinic
-        if (!clinicId) {
-          const { data: ownedClinic } = await supabase
-            .from("clinics")
-            .select("id, logo_url, header_image_url")
-            .eq("owner_id", session.user.id)
-            .single();
-          
-          if (ownedClinic) {
-            clinicId = ownedClinic.id;
-            setClinicBranding({
-              logo_url: ownedClinic.logo_url,
-              header_image_url: ownedClinic.header_image_url,
-            });
-          }
-        } else {
-          // User is a clinic member, load clinic branding
-          const { data: clinicData } = await supabase
-            .from("clinics")
-            .select("logo_url, header_image_url")
-            .eq("id", clinicId)
-            .single();
-          
-          if (clinicData) {
-            setClinicBranding({
-              logo_url: clinicData.logo_url,
-              header_image_url: clinicData.header_image_url,
-            });
-          }
+        setCouncilLogoUrl(profile.council_logo_url || "");
+        setRegistrationNumber(profile.registration_number || "");
+      }
+
+      const loadBrandingForClinic = async (clinicId: string) => {
+        const { data: clinic, error: clinicError } = await supabase
+          .from("clinics")
+          .select("logo_url, header_image_url")
+          .eq("id", clinicId)
+          .maybeSingle();
+
+        if (clinicError) {
+          console.error("Error loading clinic branding:", clinicError);
+          return;
+        }
+
+        if (clinic) {
+          setClinicBranding({
+            logo_url: clinic.logo_url,
+            header_image_url: clinic.header_image_url,
+          });
+        }
+      };
+
+      let clinicId: string | null = (profile && profile.clinic_id) ? profile.clinic_id : null;
+
+      if (!clinicId) {
+        const { data: membership, error: membershipError } = await supabase
+          .from("clinic_members")
+          .select("clinic_id")
+          .eq("user_id", session.user.id)
+          .eq("is_active", true)
+          .maybeSingle();
+
+        if (membershipError) {
+          console.error("Error loading clinic membership:", membershipError);
+        } else if (membership?.clinic_id) {
+          clinicId = membership.clinic_id;
         }
       }
+
+      if (!clinicId) {
+        const { data: ownedClinic, error: ownedError } = await supabase
+          .from("clinics")
+          .select("id")
+          .eq("owner_id", session.user.id)
+          .maybeSingle();
+
+        if (ownedError) {
+          console.error("Error loading owned clinic:", ownedError);
+        } else if (ownedClinic?.id) {
+          clinicId = ownedClinic.id;
+        }
+      }
+
+      if (clinicId) {
+        await loadBrandingForClinic(clinicId);
+      }
+
       setLoading(false);
     };
 
-    loadProfile();
+    loadProfileAndBranding();
   }, [setDoctorInfo]);
   const handleEdit = (field: string, value: string) => {
     setDoctorInfo({ ...doctorInfo, [field]: value });
