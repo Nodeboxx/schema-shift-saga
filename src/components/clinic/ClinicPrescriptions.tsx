@@ -154,7 +154,7 @@ const ClinicPrescriptions = ({ clinicId }: ClinicPrescriptionsProps) => {
   };
 
   const handleViewPrescription = (prescriptionId: string) => {
-    navigate(`/prescription/${prescriptionId}`);
+    navigate(`/clinic/prescription/${prescriptionId}`);
   };
 
   if (loading) {
@@ -207,7 +207,7 @@ const ClinicPrescriptions = ({ clinicId }: ClinicPrescriptionsProps) => {
               View all prescriptions from clinic doctors
             </p>
           </div>
-          <Button onClick={() => navigate("/prescription")}>
+          <Button onClick={() => navigate("/clinic/prescription")}>
             <Plus className="h-4 w-4 mr-2" />
             Create Prescription
           </Button>

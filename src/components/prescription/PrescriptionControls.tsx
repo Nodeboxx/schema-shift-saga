@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 interface PrescriptionControlsProps {
   prescriptionId?: string;
   userId?: string;
+  clinicId?: string | null;
   onRichTextCommand?: (command: string, value?: string) => void;
   patientName?: string;
   patientPhone?: string;
@@ -22,7 +23,7 @@ interface PrescriptionControlsProps {
   onPageLayoutChange?: (layout: 'single' | 'double') => void;
 }
 
-const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone, onSave, onAddPage, zoom = 1.3, onZoomChange, pageLayout = 'single', onPageLayoutChange }: PrescriptionControlsProps) => {
+const PrescriptionControls = ({ prescriptionId, userId, clinicId, onRichTextCommand, patientName, patientPhone, onSave, onAddPage, zoom = 1.3, onZoomChange, pageLayout = 'single', onPageLayoutChange }: PrescriptionControlsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [headerlessPrint, setHeaderlessPrint] = useState(false);
