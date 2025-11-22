@@ -168,8 +168,8 @@ const Appointments = () => {
             </Button>
           </div>
 
-        <Tabs defaultValue="pending" className="space-y-4 md:space-y-6">
-          <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1">
+        <Tabs defaultValue="pending" className="space-y-6 md:space-y-8">
+          <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1 gap-1 mb-4">
             <TabsTrigger 
               value="pending" 
               className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
@@ -197,7 +197,7 @@ const Appointments = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="pending">
+          <TabsContent value="pending" className="mt-20 pt-6">
             <Card>
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-4">Appointment Requests</h3>
@@ -248,7 +248,7 @@ const Appointments = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="confirmed">
+          <TabsContent value="confirmed" className="mt-20 pt-6">
             <AppointmentList
               appointments={confirmedAppointments}
               loading={loading}
@@ -256,7 +256,7 @@ const Appointments = () => {
             />
           </TabsContent>
 
-          <TabsContent value="calendar">
+          <TabsContent value="calendar" className="mt-20 pt-6">
             <div className="grid gap-4 lg:grid-cols-3 lg:gap-6">
               <Card className="p-4 md:p-6">
                 <h3 className="font-semibold mb-4 text-sm md:text-base">Select Date</h3>

@@ -144,8 +144,8 @@ const Analytics = () => {
           </div>
 
           {/* Detailed Analytics Tabs */}
-          <Tabs defaultValue="prescriptions" className="space-y-4">
-            <TabsList className="w-full grid grid-cols-2 lg:grid-cols-5 bg-blue-50 p-1">
+          <Tabs defaultValue="prescriptions" className="space-y-6 md:space-y-8">
+            <TabsList className="w-full grid grid-cols-2 lg:grid-cols-5 bg-blue-50 p-1 gap-1 mb-4">
               <TabsTrigger 
                 value="prescriptions" 
                 className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
@@ -183,23 +183,23 @@ const Analytics = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="prescriptions" className="space-y-4">
+            <TabsContent value="prescriptions" className="mt-20 pt-6">
               <PrescriptionAnalytics />
             </TabsContent>
 
-            <TabsContent value="appointments" className="space-y-4">
+            <TabsContent value="appointments" className="mt-20 pt-6">
               <AppointmentAnalytics />
             </TabsContent>
 
-            <TabsContent value="patients" className="space-y-4">
+            <TabsContent value="patients" className="mt-20 pt-6">
               <PatientDemographics />
             </TabsContent>
 
-            <TabsContent value="revenue" className="space-y-4">
+            <TabsContent value="revenue" className="mt-20 pt-6">
               <RevenueAnalytics />
             </TabsContent>
 
-            <TabsContent value="research" className="space-y-4">
+            <TabsContent value="research" className="mt-20 pt-6">
               <ResearchInsights />
             </TabsContent>
           </Tabs>
