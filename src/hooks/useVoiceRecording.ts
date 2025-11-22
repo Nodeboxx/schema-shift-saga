@@ -17,9 +17,11 @@ export const useVoiceRecording = ({
   const recognitionRef = useRef<any>(null);
   const shouldRestartRef = useRef(false);
 
-  const startListening = useCallback(() => {
+  const startListening = useCallback((overrideLanguage?: 'en-US' | 'bn-BD') => {
+    const effectiveLanguage = overrideLanguage || language;
+
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      console.error('Speech recognition not supported');
+      console.error('[useVoiceRecording] Speech recognition not supported in this browser');
       return false;
     }
 
@@ -29,11 +31,11 @@ export const useVoiceRecording = ({
 
       recognition.continuous = continuous;
       recognition.interimResults = true;
-      recognition.lang = language;
+      recognition.lang = effectiveLanguage;
       recognition.maxAlternatives = 1;
 
       recognition.onstart = () => {
-        console.log('Voice recognition started');
+        console.log('[useVoiceRecording] Voice recognition started with language:', effectiveLanguage);
         setIsListening(true);
         setIsProcessing(false);
         setInterimTranscript('');
@@ -58,13 +60,14 @@ export const useVoiceRecording = ({
         }
 
         if (final && onTranscript) {
+          console.log('[useVoiceRecording] Final transcript:', final.trim());
           onTranscript(final.trim());
           setInterimTranscript('');
         }
       };
 
       recognition.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
+        console.error('[useVoiceRecording] Speech recognition error:', event.error);
         
         // Don't auto-restart on these errors
         if (event.error === 'not-allowed' || event.error === 'network' || event.error === 'no-speech') {
@@ -73,24 +76,25 @@ export const useVoiceRecording = ({
           setIsProcessing(false);
           
           if (event.error === 'network') {
-            console.error('Network error: Speech recognition service unavailable. Please check your internet connection.');
+            console.error('[useVoiceRecording] Network error: Speech recognition service unavailable.');
           }
         }
       };
 
       recognition.onend = () => {
-        console.log('Voice recognition ended');
+        console.log('[useVoiceRecording] Voice recognition ended');
         
         // Only restart if we're supposed to be listening and continuous mode is on
         if (shouldRestartRef.current && continuous && recognitionRef.current) {
           try {
             setTimeout(() => {
               if (recognitionRef.current && shouldRestartRef.current) {
+                console.log('[useVoiceRecording] Restarting recognition...');
                 recognitionRef.current.start();
               }
             }, 100);
           } catch (e) {
-            console.error('Error restarting recognition:', e);
+            console.error('[useVoiceRecording] Error restarting recognition:', e);
             shouldRestartRef.current = false;
             setIsListening(false);
             setIsProcessing(false);
@@ -106,7 +110,7 @@ export const useVoiceRecording = ({
       recognition.start();
       return true;
     } catch (error) {
-      console.error('Error starting speech recognition:', error);
+      console.error('[useVoiceRecording] Error starting speech recognition:', error);
       shouldRestartRef.current = false;
       setIsListening(false);
       return false;
@@ -117,9 +121,10 @@ export const useVoiceRecording = ({
     shouldRestartRef.current = false;
     if (recognitionRef.current) {
       try {
+        console.log('[useVoiceRecording] Stopping recognition');
         recognitionRef.current.stop();
       } catch (e) {
-        console.error('Error stopping recognition:', e);
+        console.error('[useVoiceRecording] Error stopping recognition:', e);
       }
       recognitionRef.current = null;
     }
@@ -128,11 +133,11 @@ export const useVoiceRecording = ({
     setInterimTranscript('');
   }, []);
 
-  const toggleListening = useCallback(() => {
+  const toggleListening = useCallback((overrideLanguage?: 'en-US' | 'bn-BD') => {
     if (isListening) {
       stopListening();
     } else {
-      startListening();
+      startListening(overrideLanguage);
     }
   }, [isListening, startListening, stopListening]);
 

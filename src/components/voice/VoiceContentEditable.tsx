@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useId, useEffect } from 'react';
 import { VoiceInputButton } from '@/components/prescription/VoiceInputButton';
 import { useVoiceRecording } from '@/hooks/useVoiceRecording';
 import { useToast } from '@/hooks/use-toast';
+import { useVoiceRecordingContext } from '@/contexts/VoiceRecordingContext';
 
 interface VoiceContentEditableProps {
   value: string;
@@ -23,8 +24,10 @@ export const VoiceContentEditable = ({
   onKeyDown,
 }: VoiceContentEditableProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const componentId = useId();
   const [language, setLanguage] = useState<'en-US' | 'bn-BD'>('en-US');
   const { toast } = useToast();
+  const { requestRecording, releaseRecording } = useVoiceRecordingContext();
 
   const { isListening, toggleListening } = useVoiceRecording({
     language,
@@ -53,6 +56,8 @@ export const VoiceContentEditable = ({
 
   const handleVoiceToggle = async (lang: 'en-US' | 'bn-BD') => {
     if (!isListening) {
+      console.log('[VoiceContentEditable] 🎤 Request to start listening in', lang, 'component:', componentId);
+
       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         toast({
           title: 'Not Supported',
@@ -62,11 +67,24 @@ export const VoiceContentEditable = ({
         return;
       }
 
+      // Check global lock: only one recorder at a time
+      if (!requestRecording(componentId)) {
+        toast({
+          title: 'Another Recording Active',
+          description: 'Please stop the other recording before starting a new one.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
         setLanguage(lang);
-        setTimeout(() => toggleListening(), 100);
+        console.log('[VoiceContentEditable] ✅ Microphone access granted, starting recognition');
+        toggleListening(lang);
       } catch (error) {
+        console.error('[VoiceContentEditable] ❌ Microphone permission error:', error);
+        releaseRecording(componentId);
         toast({
           title: 'Microphone Access Required',
           description: 'Please allow microphone access to use voice input.',
@@ -74,9 +92,21 @@ export const VoiceContentEditable = ({
         });
       }
     } else {
+      console.log('[VoiceContentEditable] 🛑 Stopping listening for component:', componentId);
       toggleListening();
+      releaseRecording(componentId);
     }
   };
+
+  useEffect(() => {
+    if (!isListening) {
+      releaseRecording(componentId);
+    }
+
+    return () => {
+      releaseRecording(componentId);
+    };
+  }, [isListening, componentId, releaseRecording]);
 
   return (
     <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
