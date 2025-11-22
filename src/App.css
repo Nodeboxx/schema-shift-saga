@@ -95,4 +95,17 @@
     visibility: hidden !important;
     opacity: 0 !important;
   }
+
+  /* Increase medicine text sizes by 2 for print */
+  .medicine-name-print {
+    font-size: 15px !important;
+  }
+
+  .medicine-dose-print {
+    font-size: 11px !important;
+  }
+
+  .medicine-details-print {
+    font-size: 10px !important;
+  }
 }

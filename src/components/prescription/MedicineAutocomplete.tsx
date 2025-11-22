@@ -122,7 +122,7 @@ const MedicineAutocomplete = ({ value, onSelect }: MedicineAutocompleteProps) =>
                     onSelect(medicine);
                     setOpen(false);
                   }}
-                  className="flex items-start gap-3 py-3"
+                  className="flex items-start gap-3 py-3 data-[selected='true']:bg-blue-100 data-[selected=true]:text-blue-900"
                 >
                   <Check
                     className={cn(
