@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Mail, Phone, CheckCircle2, LogOut, Home, HeartPulse } from "lucide-react";
+import { Clock, Mail, Phone, CheckCircle2, LogOut, Home } from "lucide-react";
+import logo from "@/assets/medrxpro-logo.png";
 
 const ClinicPendingApproval = () => {
   const navigate = useNavigate();
@@ -85,14 +86,7 @@ const ClinicPendingApproval = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
       <Card className="max-w-2xl w-full p-8 md:p-12 text-center">
         <div className="flex justify-center mb-6">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-purple-600">
-              <HeartPulse className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              MedRxPro
-            </span>
-          </div>
+          <img src={logo} alt="MedRxPro" className="h-12" />
         </div>
 
         <div className="mb-8">
