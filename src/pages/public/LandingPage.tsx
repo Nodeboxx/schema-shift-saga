@@ -26,7 +26,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [heroContent, setHeroContent] = useState<any>({
     title: "Transform Your Healthcare Practice",
-    subtitle: "Intelligent automation, seamless patient engagement, and meaningful results with MedDexPro",
+    subtitle: "Intelligent automation, seamless patient engagement, and meaningful results with MedRxPro",
     cta: "Start Free Trial"
   });
 
@@ -176,7 +176,7 @@ const LandingPage = () => {
                 <HeartPulse className="w-6 h-6 text-white" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                MedDexPro
+                MedRxPro
               </span>
             </div>
             <div className="hidden md:flex items-center gap-8">
@@ -235,7 +235,7 @@ const LandingPage = () => {
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              Transform your healthcare practice with intelligent automation, seamless patient engagement, and meaningful results made possible by MedDexPro
+              Transform your healthcare practice with intelligent automation, seamless patient engagement, and meaningful results made possible by MedRxPro
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in" style={{ animationDelay: '0.3s' }}>
@@ -414,7 +414,7 @@ const LandingPage = () => {
                   <HeartPulse className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-                  MedDexPro
+                  MedRxPro
                 </span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -454,7 +454,7 @@ const LandingPage = () => {
           </div>
 
           <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>© 2025 MedDexPro. All rights reserved. Empowering healthcare professionals worldwide.</p>
+            <p>© 2025 MedRxPro. All rights reserved. Empowering healthcare professionals worldwide.</p>
           </div>
         </div>
       </footer>

@@ -101,7 +101,7 @@ serve(async (req: Request) => {
       <body>
         <div class="container">
           <div class="header">
-            <h1 style="margin: 0; color: #2c3e50;">MedDexPro - Prescription</h1>
+            <h1 style="margin: 0; color: #2c3e50;">MedRxPro - Prescription</h1>
           </div>
           
           <div class="content">
@@ -138,7 +138,7 @@ serve(async (req: Request) => {
             <p><strong>Important:</strong> Please follow the prescription as directed by your doctor.</p>
             <p>For any questions or concerns, please contact your healthcare provider.</p>
             <p style="margin-top: 20px; font-size: 12px;">
-              This email was sent from MedDexPro - Prescription Management System
+              This email was sent from MedRxPro - Prescription Management System
             </p>
           </div>
         </div>

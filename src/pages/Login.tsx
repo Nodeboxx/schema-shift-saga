@@ -86,7 +86,7 @@ const Login = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-2">
               Welcome Back
             </h1>
-            <p className="text-muted-foreground">Sign in to your MedDexPro account</p>
+            <p className="text-muted-foreground">Sign in to your MedRxPro account</p>
           </div>
         </div>
 

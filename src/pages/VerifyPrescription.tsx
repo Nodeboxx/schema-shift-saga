@@ -384,7 +384,7 @@ const VerifyPrescription = () => {
             ✓ This is a verified digital prescription
           </p>
           <p className="text-xs text-muted-foreground">
-            Authenticated and secured by MedDexPro. For queries, please contact the issuing clinic.
+            Authenticated and secured by MedRxPro. For queries, please contact the issuing clinic.
           </p>
         </Card>
       </div>

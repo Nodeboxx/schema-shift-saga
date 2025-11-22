@@ -189,7 +189,7 @@ export const SubscriptionManager = () => {
     return (
       <Card className="border-dashed">
         <CardHeader>
-          <CardTitle>Get Started with MedDexPro</CardTitle>
+          <CardTitle>Get Started with MedRxPro</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-muted-foreground">

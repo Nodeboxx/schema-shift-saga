@@ -18,13 +18,13 @@ const Demo = () => {
     <div className="min-h-screen bg-background">
       {/* Demo Banner */}
       <div className="bg-gradient-to-r from-primary to-purple-600 text-white py-3 px-6 text-center font-medium">
-        🎯 Demo Mode - Experience MedDexPro without signing up!
+        🎯 Demo Mode - Experience MedRxPro without signing up!
       </div>
 
       {/* Header */}
       <div className="border-b bg-card/95 backdrop-blur">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold">MedDexPro Demo Dashboard</h1>
+          <h1 className="text-2xl font-bold">MedRxPro Demo Dashboard</h1>
           <Button variant="outline" onClick={() => navigate("/")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
