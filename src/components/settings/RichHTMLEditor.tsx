@@ -3,8 +3,9 @@ import RichTextToolbar from '@/components/RichTextToolbar';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Label } from '@/components/ui/label';
-import { Upload } from 'lucide-react';
+import { Upload, Code, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 interface RichHTMLEditorProps {
   label: string;
@@ -24,6 +25,7 @@ export const RichHTMLEditor = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [isCodeView, setIsCodeView] = useState(false);
   const { toast } = useToast();
 
   const handleCommand = (command: string, value?: string) => {
@@ -125,42 +127,79 @@ export const RichHTMLEditor = ({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label>{label}</Label>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={uploading}
-          className="h-8"
-        >
-          <Upload className="w-3 h-3 mr-1" />
-          {uploading ? 'Uploading...' : 'Insert Image'}
-        </Button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="hidden"
-        />
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setIsCodeView(!isCodeView)}
+            className="h-8"
+          >
+            {isCodeView ? (
+              <>
+                <Eye className="w-3 h-3 mr-1" />
+                Visual
+              </>
+            ) : (
+              <>
+                <Code className="w-3 h-3 mr-1" />
+                HTML
+              </>
+            )}
+          </Button>
+          {!isCodeView && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="h-8"
+            >
+              <Upload className="w-3 h-3 mr-1" />
+              {uploading ? 'Uploading...' : 'Insert Image'}
+            </Button>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="hidden"
+          />
+        </div>
       </div>
 
-      <div className="border rounded-lg overflow-hidden bg-background">
-        <RichTextToolbar onCommand={handleCommand} className="border-b" />
-        <div
-          ref={editorRef}
-          contentEditable
-          suppressContentEditableWarning
-          onBlur={(e) => onChange(e.currentTarget.innerHTML)}
-          onInput={(e) => onChange(e.currentTarget.innerHTML)}
-          dangerouslySetInnerHTML={{ __html: value }}
-          className="p-4 focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[150px]"
-          style={{ minHeight }}
-          data-placeholder={placeholder}
-        />
-      </div>
+      {isCodeView ? (
+        <div className="border rounded-lg overflow-hidden bg-background">
+          <Textarea
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            className="font-mono text-sm p-4 min-h-[150px] resize-y border-0 focus-visible:ring-0"
+            style={{ minHeight }}
+            placeholder={placeholder}
+          />
+        </div>
+      ) : (
+        <div className="border rounded-lg overflow-hidden bg-background">
+          <RichTextToolbar onCommand={handleCommand} className="border-b" />
+          <div
+            ref={editorRef}
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => onChange(e.currentTarget.innerHTML)}
+            onInput={(e) => onChange(e.currentTarget.innerHTML)}
+            dangerouslySetInnerHTML={{ __html: value }}
+            className="p-4 focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[150px]"
+            style={{ minHeight }}
+            data-placeholder={placeholder}
+          />
+        </div>
+      )}
       <p className="text-xs text-muted-foreground">
-        Use the toolbar to format text, add images, and style your content
+        {isCodeView 
+          ? 'Edit HTML code directly. Switch to Visual mode to use formatting tools.'
+          : 'Use the toolbar to format text, add images, and style your content. Switch to HTML mode to edit code.'}
       </p>
       <style>{`
         [contenteditable][data-placeholder]:empty:before {
