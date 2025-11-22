@@ -156,30 +156,34 @@ const Appointments = () => {
   return (
     <AppLayout>
       <SubscriptionGate feature="appointments">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="p-4 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 md:mb-6">
             <div>
-              <h1 className="text-3xl font-bold">Appointments</h1>
-              <p className="text-muted-foreground">Manage your schedule and appointment requests</p>
+              <h1 className="text-2xl md:text-3xl font-bold">Appointments</h1>
+              <p className="text-sm text-muted-foreground">Manage your schedule and appointment requests</p>
             </div>
-            <Button onClick={() => setDialogOpen(true)}>
+            <Button onClick={() => setDialogOpen(true)} className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               New Appointment
             </Button>
           </div>
 
-        <Tabs defaultValue="pending" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="pending">
-              Pending Requests
+        <Tabs defaultValue="pending" className="space-y-4 md:space-y-6">
+          <TabsList className="w-full grid grid-cols-3">
+            <TabsTrigger value="pending" className="text-xs sm:text-sm">
+              <span className="hidden sm:inline">Pending Requests</span>
+              <span className="sm:hidden">Pending</span>
               {pendingRequests.length > 0 && (
-                <Badge variant="destructive" className="ml-2">
+                <Badge variant="destructive" className="ml-1 sm:ml-2 text-xs">
                   {pendingRequests.length}
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
-            <TabsTrigger value="calendar">Calendar View</TabsTrigger>
+            <TabsTrigger value="confirmed" className="text-xs sm:text-sm">Confirmed</TabsTrigger>
+            <TabsTrigger value="calendar" className="text-xs sm:text-sm">
+              <span className="hidden sm:inline">Calendar View</span>
+              <span className="sm:hidden">Calendar</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="pending">
@@ -195,14 +199,14 @@ const Appointments = () => {
                     {pendingRequests.map((appointment) => (
                       <div
                         key={appointment.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border rounded-lg"
                       >
                         <div className="flex-1">
                           <div className="font-semibold">{appointment.notes || "New Patient"}</div>
                           <div className="text-sm text-muted-foreground">
                             {format(new Date(appointment.start_time), "PPP 'at' p")}
                           </div>
-                          <div className="text-sm">
+                          <div className="text-sm mt-1">
                             Type: <Badge variant="outline">{appointment.type}</Badge>
                           </div>
                         </div>
@@ -210,6 +214,7 @@ const Appointments = () => {
                           <Button
                             size="sm"
                             onClick={() => handleApproveAppointment(appointment.id)}
+                            className="flex-1 sm:flex-initial"
                           >
                             <Check className="w-4 h-4 mr-1" />
                             Approve
@@ -218,6 +223,7 @@ const Appointments = () => {
                             size="sm"
                             variant="destructive"
                             onClick={() => handleDenyAppointment(appointment.id)}
+                            className="flex-1 sm:flex-initial"
                           >
                             <X className="w-4 h-4 mr-1" />
                             Deny
@@ -240,14 +246,14 @@ const Appointments = () => {
           </TabsContent>
 
           <TabsContent value="calendar">
-            <div className="grid lg:grid-cols-3 gap-6">
-              <Card className="p-6">
-                <h3 className="font-semibold mb-4">Select Date</h3>
+            <div className="grid gap-4 lg:grid-cols-3 lg:gap-6">
+              <Card className="p-4 md:p-6">
+                <h3 className="font-semibold mb-4 text-sm md:text-base">Select Date</h3>
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={(date) => date && setDate(date)}
-                  className="rounded-md border"
+                  className="rounded-md border w-full"
                 />
               </Card>
 

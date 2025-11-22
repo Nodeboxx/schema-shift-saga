@@ -118,10 +118,10 @@ const Analytics = () => {
   return (
     <AppLayout>
       <SubscriptionGate feature="analytics">
-        <div className="p-6 space-y-6">
+        <div className="p-4 md:p-6 space-y-4 md:space-y-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Analytics & Insights</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">Analytics & Insights</h1>
+            <p className="text-sm text-muted-foreground">
               Track your practice performance and clinical insights
             </p>
           </div>
@@ -145,26 +145,26 @@ const Analytics = () => {
 
           {/* Detailed Analytics Tabs */}
           <Tabs defaultValue="prescriptions" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="prescriptions">
-                <FileText className="h-4 w-4 mr-2" />
-                Prescriptions
+            <TabsList className="w-full grid grid-cols-2 lg:grid-cols-5">
+              <TabsTrigger value="prescriptions" className="text-xs sm:text-sm">
+                <FileText className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Prescriptions</span>
               </TabsTrigger>
-              <TabsTrigger value="appointments">
-                <Calendar className="h-4 w-4 mr-2" />
-                Appointments
+              <TabsTrigger value="appointments" className="text-xs sm:text-sm">
+                <Calendar className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Appointments</span>
               </TabsTrigger>
-              <TabsTrigger value="patients">
-                <Users className="h-4 w-4 mr-2" />
-                Patient Demographics
+              <TabsTrigger value="patients" className="text-xs sm:text-sm">
+                <Users className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Demographics</span>
               </TabsTrigger>
-              <TabsTrigger value="revenue">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Revenue
+              <TabsTrigger value="revenue" className="text-xs sm:text-sm">
+                <DollarSign className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Revenue</span>
               </TabsTrigger>
-              <TabsTrigger value="research">
-                <Database className="h-4 w-4 mr-2" />
-                Clinical Insights
+              <TabsTrigger value="research" className="text-xs sm:text-sm col-span-2 lg:col-span-1">
+                <Database className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Insights</span>
               </TabsTrigger>
             </TabsList>
 
