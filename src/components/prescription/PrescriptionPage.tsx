@@ -511,6 +511,46 @@ const PrescriptionPage = ({ prescriptionData, userId, clinicId, onSaveReady, onA
     setCurrentPage(newPageId);
   };
 
+  const handleAddToNextPage = (currentPageId: number) => {
+    const nextPageId = currentPageId + 1;
+    
+    // Check if next page exists
+    const nextPageExists = pages.some(p => p.id === nextPageId);
+    
+    if (!nextPageExists) {
+      // Create new page
+      setPages([...pages, { id: nextPageId }]);
+      setPagesData({ ...pagesData, [nextPageId]: {} });
+    }
+    
+    // Add medicine to next page
+    const nextPageData = pagesData[nextPageId] || {};
+    const nextPageMedicines = nextPageData.medicines || [];
+    
+    setPagesData({
+      ...pagesData,
+      [nextPageId]: {
+        ...nextPageData,
+        medicines: [
+          ...nextPageMedicines,
+          {
+            id: Date.now().toString(),
+            type: "medicine",
+            name: "",
+            details: "",
+            dose: "",
+            duration: "",
+          },
+        ],
+      },
+    });
+    
+    toast({
+      title: "Medicine Added to Next Page",
+      description: `Current page has reached the limit of 11 medicines. Medicine added to page ${nextPageId}.`,
+    });
+  };
+
   const removePage = (pageId: number) => {
     if (pages.length === 1) {
       toast({
@@ -623,6 +663,7 @@ const PrescriptionPage = ({ prescriptionData, userId, clinicId, onSaveReady, onA
               data={page.id === 1 ? bodyData : pagesData[page.id]}
               setData={page.id === 1 ? setBodyData : (data: any) => setPagesData({ ...pagesData, [page.id]: data })}
               templateSections={templateSections}
+              onAddToNextPage={() => handleAddToNextPage(page.id)}
             />
             <PrescriptionFooter />
           </div>

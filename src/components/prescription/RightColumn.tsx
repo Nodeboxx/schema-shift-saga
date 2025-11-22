@@ -24,12 +24,24 @@ interface RightColumnProps {
   width: number;
   data?: any;
   setData?: (data: any) => void;
+  onAddToNextPage?: () => void;
 }
 
-const RightColumn = ({ width, data, setData }: RightColumnProps) => {
+const RightColumn = ({ width, data, setData, onAddToNextPage }: RightColumnProps) => {
   const medicines: Medicine[] = data?.medicines || [];
 
   const addMedicine = () => {
+    // Count only medicine type items (not categories or text fields)
+    const medicineCount = medicines.filter(m => m.type === "medicine").length;
+    
+    // If current page has 11 medicines, move to next page
+    if (medicineCount >= 11) {
+      if (onAddToNextPage) {
+        onAddToNextPage();
+      }
+      return;
+    }
+    
     if (setData) {
       setData({
         ...data,
