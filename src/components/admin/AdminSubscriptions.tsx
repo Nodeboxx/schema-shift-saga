@@ -225,6 +225,36 @@ export const AdminSubscriptions = () => {
 
       if (error) throw error;
 
+      // If this is a clinic_admin, also update their clinic
+      if (editingProfile.role === 'clinic_admin') {
+        const clinicUpdates: any = {
+          subscription_tier: tier,
+          subscription_status: status,
+        };
+
+        if (startDate) {
+          clinicUpdates.subscription_start_date = startDate;
+        }
+
+        if (endDate) {
+          clinicUpdates.subscription_end_date = endDate;
+        }
+
+        const { error: clinicError } = await supabase
+          .from("clinics")
+          .update(clinicUpdates)
+          .eq("owner_id", editingProfile.id);
+
+        if (clinicError) {
+          console.error("Error updating clinic:", clinicError);
+          toast({
+            title: "Warning",
+            description: "Profile updated but clinic sync failed. Please update clinic subscription separately.",
+            variant: "destructive",
+          });
+        }
+      }
+
       toast({
         title: "Success",
         description: "Subscription updated successfully",
