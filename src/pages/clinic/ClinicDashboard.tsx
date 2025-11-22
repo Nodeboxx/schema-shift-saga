@@ -72,11 +72,12 @@ const ClinicDashboard = () => {
     );
   }
 
-  // Check if subscription is expired
+  // Check if subscription is pending approval or expired
+  const isPendingApproval = clinic.subscription_status === 'pending_approval';
   const isSubscriptionExpired = clinic.subscription_end_date && 
     new Date(clinic.subscription_end_date) < new Date();
 
-  if (isSubscriptionExpired) {
+  if (isPendingApproval || isSubscriptionExpired) {
     return <ClinicSubscriptionLock clinic={clinic} />;
   }
 

@@ -78,13 +78,16 @@ const Dashboard = () => {
         // Check clinic subscription status
         const { data: clinic } = await supabase
           .from("clinics")
-          .select("subscription_end_date, name")
+          .select("subscription_end_date, subscription_status, name")
           .eq("id", profile.clinic_id)
           .single();
 
-        if (clinic?.subscription_end_date) {
-          const isExpired = new Date(clinic.subscription_end_date) < new Date();
-          setClinicSubscriptionExpired(isExpired);
+        if (clinic) {
+          // Check if pending approval or expired
+          const isPendingApproval = clinic.subscription_status === 'pending_approval';
+          const isExpired = clinic.subscription_end_date && new Date(clinic.subscription_end_date) < new Date();
+          
+          setClinicSubscriptionExpired(isPendingApproval || isExpired);
           setClinicInfo(clinic);
         }
       }
@@ -144,12 +147,13 @@ const Dashboard = () => {
     });
   };
 
-  // If doctor's clinic subscription is expired, show lock screen
+  // If doctor's clinic subscription is expired or pending approval, show lock screen
   if (clinicSubscriptionExpired && clinicInfo) {
     return (
       <DoctorClinicSubscriptionLock 
         clinicName={clinicInfo.name}
         subscriptionEndDate={clinicInfo.subscription_end_date}
+        subscriptionStatus={clinicInfo.subscription_status}
       />
     );
   }

@@ -7,6 +7,8 @@ interface ClinicSubscriptionLockProps {
 }
 
 export const ClinicSubscriptionLock = ({ clinic }: ClinicSubscriptionLockProps) => {
+  const isPendingApproval = clinic.subscription_status === 'pending_approval';
+  
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="max-w-2xl w-full border-destructive">
@@ -20,10 +22,14 @@ export const ClinicSubscriptionLock = ({ clinic }: ClinicSubscriptionLockProps) 
           
           <div className="space-y-2">
             <h2 className="text-3xl font-bold text-foreground">
-              Clinic Subscription Expired
+              {isPendingApproval 
+                ? "Clinic Pending Approval" 
+                : "Clinic Subscription Expired"}
             </h2>
             <p className="text-lg text-muted-foreground">
-              {clinic.name}'s subscription has expired
+              {isPendingApproval
+                ? `${clinic.name} is awaiting admin approval`
+                : `${clinic.name}'s subscription has expired`}
             </p>
           </div>
 
@@ -40,7 +46,7 @@ export const ClinicSubscriptionLock = ({ clinic }: ClinicSubscriptionLockProps) 
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-destructive mt-1">•</span>
-                <span>Patient data is preserved but inaccessible until renewal</span>
+                <span>Patient data is preserved but inaccessible until {isPendingApproval ? 'approval' : 'renewal'}</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-destructive mt-1">•</span>
@@ -51,14 +57,16 @@ export const ClinicSubscriptionLock = ({ clinic }: ClinicSubscriptionLockProps) 
 
           <div className="pt-4 space-y-3">
             <p className="text-sm text-muted-foreground">
-              Please contact your administrator to renew the clinic subscription
+              {isPendingApproval
+                ? "Your clinic registration is under review. An administrator will approve your clinic shortly."
+                : "Please contact your administrator to renew the clinic subscription"}
             </p>
             <Button size="lg" variant="default" className="w-full">
               Contact Administrator
             </Button>
           </div>
 
-          {clinic.subscription_end_date && (
+          {!isPendingApproval && clinic.subscription_end_date && (
             <p className="text-xs text-muted-foreground">
               Subscription ended on: {new Date(clinic.subscription_end_date).toLocaleDateString()}
             </p>
