@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Lock, AlertTriangle, Building2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Lock, AlertTriangle, Building2, LogOut, Home } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DoctorClinicSubscriptionLockProps {
   clinicName: string;
@@ -16,6 +18,33 @@ export const DoctorClinicSubscriptionLock = ({
 }: DoctorClinicSubscriptionLockProps) => {
   const navigate = useNavigate();
   const isPendingApproval = subscriptionStatus === 'pending_approval';
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+
+  useEffect(() => {
+    const fetchWhatsappNumber = async () => {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "whatsapp_contact")
+        .single();
+      
+      if (data?.value && typeof data.value === 'object' && 'value' in data.value) {
+        setWhatsappNumber((data.value as any).value);
+      }
+    };
+    fetchWhatsappNumber();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
+  const handleWhatsApp = () => {
+    if (whatsappNumber) {
+      window.open(`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`, '_blank');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -80,14 +109,19 @@ export const DoctorClinicSubscriptionLock = ({
                 ? "Your clinic registration is under review. An administrator will approve the clinic shortly, after which all features will be available."
                 : "Contact your clinic administrator to renew the subscription. All features will be restored immediately after renewal."}
             </p>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="w-full"
-              onClick={() => navigate("/")}
-            >
-              Go to Home
+            <Button size="lg" variant="default" className="w-full" onClick={handleWhatsApp}>
+              Contact Administrator
             </Button>
+            <div className="flex gap-2">
+              <Button size="lg" variant="outline" className="flex-1" onClick={() => navigate("/")}>
+                <Home className="h-4 w-4 mr-2" />
+                Go to Homepage
+              </Button>
+              <Button size="lg" variant="ghost" className="flex-1" onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
 
           {!isPendingApproval && subscriptionEndDate && (

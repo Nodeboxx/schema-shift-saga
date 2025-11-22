@@ -38,6 +38,7 @@ const AdminSiteSettings = () => {
   const [logo, setLogo] = useState({ url: "", alt: "" });
   const [favicon, setFavicon] = useState({ url: "/favicon.ico" });
   const [siteName, setSiteName] = useState({ value: "MedDexPro" });
+  const [whatsappNumber, setWhatsappNumber] = useState({ value: "" });
   const [logoUploading, setLogoUploading] = useState(false);
   const [faviconUploading, setFaviconUploading] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -53,7 +54,7 @@ const AdminSiteSettings = () => {
       const { data, error } = await supabase
         .from("site_settings")
         .select("*")
-        .in("key", ["header", "footer", "site_logo", "site_favicon", "site_name"]);
+        .in("key", ["header", "footer", "site_logo", "site_favicon", "site_name", "whatsapp_contact"]);
 
       if (error) throw error;
 
@@ -68,6 +69,8 @@ const AdminSiteSettings = () => {
           setFavicon(setting.value);
         } else if (setting.key === "site_name") {
           setSiteName(setting.value);
+        } else if (setting.key === "whatsapp_contact") {
+          setWhatsappNumber(setting.value);
         }
       });
     } catch (error: any) {
@@ -295,6 +298,34 @@ const AdminSiteSettings = () => {
     }
   };
 
+  const saveWhatsappNumber = async () => {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("site_settings")
+        .upsert([{
+          key: 'whatsapp_contact',
+          value: whatsappNumber as any,
+          updated_at: new Date().toISOString()
+        }], { onConflict: 'key' });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "WhatsApp contact number saved"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -333,6 +364,24 @@ const AdminSiteSettings = () => {
                     Save
                   </Button>
                 </div>
+              </div>
+
+              <div>
+                <Label>WhatsApp Contact Number</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={whatsappNumber.value}
+                    onChange={(e) => setWhatsappNumber({ value: e.target.value })}
+                    placeholder="+1234567890"
+                  />
+                  <Button onClick={saveWhatsappNumber} disabled={saving}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Used for "Contact Administrator" button on pending approval screens
+                </p>
               </div>
 
               <div>

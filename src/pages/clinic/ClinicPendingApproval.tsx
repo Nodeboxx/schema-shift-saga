@@ -3,21 +3,35 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Mail, Phone, CheckCircle2 } from "lucide-react";
+import { Clock, Mail, Phone, CheckCircle2, LogOut, Home } from "lucide-react";
 import logo from "@/assets/meddexpro-logo.png";
 
 const ClinicPendingApproval = () => {
   const navigate = useNavigate();
   const [clinic, setClinic] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [whatsappNumber, setWhatsappNumber] = useState("");
 
   useEffect(() => {
     checkClinicStatus();
+    fetchWhatsappNumber();
     
     // Check status every 30 seconds
     const interval = setInterval(checkClinicStatus, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const fetchWhatsappNumber = async () => {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "whatsapp_contact")
+      .single();
+    
+    if (data?.value && typeof data.value === 'object' && 'value' in data.value) {
+      setWhatsappNumber((data.value as any).value);
+    }
+  };
 
   const checkClinicStatus = async () => {
     try {
@@ -52,6 +66,12 @@ const ClinicPendingApproval = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate("/");
+  };
+
+  const handleWhatsApp = () => {
+    if (whatsappNumber) {
+      window.open(`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}`, '_blank');
+    }
   };
 
   if (loading) {
@@ -121,21 +141,26 @@ const ClinicPendingApproval = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t">
-          <p className="text-sm text-muted-foreground mb-4">
-            Need immediate assistance? Contact us at{" "}
+        <div className="mt-8 pt-6 border-t space-y-4">
+          <Button size="lg" variant="default" className="w-full" onClick={handleWhatsApp}>
+            Contact Administrator
+          </Button>
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1" onClick={() => navigate("/")}>
+              <Home className="h-4 w-4 mr-2" />
+              Back to Home
+            </Button>
+            <Button variant="ghost" className="flex-1" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground text-center">
+            Need email support?{" "}
             <a href="mailto:support@meddexpro.com" className="text-primary hover:underline">
               support@meddexpro.com
             </a>
           </p>
-          <div className="flex gap-3 justify-center">
-            <Button variant="outline" onClick={() => navigate("/")}>
-              Back to Home
-            </Button>
-            <Button variant="ghost" onClick={handleLogout}>
-              Sign Out
-            </Button>
-          </div>
         </div>
       </Card>
     </div>
