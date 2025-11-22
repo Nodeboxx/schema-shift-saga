@@ -54,7 +54,10 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
       document.body.classList.remove('print-headerless');
     }
 
-    window.print();
+    // Give React a short moment to apply zoom=1 before print snapshot
+    setTimeout(() => {
+      window.print();
+    }, 50);
   };
 
   const handleGoHome = () => {

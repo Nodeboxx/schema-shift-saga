@@ -15,7 +15,7 @@ const Prescription = () => {
   const [prescriptionData, setPrescriptionData] = useState<any>(null);
   const [onSave, setOnSave] = useState<(() => void) | undefined>();
   const [onAddPage, setOnAddPage] = useState<(() => void) | undefined>();
-  const [zoom, setZoom] = useState(1.3); // Default 130%
+  const [zoom, setZoom] = useState(1); // Default 100%
   const [pageLayout, setPageLayout] = useState<'single' | 'double'>('single');
   const navigate = useNavigate();
   const { id } = useParams();
