@@ -23,45 +23,45 @@ const ClinicPrescriptionHeader = ({
   const [loading, setLoading] = useState(true);
   const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
-  const [doctorNameBN, setDoctorNameBN] = useState<string>(doctorInfo.docNameBN);
-  const [doctorDegreeBN, setDoctorDegreeBN] = useState<string>(doctorInfo.docDegreeBN);
+  const [doctorNameBN, setDoctorNameBN] = useState<string>("");
+  const [doctorDegreeBN, setDoctorDegreeBN] = useState<string>("");
 
   useEffect(() => {
     const loadClinicAndDoctor = async () => {
       try {
-        // Load clinic branding
+        // Load clinic branding (LEFT SIDE ONLY)
         const { data: clinicData, error: clinicError } = await supabase
           .from("clinics")
           .select("name, logo_url, header_image_url, address, phone, email, website")
           .eq("id", clinicId)
-          .single();
+          .maybeSingle();
 
         if (clinicError) throw clinicError;
         setClinic(clinicData);
 
-        // Load doctor's profile info - FULL CONTROL from profile settings
+        // Load doctor's profile settings (RIGHT SIDE - FULL CONTROL)
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          const { data: profileData } = await supabase
+          const { data: profileData, error: profileError } = await supabase
             .from("profiles")
             .select("council_logo_url, registration_number, name_bn, degree_bn")
             .eq("id", session.user.id)
-            .single();
+            .maybeSingle();
 
+          if (profileError) throw profileError;
+          
           if (profileData) {
+            // Center: Council logo and registration (doctor controlled)
             setCouncilLogoUrl(profileData.council_logo_url || "");
             setRegistrationNumber(profileData.registration_number || "");
-            // Profile settings have FULL control - override everything
-            if (profileData.name_bn) {
-              setDoctorNameBN(profileData.name_bn);
-            }
-            if (profileData.degree_bn) {
-              setDoctorDegreeBN(profileData.degree_bn);
-            }
+            
+            // Right side: ONLY from profile settings - NO fallback
+            setDoctorNameBN(profileData.name_bn || "");
+            setDoctorDegreeBN(profileData.degree_bn || "");
           }
         }
       } catch (error) {
-        console.error("Error loading clinic branding:", error);
+        console.error("Error loading clinic and doctor data:", error);
       } finally {
         setLoading(false);
       }
