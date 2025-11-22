@@ -36,12 +36,19 @@ export const SubscriptionGate = ({
 
       const { data } = await supabase
         .from("profiles")
-        .select("subscription_status, subscription_tier, subscription_end_date, trial_ends_at")
+        .select("subscription_status, subscription_tier, subscription_end_date, trial_ends_at, clinic_id")
         .eq("id", user.id)
         .single();
 
       if (!data) {
         setHasAccess(false);
+        return;
+      }
+
+      // Clinic-managed doctors have full enterprise access - bypass all gates
+      if (data.clinic_id) {
+        setHasAccess(true);
+        setUserTier('enterprise');
         return;
       }
 
