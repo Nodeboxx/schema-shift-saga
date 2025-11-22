@@ -258,6 +258,91 @@ export type Database = {
           },
         ]
       }
+      clinic_payroll: {
+        Row: {
+          base_salary: number | null
+          bonus: number | null
+          clinic_id: string
+          commission_amount: number | null
+          commission_percentage: number | null
+          created_at: string | null
+          created_by: string | null
+          deductions: number | null
+          doctor_id: string
+          id: string
+          notes: string | null
+          payment_date: string | null
+          payment_method: string | null
+          payment_period_end: string
+          payment_period_start: string
+          payment_status: string
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          base_salary?: number | null
+          bonus?: number | null
+          clinic_id: string
+          commission_amount?: number | null
+          commission_percentage?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          deductions?: number | null
+          doctor_id: string
+          id?: string
+          notes?: string | null
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_period_end: string
+          payment_period_start: string
+          payment_status?: string
+          total_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          base_salary?: number | null
+          bonus?: number | null
+          clinic_id?: string
+          commission_amount?: number | null
+          commission_percentage?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          deductions?: number | null
+          doctor_id?: string
+          id?: string
+          notes?: string | null
+          payment_date?: string | null
+          payment_method?: string | null
+          payment_period_end?: string
+          payment_period_start?: string
+          payment_status?: string
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinic_payroll_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinic_payroll_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinic_payroll_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clinics: {
         Row: {
           address: string | null
