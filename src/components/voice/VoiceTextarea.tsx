@@ -29,14 +29,19 @@ export const VoiceTextarea = ({
   // Process audio when recording stops
   useEffect(() => {
     if (audioBlob && !isRecording) {
+      console.log('[VoiceTextarea] 🎵 Audio blob ready, starting transcription...');
       transcribeAudio(audioBlob);
     }
   }, [audioBlob, isRecording]);
 
   const transcribeAudio = async (blob: Blob) => {
     setIsProcessing(true);
+    console.log('[VoiceTextarea] 🔄 Starting transcription process...');
+    console.log('[VoiceTextarea] 📊 Blob info - size:', blob.size, 'type:', blob.type);
+    
     try {
       // Convert blob to base64
+      console.log('[VoiceTextarea] 📝 Converting blob to base64...');
       const reader = new FileReader();
       reader.readAsDataURL(blob);
       
@@ -45,15 +50,25 @@ export const VoiceTextarea = ({
       });
 
       const base64Audio = (reader.result as string).split(',')[1];
+      console.log('[VoiceTextarea] ✅ Base64 conversion complete, length:', base64Audio.length);
 
       // Send to transcription edge function
+      console.log('[VoiceTextarea] 🚀 Sending to transcribe-audio edge function, language:', language);
       const { data, error } = await supabase.functions.invoke('transcribe-audio', {
         body: { audio: base64Audio, language }
       });
 
-      if (error) throw error;
+      console.log('[VoiceTextarea] 📥 Response received from edge function');
+      console.log('[VoiceTextarea] Response data:', data);
+      console.log('[VoiceTextarea] Response error:', error);
+
+      if (error) {
+        console.error('[VoiceTextarea] ❌ Edge function error:', error);
+        throw error;
+      }
 
       if (data?.text) {
+        console.log('[VoiceTextarea] 🎉 Transcription successful:', data.text);
         // Append transcript to cursor position
         if (textareaRef.current) {
           const start = textareaRef.current.selectionStart;
@@ -61,6 +76,7 @@ export const VoiceTextarea = ({
           const before = value.substring(0, start);
           const after = value.substring(end);
           const newValue = before + data.text + ' ' + after;
+          console.log('[VoiceTextarea] 📝 Inserting text at position', start, 'to', end);
           onChange(newValue);
           
           // Set cursor after inserted text
@@ -72,15 +88,18 @@ export const VoiceTextarea = ({
             }
           }, 0);
         }
+      } else {
+        console.warn('[VoiceTextarea] ⚠️ No text in response data');
       }
     } catch (error) {
-      console.error('Transcription error:', error);
+      console.error('[VoiceTextarea] ❌ Transcription error:', error);
       toast({
         title: 'Transcription Failed',
         description: error instanceof Error ? error.message : 'Could not transcribe audio',
         variant: 'destructive',
       });
     } finally {
+      console.log('[VoiceTextarea] 🏁 Transcription process complete');
       setIsProcessing(false);
       clearAudio();
     }
@@ -88,19 +107,25 @@ export const VoiceTextarea = ({
 
   const handleVoiceToggle = async (lang: 'en-US' | 'bn-BD') => {
     if (isRecording) {
+      console.log('[VoiceTextarea] 🛑 User clicked to stop recording');
       stopRecording();
     } else {
+      console.log('[VoiceTextarea] 🎤 User clicked to start recording, language:', lang);
       try {
         setLanguage(lang);
         const success = await startRecording();
         if (!success) {
+          console.error('[VoiceTextarea] ❌ Failed to start recording');
           toast({
             title: 'Microphone Access Required',
             description: 'Please allow microphone access to use voice input.',
             variant: 'destructive',
           });
+        } else {
+          console.log('[VoiceTextarea] ✅ Recording started successfully');
         }
       } catch (error) {
+        console.error('[VoiceTextarea] ❌ Exception during recording start:', error);
         toast({
           title: 'Recording Failed',
           description: 'Could not start recording. Please check microphone permissions.',
