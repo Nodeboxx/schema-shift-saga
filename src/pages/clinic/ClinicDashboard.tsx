@@ -23,7 +23,8 @@ import {
   CreditCard, 
   UsersRound, 
   Palette, 
-  Crown 
+  Crown,
+  LogOut
 } from "lucide-react";
 import {
   Sidebar,
@@ -179,7 +180,7 @@ const ClinicDashboard = () => {
             </SidebarGroup>
           </SidebarContent>
 
-          <div className="p-4 border-t mt-auto">
+          <div className="p-4 border-t mt-auto space-y-2">
             <Button 
               variant="outline" 
               size="sm" 
@@ -188,6 +189,18 @@ const ClinicDashboard = () => {
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to App
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="w-full"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate("/");
+              }}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
             </Button>
           </div>
         </Sidebar>
