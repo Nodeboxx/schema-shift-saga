@@ -67,19 +67,29 @@ export const VoiceContentEditable = ({
       }
 
       try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         console.log('[VoiceContentEditable] ✅ Microphone access granted, requesting global lock');
         
         // Register with global context and provide stop callback
-        requestRecording(componentId, () => {
+        const wasGranted = requestRecording(componentId, () => {
           console.log('[VoiceContentEditable] 🔄 Forced stop from another recorder');
           if (isListening) {
             toggleListening();
           }
         });
         
-        console.log('[VoiceContentEditable] 🎙️ Starting recognition');
-        toggleListening('en-US');
+        if (wasGranted) {
+          console.log('[VoiceContentEditable] 🎙️ Starting recognition');
+          toggleListening('en-US');
+        } else {
+          console.log('[VoiceContentEditable] ⚠️ Could not acquire recording lock');
+          stream.getTracks().forEach(track => track.stop());
+          toast({
+            title: 'Voice Input Busy',
+            description: 'Another voice input is currently active.',
+            variant: 'destructive',
+          });
+        }
       } catch (error) {
         console.error('[VoiceContentEditable] ❌ Microphone permission error:', error);
         releaseRecording(componentId);

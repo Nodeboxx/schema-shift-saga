@@ -19,6 +19,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
   const [loading, setLoading] = useState(true);
   const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
+  const [headerFontSize, setHeaderFontSize] = useState<string>("13");
 
   const [clinicBranding, setClinicBranding] = useState<{
     logo_url?: string;
@@ -52,6 +53,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         });
         setCouncilLogoUrl(data.council_logo_url || "");
         setRegistrationNumber(data.registration_number || "");
+        setHeaderFontSize(data.header_font_size || "13");
         
         // Load clinic branding if user is part of a clinic
         if (data.clinics) {
@@ -101,7 +103,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
       
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
         {/* Left Column - English */}
-        <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5" }}>
+        <div style={{ flex: "1", fontSize: `${headerFontSize}px`, lineHeight: "1.5" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -183,7 +185,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
 
         {/* Right Column - Bengali */}
-        <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
+        <div style={{ flex: "1", fontSize: `${headerFontSize}px`, lineHeight: "1.5", textAlign: "right" }}>
           <h2
             contentEditable
             suppressContentEditableWarning

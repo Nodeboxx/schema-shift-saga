@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 const PrescriptionFooter = () => {
   const [footerLeft, setFooterLeft] = useState("");
   const [footerRight, setFooterRight] = useState("");
+  const [footerFontSize, setFooterFontSize] = useState<string>("13");
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -12,7 +13,7 @@ const PrescriptionFooter = () => {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("footer_left, footer_right")
+        .select("footer_left, footer_right, footer_font_size")
         .eq("id", session.user.id)
         .single();
 
@@ -24,6 +25,7 @@ const PrescriptionFooter = () => {
       if (data) {
         setFooterLeft(data.footer_left || "");
         setFooterRight(data.footer_right || "");
+        setFooterFontSize(data.footer_font_size || "13");
       }
     };
 
@@ -37,7 +39,7 @@ const PrescriptionFooter = () => {
       alignItems: "center",
       padding: "10px 15px",
       background: "#f9f9f9",
-      fontSize: "13px",
+      fontSize: `${footerFontSize}px`,
       borderTop: "2px solid #0056b3",
       position: "relative",
       width: "100%",

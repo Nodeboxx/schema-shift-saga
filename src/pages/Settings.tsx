@@ -132,6 +132,8 @@ const Settings = () => {
     custom_templates: [] as any[],
     avatar_url: "",
     email: "",
+    header_font_size: "13",
+    footer_font_size: "13",
   });
 
   const [accountSettings, setAccountSettings] = useState({
@@ -194,6 +196,8 @@ const Settings = () => {
         custom_templates: Array.isArray(data.custom_templates) ? data.custom_templates : [],
         avatar_url: data.avatar_url || "",
         email: data.email || "",
+        header_font_size: data.header_font_size || "13",
+        footer_font_size: data.footer_font_size || "13",
       });
       setAvatarPreview(data.avatar_url || "");
     }
@@ -335,6 +339,8 @@ const Settings = () => {
           footer_right: footerRightHtml,
           bismillah_text: profile.bismillah_text,
           avatar_url: avatarUrl,
+          header_font_size: profile.header_font_size,
+          footer_font_size: profile.footer_font_size,
         })
         .eq("id", user.id);
 
@@ -784,6 +790,40 @@ const Settings = () => {
                   <p className="text-xs text-muted-foreground mt-1">
                     This will appear at the top of your prescriptions. Leave empty to hide.
                   </p>
+                </div>
+
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4">Header & Footer Font Sizes</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="header_font_size">Header Font Size (px)</Label>
+                      <Input
+                        id="header_font_size"
+                        type="number"
+                        min="8"
+                        max="20"
+                        value={profile.header_font_size}
+                        onChange={(e) => setProfile({ ...profile, header_font_size: e.target.value })}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Current: {profile.header_font_size}px (Default: 13px, reduced by 2px from 15px)
+                      </p>
+                    </div>
+                    <div>
+                      <Label htmlFor="footer_font_size">Footer Font Size (px)</Label>
+                      <Input
+                        id="footer_font_size"
+                        type="number"
+                        min="8"
+                        max="20"
+                        value={profile.footer_font_size}
+                        onChange={(e) => setProfile({ ...profile, footer_font_size: e.target.value })}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Current: {profile.footer_font_size}px (Default: 13px, reduced by 2px from 15px)
+                      </p>
+                    </div>
+                  </div>
                 </div>
 
                 <Button

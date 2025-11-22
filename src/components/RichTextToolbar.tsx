@@ -72,8 +72,14 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
       const range = selection.getRangeAt(0);
       const span = document.createElement('span');
       span.style.fontSize = value + 'px';
-      span.appendChild(range.extractContents());
+      const contents = range.extractContents();
+      span.appendChild(contents);
       range.insertNode(span);
+      
+      // Restore selection
+      range.selectNodeContents(span);
+      selection.removeAllRanges();
+      selection.addRange(range);
     }
   };
 
@@ -99,8 +105,14 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
       const range = selection.getRangeAt(0);
       const span = document.createElement('span');
       span.style.lineHeight = value;
-      span.appendChild(range.extractContents());
+      const contents = range.extractContents();
+      span.appendChild(contents);
       range.insertNode(span);
+      
+      // Restore selection
+      range.selectNodeContents(span);
+      selection.removeAllRanges();
+      selection.addRange(range);
     }
   };
 
@@ -111,8 +123,14 @@ const RichTextToolbar = ({ onCommand, className }: RichTextToolbarProps) => {
       const range = selection.getRangeAt(0);
       const span = document.createElement('span');
       span.style.letterSpacing = value + 'px';
-      span.appendChild(range.extractContents());
+      const contents = range.extractContents();
+      span.appendChild(contents);
       range.insertNode(span);
+      
+      // Restore selection
+      range.selectNodeContents(span);
+      selection.removeAllRanges();
+      selection.addRange(range);
     }
   };
 

@@ -1574,9 +1574,11 @@ export type Database = {
           display_order: number | null
           doctor_id_display: string | null
           email: string
+          footer_font_size: string | null
           footer_left: string | null
           footer_right: string | null
           full_name: string | null
+          header_font_size: string | null
           id: string
           is_active: boolean | null
           is_featured: boolean | null
@@ -1621,9 +1623,11 @@ export type Database = {
           display_order?: number | null
           doctor_id_display?: string | null
           email: string
+          footer_font_size?: string | null
           footer_left?: string | null
           footer_right?: string | null
           full_name?: string | null
+          header_font_size?: string | null
           id: string
           is_active?: boolean | null
           is_featured?: boolean | null
@@ -1668,9 +1672,11 @@ export type Database = {
           display_order?: number | null
           doctor_id_display?: string | null
           email?: string
+          footer_font_size?: string | null
           footer_left?: string | null
           footer_right?: string | null
           full_name?: string | null
+          header_font_size?: string | null
           id?: string
           is_active?: boolean | null
           is_featured?: boolean | null
