@@ -30,8 +30,8 @@ const Questionnaires = () => {
             </Button>
           </div>
 
-          <Tabs defaultValue="templates" className="space-y-4 md:space-y-6">
-            <TabsList className="w-full grid grid-cols-2 bg-blue-50 p-1">
+          <Tabs defaultValue="templates" className="space-y-6 md:space-y-8">
+            <TabsList className="w-full grid grid-cols-2 bg-blue-50 p-1 gap-1 mb-4">
               <TabsTrigger 
                 value="templates" 
                 className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
@@ -46,11 +46,11 @@ const Questionnaires = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="templates" className="mt-4 md:mt-6">
+            <TabsContent value="templates" className="mt-20 pt-6">
               <QuestionnaireList onView={setPreviewTemplate} />
             </TabsContent>
 
-            <TabsContent value="responses" className="mt-4 md:mt-6">
+            <TabsContent value="responses" className="mt-20 pt-6">
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
                   <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />

@@ -14,8 +14,8 @@ const Notifications = () => {
           </p>
         </div>
 
-        <Tabs defaultValue="templates">
-          <TabsList className="w-full grid grid-cols-2 bg-blue-50 p-1">
+        <Tabs defaultValue="templates" className="space-y-6 md:space-y-8">
+          <TabsList className="w-full grid grid-cols-2 bg-blue-50 p-1 gap-1 mb-4">
             <TabsTrigger 
               value="templates" 
               className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
@@ -30,11 +30,11 @@ const Notifications = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="templates" className="mt-4 md:mt-6">
+          <TabsContent value="templates" className="mt-20 pt-6">
             <NotificationTemplates />
           </TabsContent>
 
-          <TabsContent value="settings" className="mt-4 md:mt-6">
+          <TabsContent value="settings" className="mt-20 pt-6">
             <NotificationSettings />
           </TabsContent>
         </Tabs>

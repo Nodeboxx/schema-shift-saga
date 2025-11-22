@@ -528,8 +528,8 @@ const Settings = () => {
           <h1 className="text-2xl md:text-4xl font-bold text-foreground">Profile Settings</h1>
         </div>
 
-        <Tabs defaultValue="account" className="space-y-4 md:space-y-6">
-          <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1">
+        <Tabs defaultValue="account" className="space-y-6 md:space-y-8">
+          <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1 gap-1 mb-4">
             <TabsTrigger 
               value="account" 
               className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
@@ -550,7 +550,7 @@ const Settings = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="account" className="space-y-4 md:space-y-6">
+          <TabsContent value="account" className="mt-20 pt-6">
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl md:text-2xl">Account Settings</CardTitle>
@@ -670,7 +670,7 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="profile" className="space-y-4 md:space-y-6">
+          <TabsContent value="profile" className="mt-20 pt-6">
             <Card>
               <CardHeader>
                 <CardTitle className="text-xl md:text-2xl">Doctor Information</CardTitle>
@@ -799,7 +799,7 @@ const Settings = () => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="templates" className="space-y-4 md:space-y-6">
+          <TabsContent value="templates" className="mt-20 pt-6">
             <Card>
               <CardHeader>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

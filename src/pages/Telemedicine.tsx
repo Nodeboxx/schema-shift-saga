@@ -223,8 +223,8 @@ const Telemedicine = () => {
             </div>
           </div>
 
-          <Tabs defaultValue="active" className="space-y-4 md:space-y-6">
-            <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1">
+          <Tabs defaultValue="active" className="space-y-6 md:space-y-8">
+            <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1 gap-1 mb-4">
               <TabsTrigger 
                 value="active" 
                 className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
@@ -249,7 +249,7 @@ const Telemedicine = () => {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="active" className="space-y-4">
+            <TabsContent value="active" className="mt-20 pt-6">
               {filterSessions(["waiting", "in_progress"]).length === 0 ? (
                 <Card className="p-8 text-center">
                   <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -298,7 +298,7 @@ const Telemedicine = () => {
               )}
             </TabsContent>
 
-            <TabsContent value="scheduled" className="space-y-4">
+            <TabsContent value="scheduled" className="mt-20 pt-6">
               {filterSessions(["scheduled"]).length === 0 ? (
                 <Card className="p-8 text-center">
                   <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -326,7 +326,7 @@ const Telemedicine = () => {
               )}
             </TabsContent>
 
-            <TabsContent value="completed" className="space-y-4">
+            <TabsContent value="completed" className="mt-20 pt-6">
               {filterSessions(["completed"]).length === 0 ? (
                 <Card className="p-8 text-center">
                   <CheckCircle2 className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
