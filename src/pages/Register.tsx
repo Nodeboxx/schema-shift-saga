@@ -173,15 +173,28 @@ const Register = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "Success!",
-        description: "Account created successfully. Logging you in...",
-      });
-      
-      // Auto login
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
+      // For clinics, show different message and redirect to approval page
+      if (userType === "clinic_admin") {
+        toast({
+          title: "Clinic Registration Received!",
+          description: "Your clinic registration is pending approval. Our team will contact you within 24-48 hours.",
+        });
+        
+        // Redirect to a clinic approval pending page
+        setTimeout(() => {
+          navigate("/clinic/pending-approval");
+        }, 1500);
+      } else {
+        // For doctors, normal flow
+        toast({
+          title: "Success!",
+          description: "Account created successfully. Logging you in...",
+        });
+        
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000);
+      }
     } catch (error: any) {
       console.error("Signup error:", error);
       toast({
