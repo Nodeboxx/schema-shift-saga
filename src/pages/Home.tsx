@@ -67,6 +67,22 @@ const Home = () => {
         "Dedicated support",
         "Custom integrations"
       ]
+    },
+    {
+      name: "Clinic",
+      price: "8990 ৳",
+      period: "per month",
+      features: [
+        "Multi-doctor management",
+        "Doctor account creation",
+        "Payroll management",
+        "Revenue analytics",
+        "Patient management",
+        "Team collaboration",
+        "Appointment scheduling",
+        "Custom branding",
+        "Priority support"
+      ]
     }
   ];
 
@@ -131,7 +147,7 @@ const Home = () => {
           <h3 className="text-3xl font-bold text-center mb-12">
             Choose your plan
           </h3>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {plans.map((plan, index) => (
               <Card 
                 key={index} 
