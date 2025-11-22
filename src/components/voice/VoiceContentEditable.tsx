@@ -58,6 +58,16 @@ export const VoiceContentEditable = ({
     if (!isListening) {
       console.log('[VoiceContentEditable] 🎤 Request to start listening in', lang, 'component:', componentId);
 
+      // Bengali is not supported by Web Speech API, inform user
+      if (lang === 'bn-BD') {
+        toast({
+          title: 'Bengali Not Supported',
+          description: 'Bengali voice input is not supported in live typing. Please use the microphone button on text boxes for Bengali.',
+          variant: 'destructive',
+        });
+        return;
+      }
+
       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         toast({
           title: 'Not Supported',
@@ -67,20 +77,20 @@ export const VoiceContentEditable = ({
         return;
       }
 
-      // Check global lock: only one recorder at a time
-      if (!requestRecording(componentId)) {
-        toast({
-          title: 'Another Recording Active',
-          description: 'Please stop the other recording before starting a new one.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
         setLanguage(lang);
-        console.log('[VoiceContentEditable] ✅ Microphone access granted, starting recognition');
+        console.log('[VoiceContentEditable] ✅ Microphone access granted, requesting global lock');
+        
+        // Register with global context and provide stop callback
+        requestRecording(componentId, () => {
+          console.log('[VoiceContentEditable] 🔄 Forced stop from another recorder');
+          if (isListening) {
+            toggleListening();
+          }
+        });
+        
+        console.log('[VoiceContentEditable] 🎙️ Starting recognition');
         toggleListening(lang);
       } catch (error) {
         console.error('[VoiceContentEditable] ❌ Microphone permission error:', error);

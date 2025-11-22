@@ -126,19 +126,18 @@ export const VoiceTextarea = ({
     } else {
       console.log('[VoiceTextarea] 🎤 User clicked to start recording, language:', lang, 'component:', componentId);
       
-      // Check if another recorder is already active
-      if (!requestRecording(componentId)) {
-        toast({
-          title: 'Another Recording Active',
-          description: 'Please stop the other recording before starting a new one.',
-          variant: 'destructive',
-        });
-        return;
-      }
-      
       try {
         setLanguage(lang);
         console.log('[VoiceTextarea] 🌐 Language set to:', lang);
+        
+        // Register with global lock and provide stop callback
+        requestRecording(componentId, () => {
+          console.log('[VoiceTextarea] 🔄 Forced stop from another recorder');
+          if (isRecording) {
+            stopRecording();
+          }
+        });
+        
         const success = await startRecording();
         if (!success) {
           console.error('[VoiceTextarea] ❌ Failed to start recording');

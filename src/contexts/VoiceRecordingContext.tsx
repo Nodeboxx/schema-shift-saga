@@ -1,8 +1,8 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useRef } from 'react';
 
 interface VoiceRecordingContextType {
   activeRecorderId: string | null;
-  requestRecording: (id: string) => boolean;
+  requestRecording: (id: string, stopCallback: () => void) => boolean;
   releaseRecording: (id: string) => void;
 }
 
@@ -10,14 +10,19 @@ const VoiceRecordingContext = createContext<VoiceRecordingContextType | undefine
 
 export const VoiceRecordingProvider = ({ children }: { children: ReactNode }) => {
   const [activeRecorderId, setActiveRecorderId] = useState<string | null>(null);
+  const stopCallbackRef = useRef<(() => void) | null>(null);
 
-  const requestRecording = useCallback((id: string) => {
+  const requestRecording = useCallback((id: string, stopCallback: () => void) => {
     if (activeRecorderId && activeRecorderId !== id) {
-      console.log('[VoiceRecordingContext] ❌ Recording request denied for', id, '- already active:', activeRecorderId);
-      return false;
+      console.log('[VoiceRecordingContext] ❌ Another recorder active:', activeRecorderId, '- stopping it before starting', id);
+      // Stop the current active recorder
+      if (stopCallbackRef.current) {
+        stopCallbackRef.current();
+      }
     }
     console.log('[VoiceRecordingContext] ✅ Recording request granted for', id);
     setActiveRecorderId(id);
+    stopCallbackRef.current = stopCallback;
     return true;
   }, [activeRecorderId]);
 
@@ -25,6 +30,7 @@ export const VoiceRecordingProvider = ({ children }: { children: ReactNode }) =>
     if (activeRecorderId === id) {
       console.log('[VoiceRecordingContext] 🔓 Recording released for', id);
       setActiveRecorderId(null);
+      stopCallbackRef.current = null;
     }
   }, [activeRecorderId]);
 
