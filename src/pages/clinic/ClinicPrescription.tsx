@@ -23,17 +23,33 @@ const ClinicPrescription = () => {
 
   useEffect(() => {
     const initAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          navigate("/login");
+          return;
+        }
+
         setUser(session.user);
         
         // Get user's clinic
-        const { data: profile } = await supabase
+        const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("clinic_id, role")
           .eq("id", session.user.id)
           .single();
+
+        if (profileError) {
+          console.error("Profile fetch error:", profileError);
+          toast({
+            title: "Error",
+            description: "Failed to load profile information",
+            variant: "destructive",
+          });
+          navigate("/clinic/dashboard");
+          return;
+        }
 
         if (!profile?.clinic_id) {
           toast({
@@ -41,7 +57,7 @@ const ClinicPrescription = () => {
             description: "You must be part of a clinic to access this feature",
             variant: "destructive",
           });
-          navigate("/dashboard");
+          navigate("/clinic/dashboard");
           return;
         }
 
@@ -50,10 +66,17 @@ const ClinicPrescription = () => {
         if (id) {
           await loadPrescription(id, profile.clinic_id);
         }
-      } else {
-        navigate("/login");
+      } catch (error) {
+        console.error("Init error:", error);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred",
+          variant: "destructive",
+        });
+        navigate("/clinic/dashboard");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     initAuth();
@@ -122,7 +145,7 @@ const ClinicPrescription = () => {
           <p className="text-muted-foreground mb-6">
             You must be part of a clinic to access prescription features.
           </p>
-          <Button onClick={() => navigate("/dashboard")} size="lg" className="w-full">
+          <Button onClick={() => navigate("/clinic/dashboard")} size="lg" className="w-full">
             Go to Dashboard
           </Button>
         </Card>
