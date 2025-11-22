@@ -84,20 +84,29 @@ const Telemedicine = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
+      console.log('[Telemedicine] Loaded sessions:', data);
       setSessions(data || []);
 
       // Check if we need to auto-start a session from URL parameters
       const sessionId = searchParams.get('session');
       const autoStart = searchParams.get('autoStart') === 'true';
       
+      console.log('[Telemedicine] URL params:', { sessionId, autoStart });
+      
       if (sessionId && autoStart && data) {
         const session = data.find(s => s.id === sessionId);
+        console.log('[Telemedicine] Found session to auto-start:', session);
+        
         if (session && session.status === 'waiting') {
           // Auto-start the session
+          console.log('[Telemedicine] Auto-starting session...');
           await startSession(sessionId);
+        } else {
+          console.log('[Telemedicine] Session not in waiting status or not found');
         }
       }
     } catch (error: any) {
+      console.error('[Telemedicine] Error loading sessions:', error);
       toast({
         title: "Error loading sessions",
         description: error.message,
@@ -110,6 +119,8 @@ const Telemedicine = () => {
 
   const startSession = async (sessionId: string) => {
     try {
+      console.log('[Telemedicine] Starting session:', sessionId);
+      
       const { error } = await supabase
         .from("telemedicine_sessions")
         .update({
@@ -118,14 +129,20 @@ const Telemedicine = () => {
         })
         .eq("id", sessionId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('[Telemedicine] Error updating session:', error);
+        throw error;
+      }
 
+      console.log('[Telemedicine] Session started successfully, setting active');
       setActiveSession(sessionId);
+      
       toast({
         title: "Session started",
         description: "You can now communicate with the patient",
       });
     } catch (error: any) {
+      console.error('[Telemedicine] Error in startSession:', error);
       toast({
         title: "Error starting session",
         description: error.message,
