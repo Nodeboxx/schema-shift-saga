@@ -46,7 +46,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const checkClinicMembership = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user || !isDoctor) return;
+      if (!user) return;
 
       const { data: profile } = await supabase
         .from('profiles')
@@ -67,11 +67,13 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
 
       const { data } = await supabase
         .from("profiles")
-        .select("subscription_tier")
+        .select("subscription_tier, clinic_id")
         .eq("id", user.id)
         .single();
 
-      setUserTier((data?.subscription_tier as SubscriptionTier) || 'free');
+      const tier = (data?.subscription_tier as SubscriptionTier) || 'free';
+      // Clinic-managed doctors are treated as enterprise for navigation locks
+      setUserTier(data?.clinic_id ? 'enterprise' : tier);
     } catch (error) {
       console.error("Error checking subscription:", error);
     }
