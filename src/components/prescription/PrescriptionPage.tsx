@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import PrescriptionHeader from "./PrescriptionHeader";
+import ClinicPrescriptionHeader from "./ClinicPrescriptionHeader";
 import PatientInfoBar from "./PatientInfoBar";
 import PrescriptionBody from "./PrescriptionBody";
 import PrescriptionFooter from "./PrescriptionFooter";
@@ -598,12 +599,19 @@ const PrescriptionPage = ({ prescriptionData, userId, clinicId, onSaveReady, onA
               </Button>
             )}
             
-            <PrescriptionHeader 
-              doctorInfo={doctorInfo} 
-              setDoctorInfo={setDoctorInfo}
-              prescriptionId={prescriptionId}
-              uniqueHash={uniqueHash}
-            />
+            {clinicId ? (
+              <ClinicPrescriptionHeader 
+                clinicId={clinicId}
+                prescriptionDate={patientInfo.patientDate}
+              />
+            ) : (
+              <PrescriptionHeader 
+                doctorInfo={doctorInfo} 
+                setDoctorInfo={setDoctorInfo}
+                prescriptionId={prescriptionId}
+                uniqueHash={uniqueHash}
+              />
+            )}
             <PatientInfoBar patientInfo={patientInfo} setPatientInfo={setPatientInfo} />
             <PrescriptionBody 
               data={page.id === 1 ? bodyData : pagesData[page.id]}
