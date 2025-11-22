@@ -115,8 +115,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      {/* Logo + Clinic Name on left, Doctor Names on right */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "20px", marginBottom: "5px" }}>
+      {/* Row 1: Logo + Clinic Name, English Doctor Name, Bengali Doctor Name - all aligned */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "8px" }}>
         {/* Left: Logo and Clinic Name */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: "1" }}>
           {clinicBranding.logo_url && (
@@ -140,41 +140,38 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           )}
         </div>
 
-        {/* Right: Doctor Names */}
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "20px" }}>
+        {/* Right: Doctor Names - English and Bengali */}
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "30px" }}>
           {/* English doctor name */}
-          <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "left" }}>
-            <h2
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => handleEdit("docNameEN", e.currentTarget.textContent || "")}
-              style={{
-                fontSize: "20px",
-                fontWeight: 700,
-                color: "#0056b3",
-                margin: 0,
-              }}
-            >
-              {doctorInfo.docNameEN}
-            </h2>
-          </div>
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("docNameEN", e.currentTarget.textContent || "")}
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+              color: "#0056b3",
+              margin: 0,
+            }}
+          >
+            {doctorInfo.docNameEN}
+          </h2>
 
           {/* Bengali doctor name */}
-          <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
-            <h2
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => handleEdit("docNameBN", e.currentTarget.textContent || "")}
-              style={{
-                fontSize: "20px",
-                fontWeight: 700,
-                color: "#0056b3",
-                margin: 0,
-              }}
-            >
-              {doctorInfo.docNameBN}
-            </h2>
-          </div>
+          <h2
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("docNameBN", e.currentTarget.textContent || "")}
+            style={{
+              fontSize: "20px",
+              fontWeight: 700,
+              color: "#0056b3",
+              margin: 0,
+              textAlign: "right"
+            }}
+          >
+            {doctorInfo.docNameBN}
+          </h2>
 
           {/* QR Code */}
           {prescriptionId && uniqueHash && (
@@ -185,7 +182,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       </div>
 
-      {/* Clinic Details and Doctor Degrees below */}
+      {/* Row 2: Clinic Details and Doctor Degrees - all aligned */}
       <div style={{ 
         display: "flex", 
         justifyContent: "space-between", 
@@ -206,28 +203,24 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
 
         {/* Doctor degrees - right side */}
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "20px" }}>
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "30px" }}>
           {/* English doctor degrees */}
-          <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "left" }}>
-            <div
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
-              dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
-              style={{ margin: 0 }}
-            />
-          </div>
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
+            dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
+            style={{ fontSize: "13px", lineHeight: "1.5", margin: 0 }}
+          />
 
           {/* Bengali doctor degrees */}
-          <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
-            <div
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
-              dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
-              style={{ margin: 0 }}
-            />
-          </div>
+          <div
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
+            dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
+            style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "right", margin: 0 }}
+          />
 
           {/* Spacer for QR code alignment */}
           {prescriptionId && uniqueHash && (
