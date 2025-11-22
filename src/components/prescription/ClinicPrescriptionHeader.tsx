@@ -100,11 +100,12 @@ const ClinicPrescriptionHeader = ({
         justifyContent: "space-between", 
         alignItems: "flex-start", 
         gap: "15px",
-        maxWidth: "100%"
+        maxWidth: "100%",
+        position: "relative"
       }}>
         {/* Left Column - Clinic Logo & Branding */}
         <div style={{ 
-          flex: "1 1 auto", 
+          flex: "1 1 0",
           fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           display: "flex", 
@@ -156,7 +157,9 @@ const ClinicPrescriptionHeader = ({
 
         {/* Center Column - Medical Council Logo & QR Code */}
         <div style={{ 
-          flex: "0 0 auto", 
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
           display: "flex", 
           flexDirection: "column", 
           alignItems: "center",
@@ -164,7 +167,8 @@ const ClinicPrescriptionHeader = ({
           padding: "8px 15px",
           gap: "12px",
           minWidth: "95px",
-          maxWidth: "120px"
+          maxWidth: "120px",
+          zIndex: 10
         }}>
           {councilLogoUrl && (
             <>
@@ -208,7 +212,7 @@ const ClinicPrescriptionHeader = ({
 
         {/* Right Column - Bengali Doctor Info (Controlled by Profile Settings) */}
         <div style={{ 
-          flex: "1 1 auto", 
+          flex: "1 1 0",
           fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           textAlign: "right",
