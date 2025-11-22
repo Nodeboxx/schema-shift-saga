@@ -36,10 +36,29 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const [open, setOpen] = useState(false);
   const isMobile = useIsMobile();
   const [userTier, setUserTier] = useState<SubscriptionTier>('free');
+  const [clinicId, setClinicId] = useState<string | null>(null);
 
   useEffect(() => {
     checkSubscription();
+    checkClinicMembership();
   }, []);
+
+  const checkClinicMembership = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !isDoctor) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('clinic_id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      setClinicId(profile?.clinic_id || null);
+    } catch (error) {
+      console.error('Error checking clinic membership:', error);
+    }
+  };
 
   const checkSubscription = async () => {
     try {
@@ -63,30 +82,33 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
     navigate('/login');
   };
 
+  // Determine if this is a clinic doctor
+  const isClinicDoctor = isDoctor && !!clinicId;
+  
   const navItems = [
     { 
-      to: '/dashboard', 
+      to: isClinicDoctor ? '/clinic/dashboard' : '/dashboard', 
       icon: LayoutDashboard, 
       label: 'Dashboard',
       show: true,
       feature: null
     },
     { 
-      to: '/prescriptions', 
+      to: isClinicDoctor ? '/clinic/prescriptions' : '/prescriptions', 
       icon: FileText, 
       label: 'All Prescriptions',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
       feature: 'prescription_history' as FeatureKey
     },
     { 
-      to: '/dashboard?tab=patients', 
+      to: isClinicDoctor ? '/clinic/dashboard/patients' : '/dashboard?tab=patients', 
       icon: Users, 
       label: 'My Patients',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
       feature: 'patient_management' as FeatureKey
     },
     { 
-      to: '/appointments', 
+      to: isClinicDoctor ? '/clinic/dashboard/appointments' : '/appointments', 
       icon: Calendar, 
       label: 'Appointments',
       show: isDoctor || isSuperAdmin || isClinicAdmin,
