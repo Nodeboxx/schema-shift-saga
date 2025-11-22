@@ -25,12 +25,11 @@ export const VoiceContentEditable = ({
 }: VoiceContentEditableProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const componentId = useId();
-  const [language, setLanguage] = useState<'en-US' | 'bn-BD'>('en-US');
   const { toast } = useToast();
   const { requestRecording, releaseRecording } = useVoiceRecordingContext();
 
   const { isListening, toggleListening } = useVoiceRecording({
-    language,
+    language: 'en-US',
     continuous: true,
     onTranscript: (text) => {
       if (contentRef.current) {
@@ -54,9 +53,9 @@ export const VoiceContentEditable = ({
     },
   });
 
-  const handleVoiceToggle = async (lang: 'en-US' | 'bn-BD') => {
+  const handleVoiceToggle = async () => {
     if (!isListening) {
-      console.log('[VoiceContentEditable] 🎤 Request to start listening in', lang, 'component:', componentId);
+      console.log('[VoiceContentEditable] 🎤 Request to start listening in en-US, component:', componentId);
 
       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         toast({
@@ -69,7 +68,6 @@ export const VoiceContentEditable = ({
 
       try {
         await navigator.mediaDevices.getUserMedia({ audio: true });
-        setLanguage(lang);
         console.log('[VoiceContentEditable] ✅ Microphone access granted, requesting global lock');
         
         // Register with global context and provide stop callback
@@ -81,7 +79,7 @@ export const VoiceContentEditable = ({
         });
         
         console.log('[VoiceContentEditable] 🎙️ Starting recognition');
-        toggleListening(lang);
+        toggleListening('en-US');
       } catch (error) {
         console.error('[VoiceContentEditable] ❌ Microphone permission error:', error);
         releaseRecording(componentId);
