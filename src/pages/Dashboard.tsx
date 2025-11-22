@@ -209,7 +209,7 @@ const Dashboard = () => {
 
           <TabsContent value="overview" className="space-y-6">
             <div className="flex justify-end mb-4">
-              <Button onClick={() => navigate(clinicId ? '/clinic/prescription' : '/prescription')}>
+              <Button onClick={() => navigate(clinicId ? '/clinic/doctor/prescription' : '/prescription')}>
                 <FileText className="w-4 h-4 mr-2" />
                 New Prescription
               </Button>
