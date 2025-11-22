@@ -23,6 +23,11 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
   const [clinicBranding, setClinicBranding] = useState<{
     logo_url?: string;
     header_image_url?: string;
+    name?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+    website?: string;
   }>({});
 
   useEffect(() => {
@@ -54,59 +59,30 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         setRegistrationNumber(profile.registration_number || "");
       }
 
-      const loadBrandingForClinic = async (clinicId: string) => {
-        const { data: clinic, error: clinicError } = await supabase
-          .from("clinics")
-          .select("logo_url, header_image_url")
-          .eq("id", clinicId)
-          .maybeSingle();
+      // Load first accessible clinic for this user (owner or clinic member)
+      const { data: clinics, error: clinicsError } = await supabase
+        .from("clinics")
+        .select("logo_url, header_image_url, name, address, phone, email, website")
+        .order("header_image_url", { ascending: false, nullsFirst: false })
+        .limit(1);
 
-        if (clinicError) {
-          console.error("Error loading clinic branding:", clinicError);
-          return;
-        }
-
-        if (clinic) {
-          setClinicBranding({
-            logo_url: clinic.logo_url,
-            header_image_url: clinic.header_image_url,
-          });
-        }
-      };
-
-      let clinicId: string | null = (profile && profile.clinic_id) ? profile.clinic_id : null;
-
-      if (!clinicId) {
-        const { data: membership, error: membershipError } = await supabase
-          .from("clinic_members")
-          .select("clinic_id")
-          .eq("user_id", session.user.id)
-          .eq("is_active", true)
-          .maybeSingle();
-
-        if (membershipError) {
-          console.error("Error loading clinic membership:", membershipError);
-        } else if (membership?.clinic_id) {
-          clinicId = membership.clinic_id;
-        }
+      if (clinicsError) {
+        console.error("Error loading clinic branding:", clinicsError);
+        setLoading(false);
+        return;
       }
 
-      if (!clinicId) {
-        const { data: ownedClinic, error: ownedError } = await supabase
-          .from("clinics")
-          .select("id")
-          .eq("owner_id", session.user.id)
-          .maybeSingle();
-
-        if (ownedError) {
-          console.error("Error loading owned clinic:", ownedError);
-        } else if (ownedClinic?.id) {
-          clinicId = ownedClinic.id;
-        }
-      }
-
-      if (clinicId) {
-        await loadBrandingForClinic(clinicId);
+      if (clinics && clinics.length > 0) {
+        const clinic = clinics[0];
+        setClinicBranding({
+          logo_url: clinic.logo_url,
+          header_image_url: clinic.header_image_url,
+          name: clinic.name,
+          address: clinic.address,
+          phone: clinic.phone,
+          email: clinic.email,
+          website: clinic.website,
+        });
       }
 
       setLoading(false);
