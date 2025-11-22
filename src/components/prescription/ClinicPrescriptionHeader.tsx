@@ -23,8 +23,8 @@ const ClinicPrescriptionHeader = ({
   const [loading, setLoading] = useState(true);
   const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
-  const [doctorNameBN, setDoctorNameBN] = useState<string>("");
-  const [doctorDegreeBN, setDoctorDegreeBN] = useState<string>("");
+  const [doctorNameBN, setDoctorNameBN] = useState<string>(doctorInfo.docNameBN);
+  const [doctorDegreeBN, setDoctorDegreeBN] = useState<string>(doctorInfo.docDegreeBN);
 
   useEffect(() => {
     const loadClinicAndDoctor = async () => {
@@ -39,7 +39,7 @@ const ClinicPrescriptionHeader = ({
         if (clinicError) throw clinicError;
         setClinic(clinicData);
 
-        // Load doctor's profile info (council logo, registration, and Bengali info)
+        // Load doctor's profile info - FULL CONTROL from profile settings
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           const { data: profileData } = await supabase
@@ -51,8 +51,13 @@ const ClinicPrescriptionHeader = ({
           if (profileData) {
             setCouncilLogoUrl(profileData.council_logo_url || "");
             setRegistrationNumber(profileData.registration_number || "");
-            setDoctorNameBN(profileData.name_bn || doctorInfo.docNameBN);
-            setDoctorDegreeBN(profileData.degree_bn || doctorInfo.docDegreeBN);
+            // Profile settings have FULL control - override everything
+            if (profileData.name_bn) {
+              setDoctorNameBN(profileData.name_bn);
+            }
+            if (profileData.degree_bn) {
+              setDoctorDegreeBN(profileData.degree_bn);
+            }
           }
         }
       } catch (error) {
@@ -63,7 +68,7 @@ const ClinicPrescriptionHeader = ({
     };
 
     loadClinicAndDoctor();
-  }, [clinicId, doctorInfo.docNameBN, doctorInfo.docDegreeBN]);
+  }, [clinicId]);
 
   if (loading) {
     return (
@@ -195,7 +200,7 @@ const ClinicPrescriptionHeader = ({
           )}
         </div>
 
-        {/* Right Column - Bengali Doctor Info */}
+        {/* Right Column - Bengali Doctor Info (Controlled by Profile Settings) */}
         <div style={{ 
           flex: "1", 
           fontSize: "13px", 
@@ -211,10 +216,10 @@ const ClinicPrescriptionHeader = ({
             lineHeight: 1.2,
             letterSpacing: "-0.01em"
           }}>
-            {doctorNameBN || doctorInfo.docNameBN}
+            {doctorNameBN}
           </h2>
           <div
-            dangerouslySetInnerHTML={{ __html: doctorDegreeBN || doctorInfo.docDegreeBN }}
+            dangerouslySetInnerHTML={{ __html: doctorDegreeBN }}
             style={{ 
               margin: 0,
               color: "#374151",
