@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useUserRole } from "@/hooks/useUserRole";
 
 interface PrescriptionControlsProps {
   prescriptionId?: string;
@@ -25,6 +26,7 @@ interface PrescriptionControlsProps {
 const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patientName, patientPhone, onSave, onAddPage, zoom = 1.3, onZoomChange, pageLayout = 'single', onPageLayoutChange }: PrescriptionControlsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { role } = useUserRole();
   const [headerlessPrint, setHeaderlessPrint] = useState(false);
 
   const handlePrint = () => {
@@ -61,7 +63,12 @@ const PrescriptionControls = ({ prescriptionId, userId, onRichTextCommand, patie
   };
 
   const handleGoHome = () => {
-    navigate("/dashboard");
+    // Route based on user role
+    if (role === 'clinic_admin') {
+      navigate("/clinic");
+    } else {
+      navigate("/dashboard");
+    }
   };
 
   const handleLogout = async () => {
