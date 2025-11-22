@@ -17,7 +17,7 @@ interface OnboardingWizardProps {
 const steps = [
   {
     id: 1,
-    title: "Welcome to MedDexPro",
+    title: "Welcome to MedRxPro",
     description: "Let's get you set up in just a few steps"
   },
   {
@@ -28,7 +28,7 @@ const steps = [
   {
     id: 3,
     title: "Explore Key Features",
-    description: "Learn what you can do with MedDexPro"
+    description: "Learn what you can do with MedRxPro"
   },
   {
     id: 4,
@@ -148,7 +148,7 @@ export const OnboardingWizard = ({ open, onComplete }: OnboardingWizardProps) =>
 
       toast({
         title: "Welcome aboard!",
-        description: "You're all set to start using MedDexPro"
+        description: "You're all set to start using MedRxPro"
       });
 
       onComplete();
@@ -203,7 +203,7 @@ export const OnboardingWizard = ({ open, onComplete }: OnboardingWizardProps) =>
               <div className="max-w-lg mx-auto">
                 <h3 className="text-xl font-semibold mb-4">Welcome to Your Medical Practice Platform</h3>
                 <p className="text-muted-foreground mb-6">
-                  MedDexPro is designed to help healthcare professionals manage their practice efficiently. 
+                  MedRxPro is designed to help healthcare professionals manage their practice efficiently. 
                   Let's take a quick tour to get you started.
                 </p>
                 <div className="grid gap-4 text-left">

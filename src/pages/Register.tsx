@@ -264,7 +264,7 @@ const Register = () => {
       <div className="w-full max-w-7xl">
         {/* Logo */}
         <div className="flex justify-center mb-6 sm:mb-8">
-          <img src={logo} alt="MedDexPro" className="h-10 sm:h-12 md:h-14" />
+          <img src={logo} alt="MedRxPro" className="h-10 sm:h-12 md:h-14" />
         </div>
 
         {/* Back to Home - Top Right */}
@@ -282,7 +282,7 @@ const Register = () => {
 
               <div className="mb-8">
                 <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
-                <p className="text-muted-foreground">Sign in to continue to MedDexPro</p>
+                <p className="text-muted-foreground">Sign in to continue to MedRxPro</p>
               </div>
 
               <form onSubmit={handleLogin} className="space-y-5">
@@ -330,7 +330,7 @@ const Register = () => {
 
               <div className="mt-6 text-center">
                 <p className="text-sm text-muted-foreground">
-                  New to MedDexPro?{" "}
+                  New to MedRxPro?{" "}
                   <span className="text-primary font-semibold">Check the right side →</span>
                 </p>
               </div>
@@ -345,7 +345,7 @@ const Register = () => {
                 <>
                   <div className="mb-8">
                     <h2 className="text-3xl font-bold mb-2">Get Started</h2>
-                    <p className="text-muted-foreground">Create your MedDexPro account</p>
+                    <p className="text-muted-foreground">Create your MedRxPro account</p>
                   </div>
 
                   <form onSubmit={handleSignupDetails} className="space-y-4">

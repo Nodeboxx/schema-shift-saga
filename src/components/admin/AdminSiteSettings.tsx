@@ -37,7 +37,7 @@ const AdminSiteSettings = () => {
   });
   const [logo, setLogo] = useState({ url: "", alt: "" });
   const [favicon, setFavicon] = useState({ url: "/favicon.ico" });
-  const [siteName, setSiteName] = useState({ value: "MedDexPro" });
+  const [siteName, setSiteName] = useState({ value: "MedRxPro" });
   const [whatsappNumber, setWhatsappNumber] = useState({ value: "" });
   const [logoUploading, setLogoUploading] = useState(false);
   const [faviconUploading, setFaviconUploading] = useState(false);
@@ -357,7 +357,7 @@ const AdminSiteSettings = () => {
                   <Input
                     value={siteName.value}
                     onChange={(e) => setSiteName({ value: e.target.value })}
-                    placeholder="MedDexPro"
+                    placeholder="MedRxPro"
                   />
                   <Button onClick={saveSiteName} disabled={saving}>
                     <Save className="h-4 w-4 mr-2" />
@@ -529,7 +529,7 @@ const AdminSiteSettings = () => {
                 <Input
                   value={footer.copyright}
                   onChange={(e) => setFooter({ ...footer, copyright: e.target.value })}
-                  placeholder="© 2025 MedDexPro. All rights reserved."
+                  placeholder="© 2025 MedRxPro. All rights reserved."
                 />
               </div>
 

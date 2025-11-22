@@ -86,7 +86,7 @@ const ClinicPendingApproval = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
       <Card className="max-w-2xl w-full p-8 md:p-12 text-center">
         <div className="flex justify-center mb-6">
-          <img src={logo} alt="MedDexPro" className="h-12" />
+          <img src={logo} alt="MedRxPro" className="h-12" />
         </div>
 
         <div className="mb-8">
@@ -95,7 +95,7 @@ const ClinicPendingApproval = () => {
           </div>
           <h1 className="text-3xl font-bold mb-3">Registration Under Review</h1>
           <p className="text-lg text-muted-foreground">
-            Thank you for registering <strong>{clinic?.name}</strong> with MedDexPro!
+            Thank you for registering <strong>{clinic?.name}</strong> with MedRxPro!
           </p>
         </div>
 
@@ -157,8 +157,8 @@ const ClinicPendingApproval = () => {
           </div>
           <p className="text-xs text-muted-foreground text-center">
             Need email support?{" "}
-            <a href="mailto:support@meddexpro.com" className="text-primary hover:underline">
-              support@meddexpro.com
+            <a href="mailto:support@medrxpro.com" className="text-primary hover:underline">
+              support@medrxpro.com
             </a>
           </p>
         </div>

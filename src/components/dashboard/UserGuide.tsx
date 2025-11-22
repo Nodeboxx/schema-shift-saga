@@ -12,7 +12,7 @@ export const UserGuide = () => {
           User Guide - Getting Started
         </CardTitle>
         <CardDescription>
-          Complete guide to using all features of MedDexPro
+          Complete guide to using all features of MedRxPro
         </CardDescription>
       </CardHeader>
       <CardContent>

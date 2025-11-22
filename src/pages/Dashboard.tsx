@@ -185,7 +185,7 @@ const Dashboard = () => {
             <CardContent className="p-12 text-center space-y-6">
               <Sparkles className="h-16 w-16 mx-auto text-primary" />
               <div>
-                <h2 className="text-2xl font-bold mb-2">Welcome to MedDexPro!</h2>
+                <h2 className="text-2xl font-bold mb-2">Welcome to MedRxPro!</h2>
                 <p className="text-muted-foreground">
                   Subscribe to a plan or start your free trial to unlock all features and create prescriptions.
                 </p>

@@ -343,7 +343,7 @@ const Checkout = () => {
                       <span className="font-medium">Bank Name:</span> Example Bank Ltd.
                     </div>
                     <div>
-                      <span className="font-medium">Account Name:</span> MedDexPro Technologies
+                      <span className="font-medium">Account Name:</span> MedRxPro Technologies
                     </div>
                     <div>
                       <span className="font-medium">Account Number:</span> 1234567890
@@ -356,7 +356,7 @@ const Checkout = () => {
                      </div>
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
-                    After transfer, please email the receipt to billing@meddexpro.com
+                    After transfer, please email the receipt to billing@medrxpro.com
                   </p>
                 </div>
               )}
