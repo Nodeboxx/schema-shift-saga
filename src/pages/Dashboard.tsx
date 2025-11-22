@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [clinicSubscriptionExpired, setClinicSubscriptionExpired] = useState(false);
   const [clinicInfo, setClinicInfo] = useState<any>(null);
+  const [clinicId, setClinicId] = useState<string | null>(null);
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalPrescriptions: 0,
@@ -75,6 +76,7 @@ const Dashboard = () => {
         .single();
 
       if (profile?.clinic_id) {
+        setClinicId(profile.clinic_id);
         // Check clinic subscription status
         const { data: clinic } = await supabase
           .from("clinics")
@@ -197,7 +199,7 @@ const Dashboard = () => {
 
           <TabsContent value="overview" className="space-y-6">
             <div className="flex justify-end mb-4">
-              <Button onClick={() => navigate('/prescription')}>
+              <Button onClick={() => navigate(clinicId ? '/clinic/prescription' : '/prescription')}>
                 <FileText className="w-4 h-4 mr-2" />
                 New Prescription
               </Button>
