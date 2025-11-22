@@ -58,16 +58,6 @@ export const VoiceContentEditable = ({
     if (!isListening) {
       console.log('[VoiceContentEditable] 🎤 Request to start listening in', lang, 'component:', componentId);
 
-      // Bengali is not supported by Web Speech API, inform user
-      if (lang === 'bn-BD') {
-        toast({
-          title: 'Bengali Not Supported',
-          description: 'Bengali voice input is not supported in live typing. Please use the microphone button on text boxes for Bengali.',
-          variant: 'destructive',
-        });
-        return;
-      }
-
       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         toast({
           title: 'Not Supported',
