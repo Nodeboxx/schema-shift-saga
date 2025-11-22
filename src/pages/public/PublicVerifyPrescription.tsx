@@ -234,34 +234,35 @@ const PublicVerifyPrescription = () => {
           </div>
         </Card>
 
-        {/* Diagnosis */}
-        {prescription.dx_text && (
-          <Card className="p-6 mb-4 bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-950/20 dark:to-rose-900/20 border-rose-200 dark:border-rose-800">
-            <h3 className="font-semibold text-lg mb-3 text-rose-900 dark:text-rose-100">Diagnosis</h3>
-            <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: prescription.dx_text.replace(/\n/g, '<br/>') }}
-            />
-          </Card>
-        )}
-
-        {/* Chief Complaints */}
-        {prescription.cc_text && (
-          <Card className="p-6 mb-4 bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/20 border-blue-200 dark:border-blue-800">
-            <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-100">Chief Complaints</h3>
-            <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: prescription.cc_text.replace(/\n/g, '<br/>') }}
-            />
+        {/* Chief Complaints & Diagnosis - Combined */}
+        {(prescription.cc_text || prescription.dx_text) && (
+          <Card className="p-6 mb-4">
+            {prescription.cc_text && (
+              <div className="mb-4">
+                <h3 className="font-semibold text-base mb-2 text-foreground border-b border-border pb-2">Chief Complaints</h3>
+                <div className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: prescription.cc_text.replace(/\n/g, '<br/>') }}
+                />
+              </div>
+            )}
+            {prescription.dx_text && (
+              <div>
+                <h3 className="font-semibold text-base mb-2 text-foreground border-b border-border pb-2">Diagnosis</h3>
+                <div className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: prescription.dx_text.replace(/\n/g, '<br/>') }}
+                />
+              </div>
+            )}
           </Card>
         )}
 
         {/* Medicines */}
         {prescription.prescription_items && prescription.prescription_items.length > 0 && (
-          <Card className="p-8 mb-4 bg-gradient-to-br from-background to-primary/5">
-            <h3 className="font-bold text-2xl mb-6 flex items-center gap-3 text-primary">
-              <FileText className="w-7 h-7" />
+          <Card className="p-6 mb-4">
+            <h3 className="font-bold text-xl mb-6 text-foreground border-b-2 border-border pb-3">
               Prescribed Medications
             </h3>
-            <div className="space-y-6">
+            <div className="space-y-5">
               {prescription.prescription_items
                 .filter((item: any) => item.item_type === 'medicine')
                 .map((item: any, index: number) => {
@@ -276,57 +277,45 @@ const PublicVerifyPrescription = () => {
                   }
 
                   return (
-                    <div key={item.id} className="bg-background rounded-xl p-6 border-2 border-primary/20 shadow-lg hover:shadow-xl transition-all">
-                      <div className="flex items-start gap-4 mb-4">
-                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-md">
-                          <span className="text-lg font-bold text-primary-foreground">{index + 1}</span>
+                    <div key={item.id} className="border border-border rounded-lg p-5 bg-background">
+                      <div className="flex items-start gap-4 mb-4 border-b border-border pb-4">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-foreground text-background flex items-center justify-center font-bold text-base">
+                          {index + 1}
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-bold text-xl text-foreground mb-2">{item.name}</h4>
-                          <div className="grid md:grid-cols-2 gap-3 text-sm">
+                          <h4 className="font-bold text-lg text-foreground mb-3">{item.name}</h4>
+                          <div className="space-y-2 text-sm">
                             {parsedDetails.generic_name && (
-                              <div className="flex items-start gap-2">
-                                <span className="font-semibold text-primary min-w-[80px]">Generic:</span>
-                                <span className="text-foreground">{parsedDetails.generic_name}</span>
+                              <div className="flex items-start">
+                                <span className="font-semibold text-foreground min-w-[100px]">Generic:</span>
+                                <span className="text-muted-foreground">{parsedDetails.generic_name}</span>
                               </div>
                             )}
                             {parsedDetails.strength && (
-                              <div className="flex items-start gap-2">
-                                <span className="font-semibold text-primary min-w-[80px]">Strength:</span>
-                                <span className="text-foreground">{parsedDetails.strength}</span>
-                              </div>
-                            )}
-                            {parsedDetails.manufacturer_name && (
-                              <div className="flex items-start gap-2 md:col-span-2">
-                                <span className="font-semibold text-primary min-w-[80px]">Manufacturer:</span>
-                                <span className="text-muted-foreground">{parsedDetails.manufacturer_name}</span>
+                              <div className="flex items-start">
+                                <span className="font-semibold text-foreground min-w-[100px]">Strength:</span>
+                                <span className="text-muted-foreground">{parsedDetails.strength}</span>
                               </div>
                             )}
                           </div>
                         </div>
                       </div>
                       
-                      {item.dose && (
-                        <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg p-4 mb-3 border-l-4 border-primary shadow-sm">
-                          <p className="text-xs font-bold text-primary mb-2 uppercase tracking-wide">DOSAGE INSTRUCTIONS</p>
-                          <p className="text-base font-semibold text-foreground leading-relaxed">{item.dose}</p>
-                        </div>
-                      )}
-                      
-                      {item.duration && (
-                        <div className="bg-gradient-to-r from-secondary/10 to-secondary/5 rounded-lg p-4 mb-3 border-l-4 border-secondary shadow-sm">
-                          <p className="text-xs font-bold text-secondary-foreground mb-2 uppercase tracking-wide">DURATION</p>
-                          <p className="text-base font-semibold text-foreground">{item.duration.replace('→ সময়কাল: ', '')}</p>
-                        </div>
-                      )}
-                      
-                      {parsedDetails.details && (
-                        <div className="bg-muted/30 rounded-lg p-4 border-l-4 border-muted">
-                          <p className="text-sm text-muted-foreground italic leading-relaxed">
-                            <span className="font-semibold text-foreground">Note:</span> {parsedDetails.details}
-                          </p>
-                        </div>
-                      )}
+                      <div className="space-y-3">
+                        {item.dose && (
+                          <div className="border-l-4 border-foreground pl-4">
+                            <p className="text-xs font-bold text-foreground mb-1 uppercase tracking-wider">Dosage</p>
+                            <p className="text-base text-foreground font-medium">{item.dose}</p>
+                          </div>
+                        )}
+                        
+                        {item.duration && (
+                          <div className="border-l-4 border-muted-foreground pl-4">
+                            <p className="text-xs font-bold text-foreground mb-1 uppercase tracking-wider">Duration</p>
+                            <p className="text-base text-foreground font-medium">{item.duration.replace('→ সময়কাল: ', '')}</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -334,36 +323,38 @@ const PublicVerifyPrescription = () => {
           </Card>
         )}
 
-        {/* Advice */}
-        {prescription.adv_text && (
-          <Card className="p-6 mb-4 bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/20 dark:to-amber-900/20 border-amber-200 dark:border-amber-800">
-            <h3 className="font-semibold text-lg mb-3 text-amber-900 dark:text-amber-100">Medical Advice</h3>
-            <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: prescription.adv_text.replace(/\n/g, '<br/>') }}
-            />
-          </Card>
-        )}
-
-        {/* Follow Up */}
-        {prescription.follow_up_text && (
-          <Card className="p-6 mb-4 bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-950/20 dark:to-purple-900/20 border-purple-200 dark:border-purple-800">
-            <h3 className="font-semibold text-lg mb-3 flex items-center gap-2 text-purple-900 dark:text-purple-100">
-              <Calendar className="w-5 h-5" />
-              Follow Up Instructions
-            </h3>
-            <div className="whitespace-pre-wrap text-sm text-foreground leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: prescription.follow_up_text.replace(/\n/g, '<br/>') }}
-            />
+        {/* Advice & Follow Up - Combined */}
+        {(prescription.adv_text || prescription.follow_up_text) && (
+          <Card className="p-6 mb-4">
+            {prescription.adv_text && (
+              <div className="mb-4">
+                <h3 className="font-semibold text-base mb-2 text-foreground border-b border-border pb-2">Medical Advice</h3>
+                <div className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: prescription.adv_text.replace(/\n/g, '<br/>') }}
+                />
+              </div>
+            )}
+            {prescription.follow_up_text && (
+              <div>
+                <h3 className="font-semibold text-base mb-2 text-foreground border-b border-border pb-2 flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Follow Up
+                </h3>
+                <div className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: prescription.follow_up_text.replace(/\n/g, '<br/>') }}
+                />
+              </div>
+            )}
           </Card>
         )}
 
         {/* Footer */}
-        <Card className="p-6 text-center bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 border-primary/20">
-          <p className="text-sm font-medium text-foreground mb-1">
+        <Card className="p-5 text-center border-2 border-border">
+          <p className="text-sm font-semibold text-foreground mb-1">
             ✓ Electronically Generated & Verified Prescription
           </p>
           <p className="text-xs text-muted-foreground">
-            Secured by MedDexPro • Created on {format(new Date(prescription.created_at), 'PPP')}
+            Created on {format(new Date(prescription.created_at), 'PPP')}
           </p>
         </Card>
       </div>
