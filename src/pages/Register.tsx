@@ -8,10 +8,9 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Check, ArrowRight, Home, Loader2 } from "lucide-react";
+import { Check, ArrowRight, Home, Loader2, HeartPulse } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/medrxpro-logo.png";
 
 interface PricingPlan {
   id: string;
@@ -264,7 +263,14 @@ const Register = () => {
       <div className="w-full max-w-7xl">
         {/* Logo */}
         <div className="flex justify-center mb-6 sm:mb-8">
-          <img src={logo} alt="MedRxPro" className="h-10 sm:h-12 md:h-14" />
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-purple-600">
+              <HeartPulse className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              MedRxPro
+            </span>
+          </div>
         </div>
 
         {/* Back to Home - Top Right */}
