@@ -106,9 +106,9 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "20px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
         {/* Left Column - English */}
-        <div style={{ flex: "1.2", fontSize: `${headerFontSize}px`, lineHeight: "1.4", minWidth: 0 }}>
+        <div style={{ flex: "1.5", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: 0 }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -119,8 +119,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               fontWeight: 700,
               color: "#0056b3",
               margin: 0,
-              marginBottom: "3px",
-              lineHeight: "1.3",
+              marginBottom: "2px",
+              lineHeight: "1.2",
             }}
           >
             {doctorInfo.docNameEN}
@@ -131,7 +131,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
-            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.4" }}
+            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.35" }}
           />
         </div>
 
@@ -142,16 +142,17 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           flexDirection: "column", 
           alignItems: "center",
           justifyContent: "flex-start",
-          padding: "0 15px",
-          gap: "8px"
+          padding: "0 12px",
+          gap: "6px",
+          minWidth: "100px"
         }}>
           {clinicBranding.logo_url ? (
             <img 
               src={clinicBranding.logo_url} 
               alt="Clinic Logo"
               style={{
-                maxHeight: "65px",
-                maxWidth: "95px",
+                maxHeight: "60px",
+                maxWidth: "85px",
                 objectFit: "contain"
               }}
               onError={(e) => {
@@ -164,8 +165,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
                 src={councilLogoUrl} 
                 alt="Medical Council Logo"
                 style={{
-                  maxHeight: "55px",
-                  maxWidth: "75px",
+                  maxHeight: "50px",
+                  maxWidth: "70px",
                   objectFit: "contain"
                 }}
                 onError={(e) => {
@@ -174,7 +175,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               />
               {registrationNumber && (
                 <div style={{
-                  fontSize: "9px",
+                  fontSize: "8px",
                   fontWeight: 600,
                   color: "#333",
                   textAlign: "center",
@@ -193,7 +194,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
 
         {/* Right Column - Bengali */}
-        <div style={{ flex: "1.2", fontSize: `${headerFontSize}px`, lineHeight: "1.4", textAlign: "right", minWidth: 0 }}>
+        <div style={{ flex: "1.5", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: 0 }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -204,8 +205,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               fontWeight: 700,
               color: "#0056b3",
               margin: 0,
-              marginBottom: "3px",
-              lineHeight: "1.3",
+              marginBottom: "2px",
+              lineHeight: "1.2",
             }}
           >
             {doctorInfo.docNameBN}
@@ -216,7 +217,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
-            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.4" }}
+            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.35" }}
           />
         </div>
       </div>
