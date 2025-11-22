@@ -304,6 +304,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                           contentEditable
                           suppressContentEditableWarning
                           onBlur={(e) => updateMedicine(med.id, "name", e.currentTarget.textContent || "")}
+                          className="medicine-name-print"
                           style={{ 
                             fontSize: "13px", 
                             fontWeight: 700, 
@@ -357,7 +358,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                     />
                   </div>
                 </div>
-                <div style={{ fontSize: "9px", fontWeight: 500, marginBottom: "2px", marginLeft: "18px" }}>
+                <div className="medicine-dose-print" style={{ fontSize: "9px", fontWeight: 500, marginBottom: "2px", marginLeft: "18px" }}>
                   {med.dose || "Dosage"}
                   {med.duration && ` ${med.duration.replace("→ সময়কাল: ", "")}`}
                 </div>
@@ -365,6 +366,7 @@ const RightColumn = ({ width, data, setData }: RightColumnProps) => {
                 <VoiceContentEditable
                   value={med.details || ""}
                   onBlur={(value) => updateMedicine(med.id, "details", value)}
+                  className="medicine-details-print"
                   style={{
                     fontSize: "8px",
                     lineHeight: "1.3",
