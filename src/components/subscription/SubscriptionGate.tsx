@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Zap } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { hasFeatureAccess, getMinimumTier, FEATURE_NAMES, FeatureKey } from "@/lib/subscriptionFeatures";
 
@@ -21,13 +21,21 @@ export const SubscriptionGate = ({
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const [userTier, setUserTier] = useState<string | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     checkAccess();
-  }, [feature]);
+  }, [feature, location.pathname]);
 
   const checkAccess = async () => {
     try {
+      // Clinic doctor routes are always treated as enterprise with full access
+      if (location.pathname.startsWith("/clinic/doctor/")) {
+        setHasAccess(true);
+        setUserTier("enterprise");
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setHasAccess(false);
