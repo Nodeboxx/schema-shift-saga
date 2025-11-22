@@ -23,6 +23,8 @@ const ClinicPrescriptionHeader = ({
   const [loading, setLoading] = useState(true);
   const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
+  const [doctorNameBN, setDoctorNameBN] = useState<string>("");
+  const [doctorDegreeBN, setDoctorDegreeBN] = useState<string>("");
 
   useEffect(() => {
     const loadClinicAndDoctor = async () => {
@@ -37,18 +39,20 @@ const ClinicPrescriptionHeader = ({
         if (clinicError) throw clinicError;
         setClinic(clinicData);
 
-        // Load doctor's council logo and registration
+        // Load doctor's profile info (council logo, registration, and Bengali info)
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           const { data: profileData } = await supabase
             .from("profiles")
-            .select("council_logo_url, registration_number")
+            .select("council_logo_url, registration_number, name_bn, degree_bn")
             .eq("id", session.user.id)
             .single();
 
           if (profileData) {
             setCouncilLogoUrl(profileData.council_logo_url || "");
             setRegistrationNumber(profileData.registration_number || "");
+            setDoctorNameBN(profileData.name_bn || doctorInfo.docNameBN);
+            setDoctorDegreeBN(profileData.degree_bn || doctorInfo.docDegreeBN);
           }
         }
       } catch (error) {
@@ -59,7 +63,7 @@ const ClinicPrescriptionHeader = ({
     };
 
     loadClinicAndDoctor();
-  }, [clinicId]);
+  }, [clinicId, doctorInfo.docNameBN, doctorInfo.docDegreeBN]);
 
   if (loading) {
     return (
@@ -160,7 +164,7 @@ const ClinicPrescriptionHeader = ({
           )}
         </div>
 
-        {/* Right Column - Bengali Doctor Info (unchanged, editable, controlled by doctor) */}
+        {/* Right Column - Bengali Doctor Info (controlled by doctor's profile settings) */}
         <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
           <h2 style={{
             fontSize: "24px",
@@ -168,10 +172,10 @@ const ClinicPrescriptionHeader = ({
             color: "#0056b3",
             margin: 0,
           }}>
-            {doctorInfo.docNameBN}
+            {doctorNameBN || doctorInfo.docNameBN}
           </h2>
           <div
-            dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
+            dangerouslySetInnerHTML={{ __html: doctorDegreeBN || doctorInfo.docDegreeBN }}
             style={{ margin: 0 }}
           />
         </div>
