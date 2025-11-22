@@ -158,10 +158,10 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
         </div>
 
-        {/* Doctor details - right side */}
-        <div style={{ flex: "1", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
+        {/* Doctor details - right side, aligned with clinic details */}
+        <div style={{ flex: "1.5", display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "20px" }}>
           {/* English doctor details */}
-          <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5" }}>
+          <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "left" }}>
             <h2
               contentEditable
               suppressContentEditableWarning
@@ -185,7 +185,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           </div>
 
           {/* Bengali doctor details */}
-          <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
+          <div style={{ fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
             <h2
               contentEditable
               suppressContentEditableWarning
@@ -207,14 +207,14 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               style={{ margin: 0 }}
             />
           </div>
+
+          {/* QR Code */}
+          {prescriptionId && uniqueHash && (
+            <div style={{ flex: "0 0 auto" }}>
+              <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
+            </div>
+          )}
         </div>
-        
-        {/* QR Code */}
-        {prescriptionId && uniqueHash && (
-          <div style={{ flex: "0 0 auto" }}>
-            <QRCodeDisplay prescriptionId={prescriptionId} uniqueHash={uniqueHash} />
-          </div>
-        )}
       </div>
     </header>
   );
