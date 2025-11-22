@@ -116,7 +116,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
       )}
       
       {/* Row 1: Logo + Clinic Name, English Doctor Name, Bengali Doctor Name - all aligned */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "8px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "3px" }}>
         {/* Left: Logo and Clinic Name */}
         <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: "1" }}>
           {clinicBranding.logo_url && (
@@ -182,25 +182,15 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       </div>
 
-      {/* Row 2: Clinic Details and Doctor Degrees - all aligned */}
+      {/* Row 2: Empty space on left, Doctor Degrees on right */}
       <div style={{ 
         display: "flex", 
         justifyContent: "space-between", 
         alignItems: "flex-start", 
-        gap: "20px" 
+        gap: "20px",
+        marginBottom: "8px"
       }}>
-        {/* Clinic Details - left side */}
-        <div style={{ 
-          flex: "1",
-          fontSize: "10px", 
-          color: "#666", 
-          lineHeight: "1.6"
-        }}>
-          {clinicBranding.address && <div>{clinicBranding.address}</div>}
-          {clinicBranding.phone && <div>Phone: {clinicBranding.phone}</div>}
-          {clinicBranding.email && <div>Email: {clinicBranding.email}</div>}
-          {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
-        </div>
+        <div style={{ flex: "1" }}></div>
 
         {/* Doctor degrees - right side */}
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "flex-start", gap: "30px" }}>
@@ -227,6 +217,18 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             <div style={{ width: "80px" }}></div>
           )}
         </div>
+      </div>
+
+      {/* Row 3: Clinic Details */}
+      <div style={{ 
+        fontSize: "10px", 
+        color: "#666", 
+        lineHeight: "1.6"
+      }}>
+        {clinicBranding.address && <div>{clinicBranding.address}</div>}
+        {clinicBranding.phone && <div>Phone: {clinicBranding.phone}</div>}
+        {clinicBranding.email && <div>Email: {clinicBranding.email}</div>}
+        {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
       </div>
     </header>
   );
