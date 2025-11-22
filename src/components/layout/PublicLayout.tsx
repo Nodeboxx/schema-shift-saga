@@ -67,13 +67,34 @@ export const PublicLayout = ({ children }: PublicLayoutProps) => {
                   )}
                 </div>
                 <div className="hidden md:flex items-center gap-8">
-                  <a href="/#features" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <a 
+                    href="#features" 
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
                     Features
                   </a>
-                  <a href="/#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <a 
+                    href="#pricing" 
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
                     Pricing
                   </a>
-                  <a href="/#booking" className="text-muted-foreground hover:text-foreground transition-colors">
+                  <a 
+                    href="#booking" 
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
                     Book Appointment
                   </a>
                   <a href="/find-doctors" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -128,8 +149,30 @@ export const PublicLayout = ({ children }: PublicLayoutProps) => {
               <div>
                 <h4 className="font-semibold mb-4 text-lg">Product</h4>
                 <ul className="space-y-3 text-sm text-muted-foreground">
-                  <li><a href="/#features" className="hover:text-foreground transition-colors">Features</a></li>
-                  <li><a href="/#pricing" className="hover:text-foreground transition-colors">Pricing</a></li>
+                  <li>
+                    <a 
+                      href="#features" 
+                      className="hover:text-foreground transition-colors cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      Features
+                    </a>
+                  </li>
+                  <li>
+                    <a 
+                      href="#pricing" 
+                      className="hover:text-foreground transition-colors cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                    >
+                      Pricing
+                    </a>
+                  </li>
                   <li><a href="/find-doctors" className="hover:text-foreground transition-colors">Find Doctors</a></li>
                 </ul>
               </div>
