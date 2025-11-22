@@ -209,10 +209,10 @@ const ClinicPrescriptionHeader = ({
           minWidth: 0
         }}>
           <h2 style={{
-            fontSize: "26px",
+            fontSize: "28px",
             fontWeight: 700,
             color: "#0056b3",
-            margin: "0 0 6px 0",
+            margin: "0 0 8px 0",
             lineHeight: 1.2,
             letterSpacing: "-0.01em"
           }}>
@@ -222,6 +222,8 @@ const ClinicPrescriptionHeader = ({
             dangerouslySetInnerHTML={{ __html: doctorDegreeBN }}
             style={{ 
               margin: 0,
+              fontSize: "13px",
+              fontWeight: 400,
               color: "#374151",
               lineHeight: 1.7
             }}
