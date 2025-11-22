@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Video, Users, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { useSearchParams } from "react-router-dom";
 import TelemedicineSession from "@/components/telemedicine/TelemedicineSession";
 
 interface Session {
@@ -31,6 +32,7 @@ interface Session {
 
 const Telemedicine = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeSession, setActiveSession] = useState<string | null>(null);
@@ -83,6 +85,18 @@ const Telemedicine = () => {
 
       if (error) throw error;
       setSessions(data || []);
+
+      // Check if we need to auto-start a session from URL parameters
+      const sessionId = searchParams.get('session');
+      const autoStart = searchParams.get('autoStart') === 'true';
+      
+      if (sessionId && autoStart && data) {
+        const session = data.find(s => s.id === sessionId);
+        if (session && session.status === 'waiting') {
+          // Auto-start the session
+          await startSession(sessionId);
+        }
+      }
     } catch (error: any) {
       toast({
         title: "Error loading sessions",

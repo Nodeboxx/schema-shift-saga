@@ -197,9 +197,9 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
         description: "Telemedicine session has been created. Redirecting...",
       });
 
-      // Navigate to telemedicine page
+      // Navigate to telemedicine page with session ID
       setTimeout(() => {
-        navigate("/telemedicine");
+        navigate(`/telemedicine?session=${session.id}&autoStart=true`);
       }, 500);
     } catch (error: any) {
       console.error("Error starting telemedicine:", error);
