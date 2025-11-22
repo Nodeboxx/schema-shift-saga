@@ -69,14 +69,17 @@ export const useVoiceRecording = ({
       recognition.onerror = (event: any) => {
         console.error('[useVoiceRecording] Speech recognition error:', event.error);
         
-        // Don't auto-restart on these errors
-        if (event.error === 'not-allowed' || event.error === 'network' || event.error === 'no-speech') {
+        // Don't auto-restart on these critical errors
+        if (event.error === 'not-allowed' || event.error === 'network' || event.error === 'no-speech' || event.error === 'aborted') {
           shouldRestartRef.current = false;
           setIsListening(false);
           setIsProcessing(false);
           
           if (event.error === 'network') {
-            console.error('[useVoiceRecording] Network error: Speech recognition service unavailable.');
+            console.error('[useVoiceRecording] Network error: Speech recognition service unavailable or language not supported.');
+          }
+          if (event.error === 'aborted') {
+            console.warn('[useVoiceRecording] Recognition aborted (likely by another instance)');
           }
         }
       };
