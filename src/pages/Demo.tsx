@@ -154,51 +154,172 @@ const Demo = () => {
           </TabsContent>
 
           <TabsContent value="clinic" className="space-y-6">
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <h3 className="text-xl font-bold">Clinic Dashboard Preview</h3>
-                <p className="text-muted-foreground">See how clinic owners manage their team, branding, and subscription.</p>
-              </div>
+            <div className="mb-6">
+              <h3 className="text-xl font-bold mb-2">Clinic Dashboard Preview</h3>
+              <p className="text-muted-foreground">Manage up to 50 doctors, patients, appointments, payroll, and subscription - all in one place.</p>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">Total Patients</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">1,247</div>
+                  <p className="text-xs text-muted-foreground mt-1">Across all doctors</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">Active Doctors</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">12 / 50</div>
+                  <p className="text-xs text-muted-foreground mt-1">Enterprise plan</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">৳2,45,000</div>
+                  <p className="text-xs text-muted-foreground mt-1">+12% from last month</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">Appointments</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">342</div>
+                  <p className="text-xs text-muted-foreground mt-1">This month</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Clinic Overview</CardTitle>
+                  <CardTitle>Clinic Features</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="font-semibold">Sunrise Health Clinic</div>
-                  <div className="text-sm text-muted-foreground">Patients per day: 120</div>
-                  <div className="text-sm text-muted-foreground">Active doctors: 8</div>
+                <CardContent className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                    <div>
+                      <div className="font-medium">Doctor Management</div>
+                      <div className="text-sm text-muted-foreground">Add, edit, delete up to 50 doctors. Reset passwords, manage profiles.</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                    <div>
+                      <div className="font-medium">Patient Overview</div>
+                      <div className="text-sm text-muted-foreground">View all patients across doctors with full medical history.</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                    <div>
+                      <div className="font-medium">Appointment Tracking</div>
+                      <div className="text-sm text-muted-foreground">Approve, complete, or cancel appointments for entire clinic.</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                    <div>
+                      <div className="font-medium">Payroll Management</div>
+                      <div className="text-sm text-muted-foreground">Track payments, commissions, bonuses for each doctor.</div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Team Members</CardTitle>
+                  <CardTitle>Clinic Branding & Team</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2 text-sm text-muted-foreground">
-                  <div>• Dr. Ayesha Rahman – Cardiologist</div>
-                  <div>• Dr. Imran Hossain – Diabetologist</div>
-                  <div>• Front desk & nursing staff overview</div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Subscription Status</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm text-muted-foreground">
-                  <div>Plan: Pro (Clinic)</div>
-                  <div>Status: Active – renews in 12 days</div>
-                  <div>Billing: Monthly, auto-renew enabled</div>
+                <CardContent className="space-y-3">
+                  <div className="p-3 bg-muted rounded-lg">
+                    <div className="font-medium mb-2">Custom Branding</div>
+                    <div className="text-sm text-muted-foreground">Upload clinic logo, header image, customize colors and styles.</div>
+                  </div>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <div className="font-medium mb-2">Team Collaboration</div>
+                    <div className="text-sm text-muted-foreground">Invite staff members, assign roles, manage permissions.</div>
+                  </div>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <div className="font-medium mb-2">Revenue Analytics</div>
+                    <div className="text-sm text-muted-foreground">Track earnings, generate reports, monitor clinic performance.</div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
-          <TabsContent value="prescription">
-            <Card>
+          <TabsContent value="prescription" className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Smart Prescription Builder</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                    <div>
+                      <div className="font-medium">Medicine Autocomplete</div>
+                      <div className="text-sm text-muted-foreground">Search from 12,000+ medicines with brand & generic names</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                    <div>
+                      <div className="font-medium">Voice Input</div>
+                      <div className="text-sm text-muted-foreground">Dictate prescriptions using AI-powered voice recognition</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                    <div>
+                      <div className="font-medium">Custom Templates</div>
+                      <div className="text-sm text-muted-foreground">Create & save templates for different specialties</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
+                    <div>
+                      <div className="font-medium">QR Code Verification</div>
+                      <div className="text-sm text-muted-foreground">Each prescription gets unique QR for authenticity</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Professional Output</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="p-3 bg-muted rounded-lg">
+                    <div className="font-medium mb-2">Print & Share</div>
+                    <div className="text-sm text-muted-foreground">Download as PDF, print directly, or share via WhatsApp/Email/Messenger</div>
+                  </div>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <div className="font-medium mb-2">Bengali & English Support</div>
+                    <div className="text-sm text-muted-foreground">Full Unicode support for Bengali text, mixed language prescriptions</div>
+                  </div>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <div className="font-medium mb-2">Patient History</div>
+                    <div className="text-sm text-muted-foreground">Access previous prescriptions, track medications, view trends</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="border-2 border-primary">
               <CardContent className="p-8 text-center">
                 <h3 className="text-xl font-bold mb-3">Try the Prescription Feature</h3>
                 <p className="text-muted-foreground mb-6">
