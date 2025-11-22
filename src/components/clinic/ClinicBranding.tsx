@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Upload } from "lucide-react";
+import { Upload, Image as ImageIcon } from "lucide-react";
 
 interface ClinicBrandingProps {
   clinic: any;
@@ -15,10 +15,11 @@ interface ClinicBrandingProps {
 
 const ClinicBranding = ({ clinic, onUpdate }: ClinicBrandingProps) => {
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState<{ logo?: boolean; header?: boolean }>({});
   const [formData, setFormData] = useState({
     name: clinic.name || "",
     logo_url: clinic.logo_url || "",
+    header_image_url: clinic.header_image_url || "",
     address: clinic.address || "",
     phone: clinic.phone || "",
     email: clinic.email || "",
@@ -26,7 +27,7 @@ const ClinicBranding = ({ clinic, onUpdate }: ClinicBrandingProps) => {
   });
   const { toast } = useToast();
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = async (file: File, type: 'logo' | 'header') => {
     if (!file) return;
 
     // Validate file type
@@ -49,11 +50,11 @@ const ClinicBranding = ({ clinic, onUpdate }: ClinicBrandingProps) => {
       return;
     }
 
-    setUploading(true);
+    setUploading({ ...uploading, [type]: true });
 
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `logo-${Date.now()}.${fileExt}`;
+      const fileName = `${type}-${Date.now()}.${fileExt}`;
       const filePath = `${clinic.id}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -71,12 +72,12 @@ const ClinicBranding = ({ clinic, onUpdate }: ClinicBrandingProps) => {
 
       setFormData({
         ...formData,
-        logo_url: publicUrl
+        [type === 'logo' ? 'logo_url' : 'header_image_url']: publicUrl
       });
 
       toast({
         title: "Success",
-        description: "Logo uploaded successfully"
+        description: `${type === 'logo' ? 'Logo' : 'Header image'} uploaded successfully`
       });
     } catch (error: any) {
       toast({
@@ -85,7 +86,7 @@ const ClinicBranding = ({ clinic, onUpdate }: ClinicBrandingProps) => {
         variant: "destructive"
       });
     } finally {
-      setUploading(false);
+      setUploading({ ...uploading, [type]: false });
     }
   };
 
@@ -120,11 +121,7 @@ const ClinicBranding = ({ clinic, onUpdate }: ClinicBrandingProps) => {
 
   return (
     <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Prescription Settings</h2>
-      <p className="text-sm text-muted-foreground mb-6">
-        Configure your clinic's branding that will appear on all prescriptions created by doctors in your clinic. 
-        The logo will appear on the left side of the prescription header.
-      </p>
+      <h2 className="text-2xl font-bold mb-6">Clinic Branding</h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -137,46 +134,93 @@ const ClinicBranding = ({ clinic, onUpdate }: ClinicBrandingProps) => {
           />
         </div>
 
-        <div className="space-y-3">
-          <Label>Logo</Label>
-          <div className="flex flex-col gap-3">
-            <div className="flex gap-2">
-              <Input
-                id="logo_url"
-                value={formData.logo_url}
-                onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                placeholder="Or enter URL manually"
-                className="flex-1"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => document.getElementById('logo-upload')?.click()}
-                disabled={uploading}
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                {uploading ? "Uploading..." : "Upload"}
-              </Button>
-            </div>
-            <input
-              id="logo-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleFileUpload(file);
-              }}
-            />
-            {formData.logo_url && (
-              <div className="relative border rounded-lg p-4 bg-muted/50">
-                <img
-                  src={formData.logo_url}
-                  alt="Logo preview"
-                  className="h-24 w-auto mx-auto object-contain"
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Logo Upload */}
+          <div className="space-y-3">
+            <Label>Logo</Label>
+            <div className="flex flex-col gap-3">
+              <div className="flex gap-2">
+                <Input
+                  id="logo_url"
+                  value={formData.logo_url}
+                  onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
+                  placeholder="Or enter URL manually"
+                  className="flex-1"
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('logo-upload')?.click()}
+                  disabled={uploading.logo}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploading.logo ? "Uploading..." : "Upload"}
+                </Button>
               </div>
-            )}
+              <input
+                id="logo-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file, 'logo');
+                }}
+              />
+              {formData.logo_url && (
+                <div className="relative border rounded-lg p-4 bg-muted/50">
+                  <img
+                    src={formData.logo_url}
+                    alt="Logo preview"
+                    className="h-24 w-auto mx-auto object-contain"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Header Image Upload */}
+          <div className="space-y-3">
+            <Label>Header Image</Label>
+            <div className="flex flex-col gap-3">
+              <div className="flex gap-2">
+                <Input
+                  id="header_image_url"
+                  value={formData.header_image_url}
+                  onChange={(e) => setFormData({ ...formData, header_image_url: e.target.value })}
+                  placeholder="Or enter URL manually"
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('header-upload')?.click()}
+                  disabled={uploading.header}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploading.header ? "Uploading..." : "Upload"}
+                </Button>
+              </div>
+              <input
+                id="header-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file, 'header');
+                }}
+              />
+              {formData.header_image_url && (
+                <div className="relative border rounded-lg p-4 bg-muted/50">
+                  <img
+                    src={formData.header_image_url}
+                    alt="Header preview"
+                    className="h-24 w-full object-cover rounded"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

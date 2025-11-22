@@ -200,7 +200,7 @@ export const PatientSelector = ({ onPatientSelect }: PatientSelectorProps) => {
                   <SelectTrigger>
                     <SelectValue placeholder="Select..." />
                   </SelectTrigger>
-                  <SelectContent className="z-[10000] bg-popover">
+                  <SelectContent>
                     <SelectItem value="Male">Male</SelectItem>
                     <SelectItem value="Female">Female</SelectItem>
                     <SelectItem value="Other">Other</SelectItem>
