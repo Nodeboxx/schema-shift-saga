@@ -60,7 +60,7 @@ export const useSubscriptionCheck = () => {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("subscription_status, subscription_tier, trial_ends_at, subscription_end_date")
+        .select("subscription_status, subscription_tier, trial_ends_at, subscription_end_date, clinic_id")
         .eq("id", user.id)
         .single();
 
@@ -71,6 +71,17 @@ export const useSubscriptionCheck = () => {
           hasAccess: false,
           status: "inactive",
           tier: "free",
+          loading: false,
+        });
+        return;
+      }
+
+      // Clinic-managed doctors have full access (enterprise features)
+      if (data.clinic_id) {
+        setSubscription({
+          hasAccess: true,
+          status: "active",
+          tier: "enterprise",
           loading: false,
         });
         return;
