@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { QRCodeDisplay } from "./QRCodeDisplay";
 
 interface PrescriptionHeaderProps {
@@ -13,85 +11,23 @@ interface PrescriptionHeaderProps {
   setDoctorInfo: (info: any) => void;
   prescriptionId?: string;
   uniqueHash?: string;
+  profileData?: any;
 }
 
-const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueHash }: PrescriptionHeaderProps) => {
-  const [loading, setLoading] = useState(true);
-  const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
-  const [registrationNumber, setRegistrationNumber] = useState<string>("");
-  const [headerFontSize, setHeaderFontSize] = useState<string>("13");
-  const [degreeEnFontSize, setDegreeEnFontSize] = useState<string>("13");
-  const [degreeBnFontSize, setDegreeBnFontSize] = useState<string>("13");
-
-  const [clinicBranding, setClinicBranding] = useState<{
-    logo_url?: string;
-    header_image_url?: string;
-  }>({});
-
-  useEffect(() => {
-    const loadProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*, clinics:clinic_id(logo_url, header_image_url)")
-        .eq("id", session.user.id)
-        .single();
-
-      if (error) {
-        console.error("Error loading profile:", error);
-        setLoading(false);
-        return;
-      }
-
-      if (data) {
-        setDoctorInfo({
-          bismillah: data.bismillah_text || "",
-          docNameEN: data.full_name || "Dr. [Your Name]",
-          docDegreeEN: data.degree_en || "MBBS<br/>Experienced Physician",
-          docNameBN: data.name_bn || "ডাঃ [আপনার নাম]",
-          docDegreeBN: data.degree_bn || "এম.বি.বি.এস<br/>অভিজ্ঞ চিকিৎসক",
-        });
-        setCouncilLogoUrl(data.council_logo_url || "");
-        setRegistrationNumber(data.registration_number || "");
-        setHeaderFontSize(data.header_font_size || "13");
-        setDegreeEnFontSize(data.degree_en_font_size || "13");
-        setDegreeBnFontSize(data.degree_bn_font_size || "13");
-        
-        // Load clinic branding if user is part of a clinic
-        if (data.clinics) {
-          setClinicBranding({
-            logo_url: data.clinics.logo_url,
-            header_image_url: data.clinics.header_image_url,
-          });
-        }
-      }
-      setLoading(false);
-    };
-
-    loadProfile();
-  }, [setDoctorInfo]);
+const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueHash, profileData }: PrescriptionHeaderProps) => {
+  const councilLogoUrl = profileData?.council_logo_url || "";
+  const registrationNumber = profileData?.registration_number || "";
+  const headerFontSize = profileData?.header_font_size || "13";
+  const degreeEnFontSize = profileData?.degree_en_font_size || "13";
+  const degreeBnFontSize = profileData?.degree_bn_font_size || "13";
+  const clinicBranding = {
+    logo_url: profileData?.clinics?.logo_url,
+    header_image_url: profileData?.clinics?.header_image_url,
+  };
   
   const handleEdit = (field: string, value: string) => {
     setDoctorInfo({ ...doctorInfo, [field]: value });
   };
-
-  if (loading) {
-    return (
-      <header className="prescription-header" style={{
-        padding: "15px",
-        borderBottom: "3px solid #0056b3",
-        minHeight: "150px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "white",
-      }}>
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </header>
-    );
-  }
 
   return (
     <header className="prescription-header" style={{
