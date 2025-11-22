@@ -115,39 +115,41 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px" }}>
-        {/* Left Side - Clinic Logo */}
-        <div style={{ 
-          flex: "0 0 auto",
-          display: "flex",
-          alignItems: "center",
-          gap: "15px"
-        }}>
-          {clinicBranding.logo_url && (
-            <img 
-              src={clinicBranding.logo_url} 
-              alt="Clinic Logo"
-              style={{
-                maxHeight: "50px",
-                maxWidth: "80px",
-                objectFit: "contain"
-              }}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          )}
-          {clinicBranding.name && (
-            <div style={{ fontSize: "14px", fontWeight: 600, color: "#333" }}>
-              {clinicBranding.name}
-            </div>
-          )}
+      {/* Logo at top */}
+      {clinicBranding.logo_url && (
+        <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: "10px" }}>
+          <img 
+            src={clinicBranding.logo_url} 
+            alt="Clinic Logo"
+            style={{
+              maxHeight: "50px",
+              maxWidth: "80px",
+              objectFit: "contain"
+            }}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
         </div>
+      )}
 
-        {/* Right Side - Doctor Details */}
+      {/* Clinic name and doctor details below logo with underline */}
+      <div style={{ 
+        borderTop: "2px solid #0056b3", 
+        paddingTop: "10px",
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "flex-start", 
+        gap: "20px" 
+      }}>
         <div style={{ flex: "1", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
-          {/* English */}
+          {/* Clinic name and English doctor details */}
           <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5" }}>
+            {clinicBranding.name && (
+              <div style={{ fontSize: "16px", fontWeight: 600, color: "#333", marginBottom: "8px" }}>
+                {clinicBranding.name}
+              </div>
+            )}
             <h2
               contentEditable
               suppressContentEditableWarning
@@ -170,7 +172,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             />
           </div>
 
-          {/* Bengali */}
+          {/* Bengali doctor details */}
           <div style={{ flex: "1", fontSize: "13px", lineHeight: "1.5", textAlign: "right" }}>
             <h2
               contentEditable
