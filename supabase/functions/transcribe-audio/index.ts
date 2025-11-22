@@ -42,13 +42,16 @@ serve(async (req) => {
   }
 
   try {
+    console.log('[Edge Function] 📨 Request received')
     const { audio, language } = await req.json()
+    console.log('[Edge Function] 📊 Request params - language:', language, 'audio length:', audio?.length)
     
     if (!audio) {
+      console.error('[Edge Function] ❌ No audio data in request')
       throw new Error('No audio data provided')
     }
 
-    console.log('Processing audio transcription with Lovable AI, language:', language)
+    console.log('[Edge Function] 🤖 Processing audio transcription with Lovable AI, language:', language)
 
     // Prepare prompt based on language
     const languagePrompt = language === 'bn-BD' 
@@ -56,6 +59,7 @@ serve(async (req) => {
       : 'Transcribe this audio in English language. Return only the transcribed text, nothing else.'
 
     // Send to Lovable AI Gateway (using google/gemini-2.5-flash)
+    console.log('[Edge Function] 🚀 Sending request to Lovable AI Gateway...')
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -80,10 +84,11 @@ serve(async (req) => {
         ]
       }),
     })
+    console.log('[Edge Function] 📥 Response received from AI Gateway, status:', response.status)
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Lovable AI error:', errorText)
+      console.error('[Edge Function] ❌ AI Gateway error:', errorText)
       
       if (response.status === 429) {
         throw new Error('Rate limit exceeded. Please wait a moment and try again.')
@@ -95,9 +100,12 @@ serve(async (req) => {
       throw new Error(`Lovable AI error: ${errorText}`)
     }
 
+    console.log('[Edge Function] 📖 Parsing AI response...')
     const result = await response.json()
+    console.log('[Edge Function] 📋 Full AI response:', JSON.stringify(result, null, 2))
     const transcribedText = result.choices?.[0]?.message?.content || ''
-    console.log('Transcription successful:', transcribedText)
+    console.log('[Edge Function] ✅ Transcription successful:', transcribedText)
+    console.log('[Edge Function] 📏 Transcription length:', transcribedText.length, 'characters')
 
     return new Response(
       JSON.stringify({ text: transcribedText }),
