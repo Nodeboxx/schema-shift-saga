@@ -26,8 +26,8 @@ interface Session {
       name: string;
       age: string | null;
       phone: string | null;
-    };
-  };
+    } | null;
+  } | null;
 }
 
 const Telemedicine = () => {
@@ -246,7 +246,9 @@ const Telemedicine = () => {
                   <p className="text-muted-foreground">No active sessions</p>
                 </Card>
               ) : (
-                filterSessions(["waiting", "in_progress"]).map((session) => (
+                filterSessions(["waiting", "in_progress"]).map((session) => {
+                  if (!session.appointments?.patients) return null;
+                  return (
                   <Card key={session.id} className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
@@ -281,7 +283,7 @@ const Telemedicine = () => {
                       </div>
                     </div>
                   </Card>
-                ))
+                )})
               )}
             </TabsContent>
 
@@ -292,7 +294,9 @@ const Telemedicine = () => {
                   <p className="text-muted-foreground">No scheduled sessions</p>
                 </Card>
               ) : (
-                filterSessions(["scheduled"]).map((session) => (
+                filterSessions(["scheduled"]).map((session) => {
+                  if (!session.appointments?.patients) return null;
+                  return (
                   <Card key={session.id} className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
@@ -306,7 +310,7 @@ const Telemedicine = () => {
                       </div>
                     </div>
                   </Card>
-                ))
+                )})
               )}
             </TabsContent>
 
@@ -317,7 +321,9 @@ const Telemedicine = () => {
                   <p className="text-muted-foreground">No completed sessions</p>
                 </Card>
               ) : (
-                filterSessions(["completed"]).map((session) => (
+                filterSessions(["completed"]).map((session) => {
+                  if (!session.appointments?.patients) return null;
+                  return (
                   <Card key={session.id} className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
@@ -336,7 +342,7 @@ const Telemedicine = () => {
                       </div>
                     </div>
                   </Card>
-                ))
+                )})
               )}
             </TabsContent>
           </Tabs>
