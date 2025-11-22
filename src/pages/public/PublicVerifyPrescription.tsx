@@ -22,7 +22,7 @@ const PublicVerifyPrescription = () => {
         .from('prescriptions')
         .select(`
           *,
-          patient:patients(name, age, sex),
+          patient:patients(name, age, sex, patient_id_display),
           doctor:profiles!prescriptions_doctor_id_fkey(
             full_name, 
             degree_en, 
@@ -30,7 +30,8 @@ const PublicVerifyPrescription = () => {
             registration_number, 
             license_number,
             phone,
-            address
+            address,
+            doctor_id_display
           ),
           clinic:clinics(
             name, 
@@ -38,7 +39,8 @@ const PublicVerifyPrescription = () => {
             address, 
             phone, 
             email,
-            website
+            website,
+            clinic_id_display
           ),
           prescription_items(*)
         `)
@@ -141,6 +143,12 @@ const PublicVerifyPrescription = () => {
               <div className="flex-1">
                 <h2 className="font-bold text-2xl text-foreground mb-3">{prescription.doctor?.full_name}</h2>
                 
+                {prescription.doctor?.doctor_id_display && (
+                  <p className="text-sm font-mono text-primary font-semibold mb-2">
+                    Doctor ID: {prescription.doctor.doctor_id_display}
+                  </p>
+                )}
+                
                 {prescription.doctor?.degree_en && (
                   <p className="text-base text-muted-foreground mb-4 whitespace-pre-line leading-relaxed">
                     {prescription.doctor.degree_en.replace(/<br\s*\/?>/gi, '\n')}
@@ -187,9 +195,16 @@ const PublicVerifyPrescription = () => {
                 {prescription.clinic && (
                   <div className="border-t border-border pt-4 mt-4">
                     {prescription.clinic?.name && (
-                      <p className="text-base font-bold text-foreground mb-3">
-                        Clinic: {prescription.clinic.name}
-                      </p>
+                      <div>
+                        <p className="text-base font-bold text-foreground mb-1">
+                          Clinic: {prescription.clinic.name}
+                        </p>
+                        {prescription.clinic?.clinic_id_display && (
+                          <p className="text-sm font-mono text-primary mb-3">
+                            Clinic ID: {prescription.clinic.clinic_id_display}
+                          </p>
+                        )}
+                      </div>
                     )}
                     
                     {prescription.clinic?.address && (
@@ -231,6 +246,11 @@ const PublicVerifyPrescription = () => {
             <div>
               <p className="text-xs font-semibold text-foreground mb-1">Name</p>
               <p className="text-base text-muted-foreground">{prescription.patient_name}</p>
+              {prescription.patient?.patient_id_display && (
+                <p className="text-xs font-mono text-primary mt-1">
+                  Patient ID: {prescription.patient.patient_id_display}
+                </p>
+              )}
             </div>
             <div>
               <p className="text-xs font-semibold text-foreground mb-1">Age</p>
