@@ -200,11 +200,31 @@ const Dashboard = () => {
         ) : (
           <>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
-          <TabsList className="w-full grid grid-cols-2 lg:grid-cols-4">
-            <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
-            <TabsTrigger value="patients" className="text-xs sm:text-sm">My Patients</TabsTrigger>
-            <TabsTrigger value="verify" className="text-xs sm:text-sm">Verify Patient</TabsTrigger>
-            <TabsTrigger value="reports" className="text-xs sm:text-sm">Reports</TabsTrigger>
+          <TabsList className="w-full grid grid-cols-2 lg:grid-cols-4 bg-blue-50 p-1">
+            <TabsTrigger 
+              value="overview" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Overview
+            </TabsTrigger>
+            <TabsTrigger 
+              value="patients" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              My Patients
+            </TabsTrigger>
+            <TabsTrigger 
+              value="verify" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Verify Patient
+            </TabsTrigger>
+            <TabsTrigger 
+              value="reports" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Reports
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-4 md:space-y-6">

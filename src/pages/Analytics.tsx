@@ -145,24 +145,39 @@ const Analytics = () => {
 
           {/* Detailed Analytics Tabs */}
           <Tabs defaultValue="prescriptions" className="space-y-4">
-            <TabsList className="w-full grid grid-cols-2 lg:grid-cols-5">
-              <TabsTrigger value="prescriptions" className="text-xs sm:text-sm">
+            <TabsList className="w-full grid grid-cols-2 lg:grid-cols-5 bg-blue-50 p-1">
+              <TabsTrigger 
+                value="prescriptions" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
                 <FileText className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Prescriptions</span>
               </TabsTrigger>
-              <TabsTrigger value="appointments" className="text-xs sm:text-sm">
+              <TabsTrigger 
+                value="appointments" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
                 <Calendar className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Appointments</span>
               </TabsTrigger>
-              <TabsTrigger value="patients" className="text-xs sm:text-sm">
+              <TabsTrigger 
+                value="patients" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
                 <Users className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Demographics</span>
               </TabsTrigger>
-              <TabsTrigger value="revenue" className="text-xs sm:text-sm">
+              <TabsTrigger 
+                value="revenue" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
                 <DollarSign className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Revenue</span>
               </TabsTrigger>
-              <TabsTrigger value="research" className="text-xs sm:text-sm col-span-2 lg:col-span-1">
+              <TabsTrigger 
+                value="research" 
+                className="text-xs sm:text-sm col-span-2 lg:col-span-1 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
                 <Database className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Insights</span>
               </TabsTrigger>

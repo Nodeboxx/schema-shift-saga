@@ -224,17 +224,26 @@ const Telemedicine = () => {
           </div>
 
           <Tabs defaultValue="active" className="space-y-4 md:space-y-6">
-            <TabsList className="w-full grid grid-cols-3">
-              <TabsTrigger value="active" className="text-xs sm:text-sm">
+            <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1">
+              <TabsTrigger 
+                value="active" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
                 <Users className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Active & Waiting</span>
                 <span className="sm:hidden">Active</span>
               </TabsTrigger>
-              <TabsTrigger value="scheduled" className="text-xs sm:text-sm">
+              <TabsTrigger 
+                value="scheduled" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
                 <Clock className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Scheduled</span>
               </TabsTrigger>
-              <TabsTrigger value="completed" className="text-xs sm:text-sm">
+              <TabsTrigger 
+                value="completed" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
                 <CheckCircle2 className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Completed</span>
               </TabsTrigger>

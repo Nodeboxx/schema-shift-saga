@@ -169,8 +169,11 @@ const Appointments = () => {
           </div>
 
         <Tabs defaultValue="pending" className="space-y-4 md:space-y-6">
-          <TabsList className="w-full grid grid-cols-3">
-            <TabsTrigger value="pending" className="text-xs sm:text-sm">
+          <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1">
+            <TabsTrigger 
+              value="pending" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
               <span className="hidden sm:inline">Pending Requests</span>
               <span className="sm:hidden">Pending</span>
               {pendingRequests.length > 0 && (
@@ -179,8 +182,16 @@ const Appointments = () => {
                 </Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="confirmed" className="text-xs sm:text-sm">Confirmed</TabsTrigger>
-            <TabsTrigger value="calendar" className="text-xs sm:text-sm">
+            <TabsTrigger 
+              value="confirmed" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Confirmed
+            </TabsTrigger>
+            <TabsTrigger 
+              value="calendar" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
               <span className="hidden sm:inline">Calendar View</span>
               <span className="sm:hidden">Calendar</span>
             </TabsTrigger>

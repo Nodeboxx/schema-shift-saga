@@ -15,9 +15,19 @@ const Notifications = () => {
         </div>
 
         <Tabs defaultValue="templates">
-          <TabsList className="w-full grid grid-cols-2">
-            <TabsTrigger value="templates" className="text-xs sm:text-sm">Email Templates</TabsTrigger>
-            <TabsTrigger value="settings" className="text-xs sm:text-sm">Settings</TabsTrigger>
+          <TabsList className="w-full grid grid-cols-2 bg-blue-50 p-1">
+            <TabsTrigger 
+              value="templates" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Email Templates
+            </TabsTrigger>
+            <TabsTrigger 
+              value="settings" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Settings
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="templates" className="mt-4 md:mt-6">
