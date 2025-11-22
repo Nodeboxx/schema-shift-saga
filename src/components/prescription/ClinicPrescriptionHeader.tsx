@@ -144,8 +144,7 @@ const ClinicPrescriptionHeader = ({
               margin: 0, 
               fontSize: "12px",
               color: "#374151",
-              lineHeight: 1.7,
-              whiteSpace: "nowrap"
+              lineHeight: 1.7
             }}>
               {clinic?.address && <div style={{ marginBottom: "2px" }}>{clinic.address}</div>}
               {clinic?.phone && <div style={{ marginBottom: "2px" }}><strong>Phone:</strong> {clinic.phone}</div>}
