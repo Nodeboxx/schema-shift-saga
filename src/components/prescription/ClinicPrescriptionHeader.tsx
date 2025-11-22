@@ -110,8 +110,7 @@ const ClinicPrescriptionHeader = ({
           display: "flex", 
           gap: "12px", 
           alignItems: "flex-start",
-          minWidth: "0",
-          maxWidth: "42%"
+          minWidth: "0"
         }}>
           {clinic?.logo_url && (
             <img 
@@ -136,7 +135,8 @@ const ClinicPrescriptionHeader = ({
               color: "#0056b3",
               margin: "0 0 6px 0",
               lineHeight: 1.2,
-              letterSpacing: "-0.01em"
+              letterSpacing: "-0.01em",
+              whiteSpace: "nowrap"
             }}>
               {clinic?.name || "Clinic Name"}
             </h2>
@@ -144,7 +144,8 @@ const ClinicPrescriptionHeader = ({
               margin: 0, 
               fontSize: "12px",
               color: "#374151",
-              lineHeight: 1.7
+              lineHeight: 1.7,
+              whiteSpace: "nowrap"
             }}>
               {clinic?.address && <div style={{ marginBottom: "2px" }}>{clinic.address}</div>}
               {clinic?.phone && <div style={{ marginBottom: "2px" }}><strong>Phone:</strong> {clinic.phone}</div>}
@@ -212,8 +213,7 @@ const ClinicPrescriptionHeader = ({
           fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           textAlign: "right",
-          minWidth: "0",
-          maxWidth: "42%"
+          minWidth: "0"
         }}>
           <h2 style={{
             fontSize: "28px",
@@ -221,7 +221,8 @@ const ClinicPrescriptionHeader = ({
             color: "#0056b3",
             margin: "0 0 8px 0",
             lineHeight: 1.2,
-            letterSpacing: "-0.01em"
+            letterSpacing: "-0.01em",
+            whiteSpace: "nowrap"
           }}>
             {doctorNameBN}
           </h2>
@@ -232,7 +233,8 @@ const ClinicPrescriptionHeader = ({
               fontSize: `${degreeBnFontSize}px`,
               fontWeight: 400,
               color: "#374151",
-              lineHeight: 1.35
+              lineHeight: 1.35,
+              whiteSpace: "nowrap"
             }}
           />
         </div>

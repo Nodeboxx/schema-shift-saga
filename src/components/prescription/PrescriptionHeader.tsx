@@ -124,7 +124,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
       
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
         {/* Left Column - English */}
-        <div style={{ flex: "1 1 auto", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: "0", maxWidth: "45%" }}>
+        <div style={{ flex: "1 1 auto", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: "0" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -137,6 +137,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               margin: 0,
               marginBottom: "2px",
               lineHeight: "1.2",
+              whiteSpace: "nowrap",
             }}
           >
             {doctorInfo.docNameEN}
@@ -147,7 +148,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
-            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.35" }}
+            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.35", whiteSpace: "nowrap" }}
           />
         </div>
 
@@ -211,7 +212,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
 
         {/* Right Column - Bengali */}
-        <div style={{ flex: "1 1 auto", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: "0", maxWidth: "45%" }}>
+        <div style={{ flex: "1 1 auto", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: "0" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -224,6 +225,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               margin: 0,
               marginBottom: "2px",
               lineHeight: "1.2",
+              whiteSpace: "nowrap",
             }}
           >
             {doctorInfo.docNameBN}
@@ -234,7 +236,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
-            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.35" }}
+            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.35", whiteSpace: "nowrap" }}
           />
         </div>
       </div>
