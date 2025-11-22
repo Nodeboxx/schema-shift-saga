@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, CheckCircle, XCircle, Calendar, User, FileText } from "lucide-react";
+import { Shield, CheckCircle, XCircle, Calendar } from "lucide-react";
 import { format } from "date-fns";
 
 const PublicVerifyPrescription = () => {
@@ -87,145 +87,144 @@ const PublicVerifyPrescription = () => {
   }
 
   return (
-    <div className="min-h-screen bg-muted/20 p-4">
+    <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <Card className="p-6 mb-4">
-          <div className="flex items-center justify-between mb-4">
+        <Card className="p-6 mb-4 border-2 border-foreground">
+          <div className="flex items-center justify-between mb-6 border-b-2 border-border pb-4">
             <div className="flex items-center gap-3">
-              <Shield className="w-8 h-8 text-primary" />
+              <Shield className="w-8 h-8 text-foreground" />
               <div>
-                <h1 className="text-2xl font-bold">Verified Prescription</h1>
+                <h1 className="text-2xl font-bold text-foreground">Verified Prescription</h1>
                 <p className="text-sm text-muted-foreground">Authenticated Medical Document</p>
               </div>
             </div>
-            <Badge className="bg-green-500">
-              <CheckCircle className="w-4 h-4 mr-1" />
+            <div className="px-4 py-2 bg-foreground text-background font-semibold rounded">
+              <CheckCircle className="w-4 h-4 inline mr-1" />
               Valid
-            </Badge>
+            </div>
           </div>
+        </Card>
 
-          {/* Clinic/Doctor Info */}
-          {prescription.doctor && (
-            <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-8 rounded-xl mb-4 border-2 border-primary/30 shadow-lg">
-              <div className="flex items-start gap-6">
-                {prescription.clinic?.logo_url && (
-                  <img 
-                    src={prescription.clinic.logo_url} 
-                    alt="Clinic Logo" 
-                    className="w-24 h-24 object-contain rounded-xl bg-background p-3 border-2 border-border shadow-md"
-                  />
+        {/* Doctor Information */}
+        {prescription.doctor && (
+          <Card className="p-6 mb-4 border-2 border-foreground">
+            <h3 className="font-bold text-xl mb-4 text-foreground border-b-2 border-border pb-3">
+              Doctor Information
+            </h3>
+            <div className="flex items-start gap-6">
+              {prescription.clinic?.logo_url && (
+                <img 
+                  src={prescription.clinic.logo_url} 
+                  alt="Clinic Logo" 
+                  className="w-24 h-24 object-contain border-2 border-border p-2"
+                />
+              )}
+              <div className="flex-1">
+                <h2 className="font-bold text-2xl text-foreground mb-3">{prescription.doctor?.full_name}</h2>
+                
+                {prescription.doctor?.degree_en && (
+                  <p className="text-base text-muted-foreground mb-4 whitespace-pre-line leading-relaxed">
+                    {prescription.doctor.degree_en.replace(/<br\s*\/?>/gi, '\n')}
+                  </p>
                 )}
-                <div className="flex-1">
-                  <h2 className="font-bold text-2xl text-foreground mb-3">{prescription.doctor?.full_name}</h2>
-                  
-                  {prescription.doctor?.degree_en && (
-                    <p className="text-base text-muted-foreground mb-4 whitespace-pre-line leading-relaxed">
-                      {prescription.doctor.degree_en.replace(/<br\s*\/?>/gi, '\n')}
-                    </p>
+                
+                <div className="grid md:grid-cols-2 gap-3 mb-4 text-sm">
+                  {prescription.doctor?.specialization && (
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-foreground">Specialization:</span>
+                      <span className="text-muted-foreground">{prescription.doctor.specialization}</span>
+                    </div>
                   )}
                   
-                  <div className="grid md:grid-cols-2 gap-3 mb-4">
-                    {prescription.doctor?.specialization && (
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm font-semibold text-primary">Specialization:</span>
-                        <span className="text-sm text-foreground">{prescription.doctor.specialization}</span>
-                      </div>
-                    )}
-                    
-                    {prescription.doctor?.registration_number && (
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm font-semibold text-primary">Reg. No:</span>
-                        <span className="text-sm text-foreground">{prescription.doctor.registration_number}</span>
-                      </div>
-                    )}
-                    
-                    {prescription.doctor?.license_number && (
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm font-semibold text-primary">License No:</span>
-                        <span className="text-sm text-foreground">{prescription.doctor.license_number}</span>
-                      </div>
-                    )}
-                    
-                    {prescription.doctor?.phone && (
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm font-semibold text-primary">Doctor Phone:</span>
-                        <span className="text-sm text-foreground">{prescription.doctor.phone}</span>
-                      </div>
-                    )}
-                  </div>
+                  {prescription.doctor?.registration_number && (
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-foreground">Reg. No:</span>
+                      <span className="text-muted-foreground">{prescription.doctor.registration_number}</span>
+                    </div>
+                  )}
+                  
+                  {prescription.doctor?.license_number && (
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-foreground">License No:</span>
+                      <span className="text-muted-foreground">{prescription.doctor.license_number}</span>
+                    </div>
+                  )}
+                  
+                  {prescription.doctor?.phone && (
+                    <div className="flex items-start gap-2">
+                      <span className="font-semibold text-foreground">Phone:</span>
+                      <span className="text-muted-foreground">{prescription.doctor.phone}</span>
+                    </div>
+                  )}
                   
                   {prescription.doctor?.address && (
-                    <p className="text-sm text-muted-foreground mb-4">
-                      <span className="font-semibold text-foreground">Address:</span> {prescription.doctor.address}
-                    </p>
-                  )}
-                  
-                  {prescription.clinic && (
-                    <div className="border-t border-primary/20 pt-4 mt-4">
-                      <div className="flex flex-wrap gap-3 mb-3">
-                        {prescription.clinic?.name && (
-                          <div className="inline-flex items-center gap-2 bg-primary px-4 py-2 rounded-full shadow-md">
-                            <CheckCircle className="w-5 h-5 text-primary-foreground" />
-                            <span className="text-base font-semibold text-primary-foreground">{prescription.clinic.name}</span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      {prescription.clinic?.address && (
-                        <p className="text-sm text-muted-foreground mb-2">
-                          <span className="font-semibold text-foreground">📍 Chamber:</span> {prescription.clinic.address}
-                        </p>
-                      )}
-                      
-                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        {prescription.clinic?.phone && (
-                          <span className="font-medium">📞 {prescription.clinic.phone}</span>
-                        )}
-                        {prescription.clinic?.email && (
-                          <span className="font-medium">✉️ {prescription.clinic.email}</span>
-                        )}
-                        {prescription.clinic?.website && (
-                          <a 
-                            href={prescription.clinic.website} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="font-medium text-primary hover:underline"
-                          >
-                            🌐 {prescription.clinic.website}
-                          </a>
-                        )}
-                      </div>
+                    <div className="flex items-start gap-2 md:col-span-2">
+                      <span className="font-semibold text-foreground">Address:</span>
+                      <span className="text-muted-foreground">{prescription.doctor.address}</span>
                     </div>
                   )}
                 </div>
+                
+                {prescription.clinic && (
+                  <div className="border-t border-border pt-4 mt-4">
+                    {prescription.clinic?.name && (
+                      <p className="text-base font-bold text-foreground mb-3">
+                        Clinic: {prescription.clinic.name}
+                      </p>
+                    )}
+                    
+                    {prescription.clinic?.address && (
+                      <p className="text-sm text-muted-foreground mb-2">
+                        <span className="font-semibold text-foreground">Chamber:</span> {prescription.clinic.address}
+                      </p>
+                    )}
+                    
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      {prescription.clinic?.phone && (
+                        <span className="text-muted-foreground">
+                          <span className="font-semibold text-foreground">Phone:</span> {prescription.clinic.phone}
+                        </span>
+                      )}
+                      {prescription.clinic?.email && (
+                        <span className="text-muted-foreground">
+                          <span className="font-semibold text-foreground">Email:</span> {prescription.clinic.email}
+                        </span>
+                      )}
+                      {prescription.clinic?.website && (
+                        <span className="text-muted-foreground">
+                          <span className="font-semibold text-foreground">Website:</span> {prescription.clinic.website}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-          )}
-        </Card>
+          </Card>
+        )}
 
         {/* Patient Information */}
-        <Card className="p-6 mb-4">
-          <h3 className="font-semibold mb-4 flex items-center gap-2">
-            <User className="w-5 h-5" />
+        <Card className="p-6 mb-4 border-2 border-foreground">
+          <h3 className="font-bold text-xl mb-4 text-foreground border-b-2 border-border pb-3">
             Patient Information
           </h3>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-sm text-muted-foreground">Name</p>
-              <p className="font-medium">{prescription.patient_name}</p>
+              <p className="text-xs font-semibold text-foreground mb-1">Name</p>
+              <p className="text-base text-muted-foreground">{prescription.patient_name}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Age</p>
-              <p className="font-medium">{prescription.patient_age || 'N/A'}</p>
+              <p className="text-xs font-semibold text-foreground mb-1">Age</p>
+              <p className="text-base text-muted-foreground">{prescription.patient_age || 'N/A'}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Sex</p>
-              <p className="font-medium">{prescription.patient_sex || 'N/A'}</p>
+              <p className="text-xs font-semibold text-foreground mb-1">Sex</p>
+              <p className="text-base text-muted-foreground">{prescription.patient_sex || 'N/A'}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Date</p>
-              <p className="font-medium">
+              <p className="text-xs font-semibold text-foreground mb-1">Date</p>
+              <p className="text-base text-muted-foreground">
                 {prescription.prescription_date 
                   ? format(new Date(prescription.prescription_date), 'MMM dd, yyyy')
                   : 'N/A'}
@@ -234,9 +233,9 @@ const PublicVerifyPrescription = () => {
           </div>
         </Card>
 
-        {/* Chief Complaints & Diagnosis - Combined */}
+        {/* Chief Complaints & Diagnosis */}
         {(prescription.cc_text || prescription.dx_text) && (
-          <Card className="p-6 mb-4">
+          <Card className="p-6 mb-4 border border-border">
             {prescription.cc_text && (
               <div className="mb-4">
                 <h3 className="font-semibold text-base mb-2 text-foreground border-b border-border pb-2">Chief Complaints</h3>
@@ -258,7 +257,7 @@ const PublicVerifyPrescription = () => {
 
         {/* Medicines */}
         {prescription.prescription_items && prescription.prescription_items.length > 0 && (
-          <Card className="p-6 mb-4">
+          <Card className="p-6 mb-4 border-2 border-foreground">
             <h3 className="font-bold text-xl mb-6 text-foreground border-b-2 border-border pb-3">
               Prescribed Medications
             </h3>
@@ -277,9 +276,9 @@ const PublicVerifyPrescription = () => {
                   }
 
                   return (
-                    <div key={item.id} className="border border-border rounded-lg p-5 bg-background">
+                    <div key={item.id} className="border-2 border-border p-5">
                       <div className="flex items-start gap-4 mb-4 border-b border-border pb-4">
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-foreground text-background flex items-center justify-center font-bold text-base">
+                        <div className="flex-shrink-0 w-10 h-10 border-2 border-foreground flex items-center justify-center font-bold text-base text-foreground">
                           {index + 1}
                         </div>
                         <div className="flex-1">
@@ -323,9 +322,9 @@ const PublicVerifyPrescription = () => {
           </Card>
         )}
 
-        {/* Advice & Follow Up - Combined */}
+        {/* Advice & Follow Up */}
         {(prescription.adv_text || prescription.follow_up_text) && (
-          <Card className="p-6 mb-4">
+          <Card className="p-6 mb-4 border border-border">
             {prescription.adv_text && (
               <div className="mb-4">
                 <h3 className="font-semibold text-base mb-2 text-foreground border-b border-border pb-2">Medical Advice</h3>
@@ -336,10 +335,7 @@ const PublicVerifyPrescription = () => {
             )}
             {prescription.follow_up_text && (
               <div>
-                <h3 className="font-semibold text-base mb-2 text-foreground border-b border-border pb-2 flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  Follow Up
-                </h3>
+                <h3 className="font-semibold text-base mb-2 text-foreground border-b border-border pb-2">Follow Up</h3>
                 <div className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: prescription.follow_up_text.replace(/\n/g, '<br/>') }}
                 />
