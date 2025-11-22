@@ -106,9 +106,9 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
         {/* Left Column - English */}
-        <div style={{ flex: "1", fontSize: `${headerFontSize}px`, lineHeight: "1.5" }}>
+        <div style={{ flex: "1.3", fontSize: `${headerFontSize}px`, lineHeight: "1.2" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -119,6 +119,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               fontWeight: 700,
               color: "#0056b3",
               margin: 0,
+              marginBottom: "2px",
             }}
           >
             {doctorInfo.docNameEN}
@@ -129,7 +130,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
-            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.5" }}
+            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.2" }}
           />
         </div>
 
@@ -140,8 +141,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           flexDirection: "column", 
           alignItems: "center",
           justifyContent: "center",
-          padding: "5px 15px",
-          gap: "10px"
+          padding: "5px 10px",
+          gap: "8px"
         }}>
           {/* Clinic Logo (if available) takes priority */}
           {clinicBranding.logo_url ? (
@@ -192,7 +193,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
 
         {/* Right Column - Bengali */}
-        <div style={{ flex: "1", fontSize: `${headerFontSize}px`, lineHeight: "1.5", textAlign: "right" }}>
+        <div style={{ flex: "1", fontSize: `${headerFontSize}px`, lineHeight: "1.2", textAlign: "right" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -203,6 +204,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               fontWeight: 700,
               color: "#0056b3",
               margin: 0,
+              marginBottom: "2px",
             }}
           >
             {doctorInfo.docNameBN}
@@ -213,7 +215,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
-            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.5" }}
+            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.2" }}
           />
         </div>
       </div>
