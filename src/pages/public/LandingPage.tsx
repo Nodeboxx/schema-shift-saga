@@ -139,6 +139,24 @@ const LandingPage = () => {
       ],
       cta: "Contact Sales",
       popular: false
+    },
+    {
+      name: "Clinic",
+      price: "8990 ৳",
+      period: "per month",
+      features: [
+        "Multi-doctor management",
+        "Doctor account creation",
+        "Payroll management",
+        "Revenue analytics",
+        "Patient management",
+        "Team collaboration",
+        "Appointment scheduling",
+        "Custom branding",
+        "Priority support"
+      ],
+      cta: "Contact Us",
+      popular: false
     }
   ];
 
@@ -317,7 +335,7 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {pricingPlans.map((plan, index) => (
               <Card 
                 key={index} 
