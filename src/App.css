@@ -49,6 +49,13 @@
     size: A4 portrait;
   }
 
+  /* Reset zoom transform for print */
+  #page-wrapper,
+  .prescription-page-wrapper {
+    transform: none !important;
+    max-width: 210mm !important;
+  }
+
   /* Hide everything except prescription pages */
   body * {
     visibility: hidden !important;
@@ -71,6 +78,8 @@
     box-shadow: none !important;
     page-break-after: always !important;
     overflow: hidden !important;
+    transform: none !important;
+    scale: 1 !important;
   }
   
   /* Hide Lovable badge, controls, and any footer links */
