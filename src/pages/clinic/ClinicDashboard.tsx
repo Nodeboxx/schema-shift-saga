@@ -11,6 +11,7 @@ import ClinicRevenue from "@/components/clinic/ClinicRevenue";
 import ClinicPayroll from "@/components/clinic/ClinicPayroll";
 import ClinicAppointments from "@/components/clinic/ClinicAppointments";
 import ClinicPatients from "@/components/clinic/ClinicPatients";
+import ClinicPrescriptions from "@/components/clinic/ClinicPrescriptions";
 import { ClinicSubscriptionExpiryBanner } from "@/components/clinic/ClinicSubscriptionExpiryBanner";
 import { ClinicSubscriptionLock } from "@/components/clinic/ClinicSubscriptionLock";
 import { 
@@ -23,7 +24,8 @@ import {
   UsersRound, 
   Palette, 
   Crown,
-  LogOut
+  LogOut,
+  FileText
 } from "lucide-react";
 import {
   Sidebar,
@@ -43,6 +45,7 @@ const menuItems = [
   { title: "Overview", path: "/clinic/dashboard", icon: LayoutDashboard },
   { title: "Patients", path: "/clinic/dashboard/patients", icon: Users },
   { title: "Appointments", path: "/clinic/dashboard/appointments", icon: Calendar },
+  { title: "Prescriptions", path: "/clinic/dashboard/prescriptions", icon: FileText },
   { title: "Doctors", path: "/clinic/dashboard/doctors", icon: UserCheck },
   { title: "Payroll", path: "/clinic/dashboard/payroll", icon: DollarSign },
   { title: "Revenue", path: "/clinic/dashboard/revenue", icon: CreditCard },
@@ -103,6 +106,8 @@ const ClinicDashboard = () => {
         return <ClinicPatients clinicId={clinic.id} />;
       case 'appointments':
         return <ClinicAppointments clinicId={clinic.id} />;
+      case 'prescriptions':
+        return <ClinicPrescriptions clinicId={clinic.id} />;
       case 'doctors':
         return <ClinicDoctors clinicId={clinic.id} />;
       case 'payroll':

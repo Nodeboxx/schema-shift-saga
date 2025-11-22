@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Plus, Search, FileText } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ClinicAppointmentDialog from "./ClinicAppointmentDialog";
 
 interface ClinicAppointmentsProps {
   clinicId: string;
@@ -22,8 +24,11 @@ interface ClinicAppointmentsProps {
 const ClinicAppointments = ({ clinicId }: ClinicAppointmentsProps) => {
   const { toast } = useToast();
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [filteredAppointments, setFilteredAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     scheduled: 0,
@@ -35,6 +40,10 @@ const ClinicAppointments = ({ clinicId }: ClinicAppointmentsProps) => {
   useEffect(() => {
     loadAppointments();
   }, [clinicId, filterStatus]);
+
+  useEffect(() => {
+    filterAppointments();
+  }, [appointments, searchTerm]);
 
   const loadAppointments = async () => {
     try {
@@ -74,16 +83,18 @@ const ClinicAppointments = ({ clinicId }: ClinicAppointmentsProps) => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setAppointments(data || []);
+      
+      const appointmentsData = data || [];
+      setAppointments(appointmentsData);
+      setFilteredAppointments(appointmentsData);
 
       // Calculate stats
-      const allAppointments = data || [];
       setStats({
-        total: allAppointments.length,
-        scheduled: allAppointments.filter((a) => a.status === "scheduled").length,
-        completed: allAppointments.filter((a) => a.status === "completed").length,
-        cancelled: allAppointments.filter((a) => a.status === "cancelled").length,
-        pending: allAppointments.filter((a) => a.status === "pending").length,
+        total: appointmentsData.length,
+        scheduled: appointmentsData.filter((a) => a.status === "scheduled").length,
+        completed: appointmentsData.filter((a) => a.status === "completed").length,
+        cancelled: appointmentsData.filter((a) => a.status === "cancelled").length,
+        pending: appointmentsData.filter((a) => a.status === "pending").length,
       });
     } catch (error: any) {
       toast({
@@ -94,6 +105,20 @@ const ClinicAppointments = ({ clinicId }: ClinicAppointmentsProps) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const filterAppointments = () => {
+    let filtered = [...appointments];
+
+    if (searchTerm) {
+      filtered = filtered.filter((apt) =>
+        apt.patient?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        apt.doctor?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        apt.patient?.phone?.includes(searchTerm)
+      );
+    }
+
+    setFilteredAppointments(filtered);
   };
 
   const updateAppointmentStatus = async (appointmentId: string, newStatus: string) => {
@@ -185,6 +210,24 @@ const ClinicAppointments = ({ clinicId }: ClinicAppointmentsProps) => {
             <h3 className="text-lg font-semibold">Appointments</h3>
             <p className="text-sm text-muted-foreground">Manage all clinic appointments</p>
           </div>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowDialog(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Appointment
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by patient name, doctor, or phone..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
           <Select value={filterStatus} onValueChange={setFilterStatus}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by status" />
@@ -199,7 +242,7 @@ const ClinicAppointments = ({ clinicId }: ClinicAppointmentsProps) => {
           </Select>
         </div>
 
-        {appointments.length === 0 ? (
+        {filteredAppointments.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No appointments found</p>
@@ -218,7 +261,7 @@ const ClinicAppointments = ({ clinicId }: ClinicAppointmentsProps) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {appointments.map((appointment) => (
+                {filteredAppointments.map((appointment) => (
                   <TableRow key={appointment.id}>
                     <TableCell>
                       <div>
@@ -296,6 +339,13 @@ const ClinicAppointments = ({ clinicId }: ClinicAppointmentsProps) => {
           </div>
         )}
       </Card>
+
+      <ClinicAppointmentDialog
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        onSuccess={loadAppointments}
+        clinicId={clinicId}
+      />
     </div>
   );
 };
