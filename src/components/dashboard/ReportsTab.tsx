@@ -135,76 +135,85 @@ export const ReportsTab = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6 p-4 md:p-0">
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Prescription Report</CardTitle>
-            <div className="flex items-center gap-2">
-              <Button
-                variant={dateRange.from === subDays(new Date(), 30) ? "default" : "outline"}
-                size="sm"
-                onClick={() => setDaysRange(30)}
-              >
-                30 DAYS
-              </Button>
-              <Button
-                variant={dateRange.from === subDays(new Date(), 60) ? "default" : "outline"}
-                size="sm"
-                onClick={() => setDaysRange(60)}
-              >
-                60 DAYS
-              </Button>
-              <Button
-                variant={dateRange.from === subDays(new Date(), 90) ? "default" : "outline"}
-                size="sm"
-                onClick={() => setDaysRange(90)}
-              >
-                90 DAYS
-              </Button>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Custom
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="end">
-                  <CalendarComponent
-                    mode="range"
-                    selected={{ from: dateRange.from, to: dateRange.to }}
-                    onSelect={(range: any) => {
-                      if (range?.from && range?.to) {
-                        setDateRange({ from: range.from, to: range.to });
-                      }
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-              <Button onClick={downloadExcel} size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Download Excel
-              </Button>
+        <CardHeader className="p-4 md:p-6">
+          <div className="flex flex-col gap-4">
+            <CardTitle className="text-xl md:text-2xl">Prescription Report</CardTitle>
+            <div className="flex flex-col sm:flex-row gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  variant={dateRange.from === subDays(new Date(), 30) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setDaysRange(30)}
+                  className="flex-1 sm:flex-none text-xs md:text-sm"
+                >
+                  30 DAYS
+                </Button>
+                <Button
+                  variant={dateRange.from === subDays(new Date(), 60) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setDaysRange(60)}
+                  className="flex-1 sm:flex-none text-xs md:text-sm"
+                >
+                  60 DAYS
+                </Button>
+                <Button
+                  variant={dateRange.from === subDays(new Date(), 90) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setDaysRange(90)}
+                  className="flex-1 sm:flex-none text-xs md:text-sm"
+                >
+                  90 DAYS
+                </Button>
+              </div>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" size="sm" className="flex-1 sm:flex-none text-xs md:text-sm">
+                      <Calendar className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                      <span className="hidden sm:inline">Custom</span>
+                      <span className="sm:hidden">Date</span>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="end">
+                    <CalendarComponent
+                      mode="range"
+                      selected={{ from: dateRange.from, to: dateRange.to }}
+                      onSelect={(range: any) => {
+                        if (range?.from && range?.to) {
+                          setDateRange({ from: range.from, to: range.to });
+                        }
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <Button onClick={downloadExcel} size="sm" className="flex-1 sm:flex-none text-xs md:text-sm">
+                  <Download className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Download Excel</span>
+                  <span className="sm:hidden">Download</span>
+                </Button>
+              </div>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-4">
+        <CardContent className="space-y-4 md:space-y-6 p-4 md:p-6">
+          <div className="grid gap-3 md:gap-4 grid-cols-2 lg:grid-cols-4">
             <Card className="bg-blue-50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Total Patients</CardTitle>
+              <CardHeader className="pb-2 p-3 md:p-4">
+                <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">Total Patients</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-blue-900">{stats.totalPatients}</div>
+              <CardContent className="p-3 md:p-4 pt-0">
+                <div className="text-2xl md:text-3xl font-bold text-blue-900">{stats.totalPatients}</div>
               </CardContent>
             </Card>
 
             <Card className="bg-green-50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Under 5 Years</CardTitle>
+              <CardHeader className="pb-2 p-3 md:p-4">
+                <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">Under 5 Years</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-green-900">{stats.under5}</div>
+              <CardContent className="p-3 md:p-4 pt-0">
+                <div className="text-2xl md:text-3xl font-bold text-green-900">{stats.under5}</div>
                 <p className="text-xs text-muted-foreground">
                   {stats.totalPatients > 0 ? ((stats.under5 / stats.totalPatients) * 100).toFixed(0) : 0}%
                 </p>
@@ -212,11 +221,11 @@ export const ReportsTab = () => {
             </Card>
 
             <Card className="bg-purple-50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Over 5 Years</CardTitle>
+              <CardHeader className="pb-2 p-3 md:p-4">
+                <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">Over 5 Years</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-purple-900">{stats.over5}</div>
+              <CardContent className="p-3 md:p-4 pt-0">
+                <div className="text-2xl md:text-3xl font-bold text-purple-900">{stats.over5}</div>
                 <p className="text-xs text-muted-foreground">
                   {stats.totalPatients > 0 ? ((stats.over5 / stats.totalPatients) * 100).toFixed(0) : 0}%
                 </p>
@@ -224,39 +233,41 @@ export const ReportsTab = () => {
             </Card>
 
             <Card className="bg-orange-50">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Avg Per Day</CardTitle>
+              <CardHeader className="pb-2 p-3 md:p-4">
+                <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">Avg Per Day</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-orange-900">{stats.avgPerDay}</div>
+              <CardContent className="p-3 md:p-4 pt-0">
+                <div className="text-2xl md:text-3xl font-bold text-orange-900">{stats.avgPerDay}</div>
               </CardContent>
             </Card>
           </div>
 
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="category" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" fill="#3b82f6" />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="w-full overflow-x-auto">
+            <ResponsiveContainer width="100%" height={250} minWidth={300}>
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="category" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Bar dataKey="count" fill="#3b82f6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2">
             <Card>
-              <CardContent className="pt-6">
-                <Label className="text-sm font-medium">Date Range</Label>
-                <p className="text-lg">
+              <CardContent className="pt-4 md:pt-6 p-3 md:p-6">
+                <Label className="text-xs md:text-sm font-medium">Date Range</Label>
+                <p className="text-sm md:text-lg break-words">
                   {format(dateRange.from, "yyyy-MM-dd")} to {format(dateRange.to, "yyyy-MM-dd")}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
-                <Label className="text-sm font-medium">Working Days</Label>
-                <p className="text-lg">{stats.workingDays} days</p>
+              <CardContent className="pt-4 md:pt-6 p-3 md:p-6">
+                <Label className="text-xs md:text-sm font-medium">Working Days</Label>
+                <p className="text-sm md:text-lg">{stats.workingDays} days</p>
               </CardContent>
             </Card>
           </div>
