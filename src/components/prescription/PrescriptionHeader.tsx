@@ -148,7 +148,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
-            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.35", whiteSpace: "nowrap" }}
+            style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.35" }}
           />
         </div>
 
@@ -236,7 +236,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
-            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.35", whiteSpace: "nowrap" }}
+            style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.35" }}
           />
         </div>
       </div>
