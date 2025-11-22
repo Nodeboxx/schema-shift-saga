@@ -6,13 +6,16 @@ import { useNavigate } from "react-router-dom";
 interface DoctorClinicSubscriptionLockProps {
   clinicName: string;
   subscriptionEndDate?: string;
+  subscriptionStatus?: string;
 }
 
 export const DoctorClinicSubscriptionLock = ({ 
   clinicName, 
-  subscriptionEndDate 
+  subscriptionEndDate,
+  subscriptionStatus
 }: DoctorClinicSubscriptionLockProps) => {
   const navigate = useNavigate();
+  const isPendingApproval = subscriptionStatus === 'pending_approval';
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -27,10 +30,14 @@ export const DoctorClinicSubscriptionLock = ({
           
           <div className="space-y-2">
             <h2 className="text-3xl font-bold text-foreground">
-              Clinic Subscription Expired
+              {isPendingApproval 
+                ? "Clinic Pending Approval" 
+                : "Clinic Subscription Expired"}
             </h2>
             <p className="text-lg text-muted-foreground">
-              Your clinic's ({clinicName}) subscription has expired
+              {isPendingApproval
+                ? `Your clinic (${clinicName}) is awaiting admin approval`
+                : `Your clinic's (${clinicName}) subscription has expired`}
             </p>
           </div>
 
@@ -40,8 +47,9 @@ export const DoctorClinicSubscriptionLock = ({
               Dashboard Access Suspended
             </h3>
             <p className="text-muted-foreground">
-              Your access has been temporarily suspended because the clinic's subscription has expired. 
-              All doctors and staff under this clinic cannot access their dashboards until the subscription is renewed.
+              {isPendingApproval
+                ? "Your access is temporarily suspended while the clinic registration is under review. All doctors and staff under this clinic cannot access their dashboards until the clinic is approved."
+                : "Your access has been temporarily suspended because the clinic's subscription has expired. All doctors and staff under this clinic cannot access their dashboards until the subscription is renewed."}
             </p>
             <ul className="space-y-2 text-muted-foreground mt-4">
               <li className="flex items-start gap-2">
@@ -68,8 +76,9 @@ export const DoctorClinicSubscriptionLock = ({
               What can you do?
             </p>
             <p className="text-sm text-muted-foreground">
-              Contact your clinic administrator to renew the subscription. 
-              All features will be restored immediately after renewal.
+              {isPendingApproval
+                ? "Your clinic registration is under review. An administrator will approve the clinic shortly, after which all features will be available."
+                : "Contact your clinic administrator to renew the subscription. All features will be restored immediately after renewal."}
             </p>
             <Button 
               size="lg" 
@@ -81,7 +90,7 @@ export const DoctorClinicSubscriptionLock = ({
             </Button>
           </div>
 
-          {subscriptionEndDate && (
+          {!isPendingApproval && subscriptionEndDate && (
             <p className="text-xs text-muted-foreground">
               Subscription ended on: {new Date(subscriptionEndDate).toLocaleDateString()}
             </p>
