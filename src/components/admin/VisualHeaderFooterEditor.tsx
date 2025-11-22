@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Save, Monitor, Code } from "lucide-react";
@@ -131,8 +133,8 @@ const VisualHeaderFooterEditor = () => {
               {activeMode === "visual" ? (
                 <>
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Visual Preview</label>
-                    <div className="border-2 border-primary rounded-lg p-6 bg-background min-h-[200px]">
+                    <Label>Visual Preview</Label>
+                    <div className="border rounded-lg p-6 bg-card mt-2 min-h-[200px]">
                       {headerContent ? (
                         <div dangerouslySetInnerHTML={{ __html: headerContent }} />
                       ) : (
@@ -141,22 +143,22 @@ const VisualHeaderFooterEditor = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Edit HTML</label>
-                    <textarea
+                    <Label>Edit HTML</Label>
+                    <Textarea
                       value={headerContent}
                       onChange={(e) => setHeaderContent(e.target.value)}
-                      className="w-full min-h-[200px] p-4 font-mono text-sm border-2 rounded-md"
+                      className="w-full min-h-[200px] font-mono text-sm mt-2"
                       placeholder="<nav>Your header HTML...</nav>"
                     />
                   </div>
                 </>
               ) : (
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Header HTML</label>
-                  <textarea
+                  <Label>Header HTML</Label>
+                  <Textarea
                     value={headerContent}
                     onChange={(e) => setHeaderContent(e.target.value)}
-                    className="w-full min-h-[300px] p-4 font-mono text-sm border rounded-md"
+                    className="w-full min-h-[300px] font-mono text-sm mt-2"
                     placeholder="<nav>Your header HTML...</nav>"
                   />
                 </div>
@@ -176,8 +178,8 @@ const VisualHeaderFooterEditor = () => {
               {activeMode === "visual" ? (
                 <>
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Visual Preview</label>
-                    <div className="border-2 border-primary rounded-lg p-6 bg-background min-h-[200px]">
+                    <Label>Visual Preview</Label>
+                    <div className="border rounded-lg p-6 bg-card mt-2 min-h-[200px]">
                       {footerContent ? (
                         <div dangerouslySetInnerHTML={{ __html: footerContent }} />
                       ) : (
@@ -186,22 +188,22 @@ const VisualHeaderFooterEditor = () => {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Edit HTML</label>
-                    <textarea
+                    <Label>Edit HTML</Label>
+                    <Textarea
                       value={footerContent}
                       onChange={(e) => setFooterContent(e.target.value)}
-                      className="w-full min-h-[200px] p-4 font-mono text-sm border-2 rounded-md"
+                      className="w-full min-h-[200px] font-mono text-sm mt-2"
                       placeholder="<footer>Your footer HTML...</footer>"
                     />
                   </div>
                 </>
               ) : (
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Footer HTML</label>
-                  <textarea
+                  <Label>Footer HTML</Label>
+                  <Textarea
                     value={footerContent}
                     onChange={(e) => setFooterContent(e.target.value)}
-                    className="w-full min-h-[300px] p-4 font-mono text-sm border rounded-md"
+                    className="w-full min-h-[300px] font-mono text-sm mt-2"
                     placeholder="<footer>Your footer HTML...</footer>"
                   />
                 </div>
