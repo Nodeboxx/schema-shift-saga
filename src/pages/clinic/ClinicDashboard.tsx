@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import ClinicMembers from "@/components/clinic/ClinicMembers";
@@ -14,13 +13,55 @@ import ClinicAppointments from "@/components/clinic/ClinicAppointments";
 import ClinicPatients from "@/components/clinic/ClinicPatients";
 import { ClinicSubscriptionExpiryBanner } from "@/components/clinic/ClinicSubscriptionExpiryBanner";
 import { ClinicSubscriptionLock } from "@/components/clinic/ClinicSubscriptionLock";
-import { ArrowLeft } from "lucide-react";
+import { 
+  ArrowLeft, 
+  LayoutDashboard, 
+  Users, 
+  Calendar, 
+  UserCheck, 
+  DollarSign, 
+  CreditCard, 
+  UsersRound, 
+  Palette, 
+  Crown 
+} from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { NavLink } from "@/components/NavLink";
+
+const menuItems = [
+  { title: "Overview", path: "/clinic/dashboard", icon: LayoutDashboard },
+  { title: "Patients", path: "/clinic/dashboard/patients", icon: Users },
+  { title: "Appointments", path: "/clinic/dashboard/appointments", icon: Calendar },
+  { title: "Doctors", path: "/clinic/dashboard/doctors", icon: UserCheck },
+  { title: "Payroll", path: "/clinic/dashboard/payroll", icon: DollarSign },
+  { title: "Revenue", path: "/clinic/dashboard/revenue", icon: CreditCard },
+  { title: "Team", path: "/clinic/dashboard/team", icon: UsersRound },
+  { title: "Branding", path: "/clinic/dashboard/branding", icon: Palette },
+  { title: "Subscription", path: "/clinic/dashboard/subscription", icon: Crown },
+];
 
 const ClinicDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [clinic, setClinic] = useState<any>(null);
+
+  const currentPath = location.pathname;
+  // Extract the tab from the path: /clinic/dashboard/patients -> patients
+  const pathParts = currentPath.split('/').filter(Boolean);
+  const currentTab = pathParts.length > 2 ? pathParts[2] : 'dashboard';
 
   useEffect(() => {
     loadClinic();
@@ -56,6 +97,29 @@ const ClinicDashboard = () => {
     }
   };
 
+  const renderContent = () => {
+    switch (currentTab) {
+      case 'patients':
+        return <ClinicPatients clinicId={clinic.id} />;
+      case 'appointments':
+        return <ClinicAppointments clinicId={clinic.id} />;
+      case 'doctors':
+        return <ClinicDoctors clinicId={clinic.id} />;
+      case 'payroll':
+        return <ClinicPayroll clinicId={clinic.id} />;
+      case 'revenue':
+        return <ClinicRevenue clinicId={clinic.id} />;
+      case 'team':
+        return <ClinicMembers clinicId={clinic.id} />;
+      case 'branding':
+        return <ClinicBranding clinic={clinic} onUpdate={loadClinic} />;
+      case 'subscription':
+        return <ClinicSubscription clinic={clinic} />;
+      default:
+        return <ClinicRevenue clinicId={clinic.id} />;
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
@@ -82,74 +146,76 @@ const ClinicDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="container mx-auto max-w-7xl py-4 md:py-8">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 md:mb-8">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">{clinic.name}</h1>
-            <p className="text-sm md:text-base text-muted-foreground">Clinic Management</p>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <Sidebar className="border-r">
+          <div className="p-4 border-b">
+            <h2 className="text-lg font-semibold truncate">{clinic.name}</h2>
+            <p className="text-xs text-muted-foreground">Clinic Management</p>
           </div>
-          <Button variant="outline" onClick={() => navigate("/dashboard")}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to App
-          </Button>
-        </div>
 
-        <ClinicSubscriptionExpiryBanner clinic={clinic} />
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Menu</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {menuItems.map((item) => (
+                    <SidebarMenuItem key={item.path}>
+                      <SidebarMenuButton asChild>
+                        <NavLink 
+                          to={item.path} 
+                          end={item.path === '/clinic/dashboard'}
+                          className="hover:bg-muted/50"
+                          activeClassName="bg-muted text-primary font-medium"
+                        >
+                          <item.icon className="h-4 w-4" />
+                          <span>{item.title}</span>
+                        </NavLink>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="w-full overflow-x-auto flex sm:inline-flex">
-            <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap">Overview</TabsTrigger>
-            <TabsTrigger value="patients" className="text-xs sm:text-sm whitespace-nowrap">Patients</TabsTrigger>
-            <TabsTrigger value="appointments" className="text-xs sm:text-sm whitespace-nowrap">Appointments</TabsTrigger>
-            <TabsTrigger value="doctors" className="text-xs sm:text-sm whitespace-nowrap">Doctors</TabsTrigger>
-            <TabsTrigger value="payroll" className="text-xs sm:text-sm whitespace-nowrap">Payroll</TabsTrigger>
-            <TabsTrigger value="revenue" className="text-xs sm:text-sm whitespace-nowrap">Revenue</TabsTrigger>
-            <TabsTrigger value="team" className="text-xs sm:text-sm whitespace-nowrap">Team</TabsTrigger>
-            <TabsTrigger value="branding" className="text-xs sm:text-sm whitespace-nowrap">Branding</TabsTrigger>
-            <TabsTrigger value="subscription" className="text-xs sm:text-sm whitespace-nowrap">Plan</TabsTrigger>
-          </TabsList>
+          <div className="p-4 border-t mt-auto">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full"
+              onClick={() => navigate("/dashboard")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to App
+            </Button>
+          </div>
+        </Sidebar>
 
-          <TabsContent value="overview">
-            <div className="grid gap-6">
-              <ClinicRevenue clinicId={clinic.id} />
+        <main className="flex-1 overflow-auto">
+          <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="flex h-14 items-center gap-4 px-6">
+              <SidebarTrigger />
+              <div className="flex-1">
+                <h1 className="text-xl font-semibold">
+                  {menuItems.find(item => {
+                    const itemTab = item.path.split('/').pop() || 'dashboard';
+                    return itemTab === currentTab;
+                  })?.title || 'Overview'}
+                </h1>
+              </div>
             </div>
-          </TabsContent>
+          </header>
 
-          <TabsContent value="patients">
-            <ClinicPatients clinicId={clinic.id} />
-          </TabsContent>
-
-          <TabsContent value="appointments">
-            <ClinicAppointments clinicId={clinic.id} />
-          </TabsContent>
-
-          <TabsContent value="doctors">
-            <ClinicDoctors clinicId={clinic.id} />
-          </TabsContent>
-
-          <TabsContent value="payroll">
-            <ClinicPayroll clinicId={clinic.id} />
-          </TabsContent>
-
-          <TabsContent value="revenue">
-            <ClinicRevenue clinicId={clinic.id} />
-          </TabsContent>
-
-          <TabsContent value="team">
-            <ClinicMembers clinicId={clinic.id} />
-          </TabsContent>
-
-          <TabsContent value="branding">
-            <ClinicBranding clinic={clinic} onUpdate={loadClinic} />
-          </TabsContent>
-
-          <TabsContent value="subscription">
-            <ClinicSubscription clinic={clinic} />
-          </TabsContent>
-        </Tabs>
+          <div className="p-6">
+            <ClinicSubscriptionExpiryBanner clinic={clinic} />
+            <div className="mt-6">
+              {renderContent()}
+            </div>
+          </div>
+        </main>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 

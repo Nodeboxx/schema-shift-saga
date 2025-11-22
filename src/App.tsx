@@ -87,6 +87,8 @@ const App = () => (
               <Route path="/import-data" element={<DataImport />} />
               <Route path="/checkout/:plan" element={<Checkout />} />
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/clinic/dashboard/*" element={<ClinicDashboard />} />
+              <Route path="/clinic/dashboard" element={<ClinicDashboard />} />
               <Route path="/clinic" element={<ClinicDashboard />} />
               <Route path="/clinic/pending-approval" element={<ClinicPendingApproval />} />
               <Route path="/verify/:id" element={<PublicVerifyPrescription />} />
