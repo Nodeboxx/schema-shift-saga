@@ -168,13 +168,13 @@ const AppointmentList = ({ appointments, loading, onUpdate }: AppointmentListPro
       // Check if session already exists for this appointment
       const { data: existingSession } = await supabase
         .from("telemedicine_sessions")
-        .select("id")
+        .select("id, status")
         .eq("appointment_id", appointment.id)
         .maybeSingle();
 
       if (existingSession) {
-        // Navigate to existing session
-        navigate("/telemedicine");
+        // Navigate to existing session and auto-start if still waiting
+        navigate(`/telemedicine?session=${existingSession.id}&autoStart=true`);
         return;
       }
 
