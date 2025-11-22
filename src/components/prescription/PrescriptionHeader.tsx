@@ -115,10 +115,10 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      {/* Row 1: Logo + Clinic Name, Doctor Names with QR in middle */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px", marginBottom: "3px" }}>
-        {/* Left: Logo and Clinic Name */}
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: "1" }}>
+      {/* Row 1: Logo + Clinic Name with details, Doctor Names with QR in middle */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "20px", marginBottom: "3px" }}>
+        {/* Left: Logo and Clinic Name with Details */}
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", flex: "1" }}>
           {clinicBranding.logo_url && (
             <img 
               src={clinicBranding.logo_url} 
@@ -133,11 +133,24 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
               }}
             />
           )}
-          {clinicBranding.name && (
-            <div style={{ fontSize: "18px", fontWeight: 700, color: "#333" }}>
-              {clinicBranding.name}
+          <div>
+            {clinicBranding.name && (
+              <div style={{ fontSize: "18px", fontWeight: 700, color: "#333", marginBottom: "4px" }}>
+                {clinicBranding.name}
+              </div>
+            )}
+            {/* Clinic Details */}
+            <div style={{ 
+              fontSize: "10px", 
+              color: "#666", 
+              lineHeight: "1.6"
+            }}>
+              {clinicBranding.address && <div>{clinicBranding.address}</div>}
+              {clinicBranding.phone && <div>Phone: {clinicBranding.phone}</div>}
+              {clinicBranding.email && <div>Email: {clinicBranding.email}</div>}
+              {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Center-Right: Doctor Names with QR Code in between */}
@@ -231,17 +244,6 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       </div>
 
-      {/* Row 3: Clinic Details */}
-      <div style={{ 
-        fontSize: "10px", 
-        color: "#666", 
-        lineHeight: "1.6"
-      }}>
-        {clinicBranding.address && <div>{clinicBranding.address}</div>}
-        {clinicBranding.phone && <div>Phone: {clinicBranding.phone}</div>}
-        {clinicBranding.email && <div>Email: {clinicBranding.email}</div>}
-        {clinicBranding.website && <div>Website: {clinicBranding.website}</div>}
-      </div>
     </header>
   );
 };
