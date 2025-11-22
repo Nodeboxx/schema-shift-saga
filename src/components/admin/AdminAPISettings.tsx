@@ -139,11 +139,11 @@ export const AdminAPISettings = () => {
   };
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-2xl font-bold">API & Integration Settings</h2>
-          <p className="text-sm text-muted-foreground mt-1">
+    <Card className="p-4 md:p-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6 gap-3">
+        <div className="min-w-0">
+          <h2 className="text-xl md:text-2xl font-bold">API & Integration Settings</h2>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">
             Configure third-party services and API keys
           </p>
         </div>
@@ -153,8 +153,8 @@ export const AdminAPISettings = () => {
         </Badge>
       </div>
 
-      <Tabs defaultValue="ai" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+      <Tabs defaultValue="ai" className="space-y-4 md:space-y-6">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
           <TabsTrigger value="ai">
             <Cpu className="h-4 w-4 mr-2" />
             AI Services
@@ -307,11 +307,11 @@ export const AdminAPISettings = () => {
         </TabsContent>
       </Tabs>
 
-      <div className="flex justify-end gap-2 mt-6 pt-6 border-t">
-        <Button variant="outline" onClick={() => window.location.reload()}>
+      <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4 md:mt-6 pt-4 md:pt-6 border-t">
+        <Button variant="outline" onClick={() => window.location.reload()} className="w-full sm:w-auto">
           Cancel
         </Button>
-        <Button onClick={handleSave} disabled={saving}>
+        <Button onClick={handleSave} disabled={saving} className="w-full sm:w-auto">
           <Save className="h-4 w-4 mr-2" />
           {saving ? 'Saving...' : 'Save Settings'}
         </Button>

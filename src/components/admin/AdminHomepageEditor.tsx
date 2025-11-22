@@ -321,18 +321,18 @@ const AdminHomepageEditor = () => {
       };
 
       return (
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
+        <div className="space-y-4 md:space-y-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
             <div>
-              <h2 className="text-3xl font-bold">Homepage Editor</h2>
-              <p className="text-muted-foreground">Drag and drop to reorder sections</p>
+              <h2 className="text-2xl md:text-3xl font-bold">Homepage Editor</h2>
+              <p className="text-sm md:text-base text-muted-foreground">Drag and drop to reorder sections</p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => window.open("/", "_blank")}>
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+              <Button variant="outline" onClick={() => window.open("/", "_blank")} className="w-full sm:w-auto">
                 <Eye className="h-4 w-4 mr-2" />
                 Preview
               </Button>
-              <Button onClick={addNewSection}>
+              <Button onClick={addNewSection} className="w-full sm:w-auto">
                 <Plus className="h-4 w-4 mr-2" />
                 Add Section
               </Button>

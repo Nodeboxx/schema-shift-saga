@@ -80,23 +80,23 @@ export const AdminAppointments = () => {
   }
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">All Appointments</h2>
-        <div className="flex items-center gap-4">
-          <div className="relative">
+    <Card className="p-4 md:p-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6 gap-3">
+        <h2 className="text-xl md:text-2xl font-bold">All Appointments</h2>
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search appointments..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-64"
+              className="pl-10 w-full"
             />
           </div>
         </div>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

@@ -202,9 +202,9 @@ export const AdminOrders = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Stats Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { title: "Total Revenue", value: `$${stats.totalRevenue}`, icon: DollarSign, gradient: "from-green-500 to-green-600" },
           { title: "Active Subscriptions", value: stats.activeSubscriptions, icon: Users, gradient: "from-blue-500 to-blue-600" },
@@ -215,14 +215,14 @@ export const AdminOrders = () => {
           return (
             <Card key={stat.title} className="overflow-hidden">
               <div className={`h-2 bg-gradient-to-r ${stat.gradient}`} />
-              <div className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                    <p className="text-3xl font-bold mt-2">{stat.value}</p>
+              <div className="p-4 md:p-6">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs md:text-sm font-medium text-muted-foreground truncate">{stat.title}</p>
+                    <p className="text-2xl md:text-3xl font-bold mt-1 md:mt-2">{stat.value}</p>
                   </div>
-                  <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
-                    <Icon className="h-6 w-6 text-white" />
+                  <div className={`p-2 md:p-3 rounded-xl bg-gradient-to-br ${stat.gradient}`}>
+                    <Icon className="h-5 w-5 md:h-6 md:w-6 text-white" />
                   </div>
                 </div>
               </div>
@@ -232,10 +232,10 @@ export const AdminOrders = () => {
       </div>
 
       {/* Orders Table */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold">Subscription Orders</h3>
-          <div className="relative w-64">
+      <Card className="p-4 md:p-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6 gap-3">
+          <h3 className="text-xl md:text-2xl font-bold">Subscription Orders</h3>
+          <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search orders..."
@@ -246,7 +246,7 @@ export const AdminOrders = () => {
           </div>
         </div>
 
-        <div className="border rounded-lg overflow-hidden">
+        <div className="border rounded-lg overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">

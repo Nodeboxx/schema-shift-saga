@@ -76,18 +76,18 @@ export const AdminAnalytics = () => {
   ];
 
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-bold mb-6">System Analytics</h2>
+    <Card className="p-4 md:p-6">
+      <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">System Analytics</h2>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {metrics.map((metric) => {
           const Icon = metric.icon;
           return (
-            <Card key={metric.title} className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{metric.title}</p>
-                  <p className="text-3xl font-bold mt-2">{metric.value}</p>
+            <Card key={metric.title} className="p-4 md:p-6">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs md:text-sm font-medium text-muted-foreground truncate">{metric.title}</p>
+                  <p className="text-2xl md:text-3xl font-bold mt-1 md:mt-2">{metric.value}</p>
                 </div>
                 <div className={`${metric.color} p-3 rounded-lg`}>
                   <Icon className="h-6 w-6 text-white" />

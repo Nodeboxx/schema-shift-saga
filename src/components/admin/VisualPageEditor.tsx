@@ -208,19 +208,19 @@ const VisualPageEditor = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-bold">Page Management</h2>
-          <p className="text-muted-foreground">Visual page builder with live preview</p>
+          <h2 className="text-2xl md:text-3xl font-bold">Page Management</h2>
+          <p className="text-sm md:text-base text-muted-foreground">Visual page builder with live preview</p>
         </div>
-        <Button onClick={createPage}>
+        <Button onClick={createPage} className="w-full md:w-auto">
           <Plus className="h-4 w-4 mr-2" />
           New Page
         </Button>
       </div>
 
-      <Card>
+      <Card className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -282,7 +282,7 @@ const VisualPageEditor = () => {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] md:max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>{editingPage?.id ? "Edit Page" : "Create Page"}</span>

@@ -141,19 +141,19 @@ export const AdminPricingPlans = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold">Pricing Plans Management</h2>
-          <p className="text-muted-foreground">Edit your pricing plans and features</p>
+          <h2 className="text-xl md:text-2xl font-bold">Pricing Plans Management</h2>
+          <p className="text-sm md:text-base text-muted-foreground">Edit your pricing plans and features</p>
         </div>
-        <Button onClick={savePricing} disabled={loading}>
+        <Button onClick={savePricing} disabled={loading} className="w-full md:w-auto">
           <Save className="w-4 h-4 mr-2" />
           {loading ? "Saving..." : "Save Changes"}
         </Button>
       </div>
 
-      <Card className="p-6">
+      <Card className="p-4 md:p-6">
         <div className="space-y-4">
           <div>
             <Label>Section Heading</Label>
@@ -175,17 +175,17 @@ export const AdminPricingPlans = () => {
         </div>
       </Card>
 
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold">Plans</h3>
-        <Button onClick={addPlan} variant="outline">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h3 className="text-lg md:text-xl font-semibold">Plans</h3>
+        <Button onClick={addPlan} variant="outline" className="w-full sm:w-auto">
           <Plus className="w-4 h-4 mr-2" />
           Add Plan
         </Button>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4 md:gap-6">
         {content.plans.map((plan, planIndex) => (
-          <Card key={plan.id} className="p-6">
+          <Card key={plan.id} className="p-4 md:p-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-semibold text-lg">Plan {planIndex + 1}</h4>

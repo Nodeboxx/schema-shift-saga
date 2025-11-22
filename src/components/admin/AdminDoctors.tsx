@@ -146,16 +146,17 @@ const AdminDoctors = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold">Doctor Management</h2>
-          <p className="text-muted-foreground">Manage doctor profiles and visibility</p>
+          <h2 className="text-2xl md:text-3xl font-bold">Doctor Management</h2>
+          <p className="text-sm md:text-base text-muted-foreground">Manage doctor profiles and visibility</p>
         </div>
       </div>
 
-      <Card className="p-6">
-        <Table>
+      <Card className="p-4 md:p-6">
+        <div className="overflow-x-auto">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Photo</TableHead>
@@ -207,11 +208,12 @@ const AdminDoctors = () => {
             ))}
           </TableBody>
         </Table>
+        </div>
       </Card>
 
       {/* Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] md:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Doctor Profile</DialogTitle>
           </DialogHeader>
