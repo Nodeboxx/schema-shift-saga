@@ -195,7 +195,7 @@ export const PublicLayout = ({ children }: PublicLayoutProps) => {
             </div>
 
             <div className="border-t border-border pt-8 text-center text-sm text-muted-foreground">
-              <p>© {new Date().getFullYear()} {siteName}. All rights reserved.</p>
+              <p>© {new Date().getFullYear()} {siteName}. All rights reserved. Developed By <a href="https://digiwebdex.com/" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors underline">Digiwebdex</a></p>
             </div>
           </div>
         </footer>
