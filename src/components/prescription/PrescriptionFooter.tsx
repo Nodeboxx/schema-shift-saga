@@ -49,8 +49,9 @@ const PrescriptionFooter = () => {
       width: "100%",
       boxSizing: "border-box",
       marginTop: "auto",
+      gap: "10px",
     }}>
-      <div style={{ width: "45%", position: "relative", textAlign: "left", fontSize: `${footerLeftFontSize}px`, lineHeight: "1.35" }}>
+      <div style={{ flex: "1 1 auto", maxWidth: "45%", minWidth: "0", position: "relative", textAlign: "left", fontSize: `${footerLeftFontSize}px`, lineHeight: "1.35" }}>
         <div
           contentEditable
           spellCheck={false}
@@ -59,10 +60,10 @@ const PrescriptionFooter = () => {
           style={{ minHeight: "20px", outline: "none", textAlign: "left", lineHeight: "1.35" }}
         />
       </div>
-      <div style={{ fontSize: "12px", fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}>
+      <div style={{ flex: "0 0 auto", fontSize: "12px", fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}>
         Page 1
       </div>
-      <div style={{ width: "45%", position: "relative", textAlign: "right", fontSize: `${footerRightFontSize}px`, lineHeight: "1.35" }}>
+      <div style={{ flex: "1 1 auto", maxWidth: "45%", minWidth: "0", position: "relative", textAlign: "right", fontSize: `${footerRightFontSize}px`, lineHeight: "1.35" }}>
         <div
           contentEditable
           spellCheck={false}
