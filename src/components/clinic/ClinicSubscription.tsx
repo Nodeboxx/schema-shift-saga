@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
-import { CreditCard, Users, FileText } from "lucide-react";
+import { Users, FileText } from "lucide-react";
 
 interface ClinicSubscriptionProps {
   clinic: any;
 }
 
 const ClinicSubscription = ({ clinic }: ClinicSubscriptionProps) => {
-  const navigate = useNavigate();
   const [usage, setUsage] = useState({
     doctors: 0,
     patients: 0,
@@ -57,31 +54,39 @@ const ClinicSubscription = ({ clinic }: ClinicSubscriptionProps) => {
       <Card className="p-6">
         <h2 className="text-2xl font-bold mb-6">Current Plan</h2>
         
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-lg">Plan:</span>
-            <Badge className="text-lg px-3 py-1 capitalize">
-              {clinic.subscription_tier}
-            </Badge>
-          </div>
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-lg">Status:</span>
-            <Badge variant={clinic.subscription_status === "active" ? "default" : "secondary"}>
-              {clinic.subscription_status}
+            <span className="text-muted-foreground">Plan:</span>
+            <Badge className="text-sm px-3 py-1 capitalize">
+              {clinic.subscription_tier || 'Enterprise'}
             </Badge>
           </div>
+          
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Status:</span>
+            <Badge variant={clinic.subscription_status === "active" ? "default" : "secondary"}>
+              {clinic.subscription_status || 'pending'}
+            </Badge>
+          </div>
+
+          {clinic.subscription_start_date && (
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Activated:</span>
+              <span className="font-medium">
+                {new Date(clinic.subscription_start_date).toLocaleDateString()}
+              </span>
+            </div>
+          )}
+
+          {clinic.subscription_end_date && (
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Next Billing:</span>
+              <span className="font-medium">
+                {new Date(clinic.subscription_end_date).toLocaleDateString()}
+              </span>
+            </div>
+          )}
         </div>
-
-        {clinic.subscription_end_date && (
-          <p className="text-sm text-muted-foreground mb-6">
-            Renews on: {new Date(clinic.subscription_end_date).toLocaleDateString()}
-          </p>
-        )}
-
-        <Button onClick={() => navigate("/checkout/clinic")}>
-          <CreditCard className="mr-2 h-4 w-4" />
-          Manage Subscription
-        </Button>
       </Card>
 
       <Card className="p-6">
@@ -94,7 +99,7 @@ const ClinicSubscription = ({ clinic }: ClinicSubscriptionProps) => {
               <span>Doctors</span>
             </div>
             <span className="font-semibold">
-              {usage.doctors} / {clinic.max_doctors}
+              {usage.doctors} / {clinic.max_doctors || '∞'}
             </span>
           </div>
 
@@ -104,14 +109,14 @@ const ClinicSubscription = ({ clinic }: ClinicSubscriptionProps) => {
               <span>Patients</span>
             </div>
             <span className="font-semibold">
-              {usage.patients} / {clinic.max_patients}
+              {usage.patients} / {clinic.max_patients || '∞'}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-primary" />
-              <span>Prescriptions This Month</span>
+              <span>Total Prescriptions</span>
             </div>
             <span className="font-semibold">{usage.prescriptions}</span>
           </div>
