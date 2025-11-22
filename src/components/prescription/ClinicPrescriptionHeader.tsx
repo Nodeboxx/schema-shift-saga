@@ -104,7 +104,7 @@ const ClinicPrescriptionHeader = ({
       }}>
         {/* Left Column - Clinic Logo & Branding */}
         <div style={{ 
-          flex: "1", 
+          flex: "1.5", 
           fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           display: "flex", 
@@ -206,7 +206,7 @@ const ClinicPrescriptionHeader = ({
 
         {/* Right Column - Bengali Doctor Info (Controlled by Profile Settings) */}
         <div style={{ 
-          flex: "1", 
+          flex: "1.5", 
           fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           textAlign: "right",
