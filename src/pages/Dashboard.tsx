@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import { Users, FileText, Calendar, Sparkles, ScanLine } from "lucide-react";
+import { Users, FileText, Calendar, Sparkles, ScanLine, HeartPulse } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { MyPatientsTab } from "@/components/dashboard/MyPatientsTab";
@@ -168,6 +168,14 @@ const Dashboard = () => {
     <AppLayout>
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-purple-600">
+              <HeartPulse className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-primary via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              MedRxPro
+            </span>
+          </div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
         </div>
 
