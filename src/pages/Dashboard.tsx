@@ -14,12 +14,15 @@ import { SubscriptionGate } from "@/components/subscription/SubscriptionGate";
 import { SubscriptionExpiryBanner } from "@/components/subscription/SubscriptionExpiryBanner";
 import { SubscriptionHistory } from "@/components/subscription/SubscriptionHistory";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { DoctorClinicSubscriptionLock } from "@/components/subscription/DoctorClinicSubscriptionLock";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
   const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [clinicSubscriptionExpired, setClinicSubscriptionExpired] = useState(false);
+  const [clinicInfo, setClinicInfo] = useState<any>(null);
   const [stats, setStats] = useState({
     totalPatients: 0,
     totalPrescriptions: 0,
@@ -28,6 +31,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     checkSubscription();
+    checkClinicSubscription();
     checkOnboarding();
     loadStats();
     
@@ -55,6 +59,37 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error("Error checking onboarding:", error);
+    }
+  };
+
+  const checkClinicSubscription = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Check if user is a doctor in a clinic
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("clinic_id")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.clinic_id) {
+        // Check clinic subscription status
+        const { data: clinic } = await supabase
+          .from("clinics")
+          .select("subscription_end_date, name")
+          .eq("id", profile.clinic_id)
+          .single();
+
+        if (clinic?.subscription_end_date) {
+          const isExpired = new Date(clinic.subscription_end_date) < new Date();
+          setClinicSubscriptionExpired(isExpired);
+          setClinicInfo(clinic);
+        }
+      }
+    } catch (error) {
+      console.error("Error checking clinic subscription:", error);
     }
   };
 
@@ -108,6 +143,16 @@ const Dashboard = () => {
       totalAppointments: appointmentsRes.count || 0,
     });
   };
+
+  // If doctor's clinic subscription is expired, show lock screen
+  if (clinicSubscriptionExpired && clinicInfo) {
+    return (
+      <DoctorClinicSubscriptionLock 
+        clinicName={clinicInfo.name}
+        subscriptionEndDate={clinicInfo.subscription_end_date}
+      />
+    );
+  }
 
   return (
     <AppLayout>

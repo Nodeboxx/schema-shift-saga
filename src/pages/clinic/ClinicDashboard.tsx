@@ -12,6 +12,8 @@ import ClinicRevenue from "@/components/clinic/ClinicRevenue";
 import ClinicPayroll from "@/components/clinic/ClinicPayroll";
 import ClinicAppointments from "@/components/clinic/ClinicAppointments";
 import ClinicPatients from "@/components/clinic/ClinicPatients";
+import { ClinicSubscriptionExpiryBanner } from "@/components/clinic/ClinicSubscriptionExpiryBanner";
+import { ClinicSubscriptionLock } from "@/components/clinic/ClinicSubscriptionLock";
 import { ArrowLeft } from "lucide-react";
 
 const ClinicDashboard = () => {
@@ -70,6 +72,14 @@ const ClinicDashboard = () => {
     );
   }
 
+  // Check if subscription is expired
+  const isSubscriptionExpired = clinic.subscription_end_date && 
+    new Date(clinic.subscription_end_date) < new Date();
+
+  if (isSubscriptionExpired) {
+    return <ClinicSubscriptionLock clinic={clinic} />;
+  }
+
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="container mx-auto max-w-7xl py-4 md:py-8">
@@ -83,6 +93,8 @@ const ClinicDashboard = () => {
             Back to App
           </Button>
         </div>
+
+        <ClinicSubscriptionExpiryBanner clinic={clinic} />
 
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="w-full overflow-x-auto flex sm:inline-flex">
