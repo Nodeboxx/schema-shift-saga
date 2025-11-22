@@ -34,6 +34,8 @@ export const AdminAPISettings = () => {
     twilio_account_sid: '',
     twilio_auth_token: '',
     twilio_phone: '',
+    bulksms_api_key: '',
+    bulksms_sender_id: '',
     
     // Messaging Services
     whatsapp_api_key: '',
@@ -230,6 +232,20 @@ export const AdminAPISettings = () => {
               {renderAPIField('twilio_account_sid', 'Account SID', 'AC...', Key)}
               {renderAPIField('twilio_auth_token', 'Auth Token', '...', Key)}
               {renderAPIField('twilio_phone', 'Phone Number', '+1...', Key)}
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <Mail className="h-5 w-5" />
+                BulkSMS BD
+              </h3>
+              <Card className="p-4 bg-muted/50 mb-4">
+                <p className="text-sm text-muted-foreground">
+                  Configure BulkSMS BD for Bangladesh SMS delivery. Get your API key from bulksmsbd.net
+                </p>
+              </Card>
+              {renderAPIField('bulksms_api_key', 'API Key', 'XQ6vD6omFQ21oVypfsjM', Key)}
+              {renderAPIField('bulksms_sender_id', 'Sender ID', '8809617626936', Key)}
             </div>
           </div>
         </TabsContent>

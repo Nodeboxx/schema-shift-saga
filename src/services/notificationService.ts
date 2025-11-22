@@ -1,24 +1,75 @@
 import { supabase } from "@/integrations/supabase/client";
+import { sendSMS, sendAppointmentCreatedSMS, sendAppointmentApprovedSMS, sendAppointmentReminderSMS, sendAppointmentRescheduledSMS, sendPrescriptionLinkSMS } from "./smsService";
 
 interface SendNotificationParams {
   eventType: string;
   recipientEmail: string;
   recipientName: string;
   templateData: Record<string, string>;
+  recipientPhone?: string;
+  sendSMS?: boolean;
 }
 
 export const sendNotification = async (params: SendNotificationParams) => {
   try {
+    // Send Email
     const { data, error } = await supabase.functions.invoke("send-notification", {
       body: params,
     });
 
     if (error) {
       console.error("Error sending notification:", error);
-      return { success: false, error };
+    } else {
+      console.log("Email notification sent:", data);
     }
 
-    console.log("Notification sent:", data);
+    // Send SMS if enabled and phone number provided
+    if (params.sendSMS && params.recipientPhone) {
+      const smsHandlers: Record<string, () => Promise<any>> = {
+        'appointment_created': () => sendAppointmentCreatedSMS(
+          params.recipientPhone!,
+          params.recipientName,
+          params.templateData.doctor_name || 'Your Doctor',
+          params.templateData.appointment_date || '',
+          params.templateData.clinic_name || 'MedRxPro'
+        ),
+        'appointment_approved': () => sendAppointmentApprovedSMS(
+          params.recipientPhone!,
+          params.recipientName,
+          params.templateData.doctor_name || 'Your Doctor',
+          params.templateData.appointment_date || '',
+          params.templateData.clinic_name || 'MedRxPro'
+        ),
+        'appointment_reminder': () => sendAppointmentReminderSMS(
+          params.recipientPhone!,
+          params.recipientName,
+          params.templateData.doctor_name || 'Your Doctor',
+          params.templateData.appointment_date || '',
+          params.templateData.clinic_name || 'MedRxPro'
+        ),
+        'appointment_rescheduled': () => sendAppointmentRescheduledSMS(
+          params.recipientPhone!,
+          params.recipientName,
+          params.templateData.doctor_name || 'Your Doctor',
+          params.templateData.new_appointment_date || '',
+          params.templateData.clinic_name || 'MedRxPro'
+        ),
+        'prescription_created': () => sendPrescriptionLinkSMS(
+          params.recipientPhone!,
+          params.recipientName,
+          params.templateData.doctor_name || 'Your Doctor',
+          params.templateData.prescription_url || '',
+          params.templateData.clinic_name || 'MedRxPro'
+        ),
+      };
+
+      const smsHandler = smsHandlers[params.eventType];
+      if (smsHandler) {
+        const smsResult = await smsHandler();
+        console.log("SMS notification sent:", smsResult);
+      }
+    }
+
     return { success: true, data };
   } catch (error) {
     console.error("Exception sending notification:", error);
@@ -33,12 +84,15 @@ export const sendPrescriptionCreatedEmail = async (
   doctorName: string,
   prescriptionDate: string,
   prescriptionUrl: string,
-  clinicName: string = "MedRxPro"
+  clinicName: string = "MedRxPro",
+  patientPhone?: string
 ) => {
   return sendNotification({
     eventType: "prescription_created",
     recipientEmail: patientEmail,
     recipientName: patientName,
+    recipientPhone: patientPhone,
+    sendSMS: !!patientPhone,
     templateData: {
       patient_name: patientName,
       doctor_name: doctorName,
@@ -55,12 +109,15 @@ export const sendAppointmentCreatedEmail = async (
   doctorName: string,
   appointmentDate: string,
   appointmentType: string,
-  clinicName: string = "MedRxPro"
+  clinicName: string = "MedRxPro",
+  patientPhone?: string
 ) => {
   return sendNotification({
     eventType: "appointment_created",
     recipientEmail: patientEmail,
     recipientName: patientName,
+    recipientPhone: patientPhone,
+    sendSMS: !!patientPhone,
     templateData: {
       patient_name: patientName,
       doctor_name: doctorName,
@@ -77,12 +134,15 @@ export const sendAppointmentApprovedEmail = async (
   doctorName: string,
   appointmentDate: string,
   clinicName: string = "MedRxPro",
-  clinicAddress: string = "Visit our clinic"
+  clinicAddress: string = "Visit our clinic",
+  patientPhone?: string
 ) => {
   return sendNotification({
     eventType: "appointment_approved",
     recipientEmail: patientEmail,
     recipientName: patientName,
+    recipientPhone: patientPhone,
+    sendSMS: !!patientPhone,
     templateData: {
       patient_name: patientName,
       doctor_name: doctorName,
@@ -99,12 +159,15 @@ export const sendAppointmentReminderEmail = async (
   doctorName: string,
   appointmentDate: string,
   clinicName: string = "MedRxPro",
-  clinicAddress: string = "Visit our clinic"
+  clinicAddress: string = "Visit our clinic",
+  patientPhone?: string
 ) => {
   return sendNotification({
     eventType: "appointment_reminder",
     recipientEmail: patientEmail,
     recipientName: patientName,
+    recipientPhone: patientPhone,
+    sendSMS: !!patientPhone,
     templateData: {
       patient_name: patientName,
       doctor_name: doctorName,
@@ -121,12 +184,15 @@ export const sendAppointmentRescheduledEmail = async (
   doctorName: string,
   newAppointmentDate: string,
   oldAppointmentDate: string,
-  clinicName: string = "MedRxPro"
+  clinicName: string = "MedRxPro",
+  patientPhone?: string
 ) => {
   return sendNotification({
     eventType: "appointment_rescheduled",
     recipientEmail: patientEmail,
     recipientName: patientName,
+    recipientPhone: patientPhone,
+    sendSMS: !!patientPhone,
     templateData: {
       patient_name: patientName,
       doctor_name: doctorName,
