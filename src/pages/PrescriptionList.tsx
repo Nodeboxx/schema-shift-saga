@@ -143,11 +143,17 @@ const PrescriptionList = () => {
                           <TableCell>
                             {prescription.patient_age || "-"} / {prescription.patient_sex || "-"}
                           </TableCell>
-                          <TableCell className="max-w-xs truncate">
-                            {prescription.cc_text || "-"}
+                          <TableCell className="max-w-xs">
+                            <div 
+                              className="line-clamp-2" 
+                              dangerouslySetInnerHTML={{ __html: prescription.cc_text || "-" }}
+                            />
                           </TableCell>
-                          <TableCell className="max-w-xs truncate">
-                            {prescription.dx_text || "-"}
+                          <TableCell className="max-w-xs">
+                            <div 
+                              className="line-clamp-2" 
+                              dangerouslySetInnerHTML={{ __html: prescription.dx_text || "-" }}
+                            />
                           </TableCell>
                           <TableCell>
                             <Badge variant="default" className="bg-secondary text-secondary-foreground">
@@ -210,13 +216,19 @@ const PrescriptionList = () => {
                           {prescription.cc_text && (
                             <div>
                               <span className="text-muted-foreground">CC:</span>
-                              <p className="line-clamp-2 mt-1">{prescription.cc_text}</p>
+                              <div 
+                                className="line-clamp-2 mt-1" 
+                                dangerouslySetInnerHTML={{ __html: prescription.cc_text }}
+                              />
                             </div>
                           )}
                           {prescription.dx_text && (
                             <div>
                               <span className="text-muted-foreground">Dx:</span>
-                              <p className="line-clamp-2 mt-1">{prescription.dx_text}</p>
+                              <div 
+                                className="line-clamp-2 mt-1" 
+                                dangerouslySetInnerHTML={{ __html: prescription.dx_text }}
+                              />
                             </div>
                           )}
                         </div>
