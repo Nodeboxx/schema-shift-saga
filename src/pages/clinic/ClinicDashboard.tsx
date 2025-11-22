@@ -9,6 +9,7 @@ import ClinicBranding from "@/components/clinic/ClinicBranding";
 import ClinicSubscription from "@/components/clinic/ClinicSubscription";
 import ClinicDoctors from "@/components/clinic/ClinicDoctors";
 import ClinicRevenue from "@/components/clinic/ClinicRevenue";
+import ClinicPayroll from "@/components/clinic/ClinicPayroll";
 import { ArrowLeft } from "lucide-react";
 
 const ClinicDashboard = () => {
@@ -82,8 +83,9 @@ const ClinicDashboard = () => {
         </div>
 
         <Tabs defaultValue="doctors" className="space-y-6">
-          <TabsList className="w-full sm:w-auto grid grid-cols-5 sm:inline-flex">
+          <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:grid-cols-6 gap-1">
             <TabsTrigger value="doctors" className="text-xs sm:text-sm">Doctors</TabsTrigger>
+            <TabsTrigger value="payroll" className="text-xs sm:text-sm">Payroll</TabsTrigger>
             <TabsTrigger value="revenue" className="text-xs sm:text-sm">Revenue</TabsTrigger>
             <TabsTrigger value="team" className="text-xs sm:text-sm">Team</TabsTrigger>
             <TabsTrigger value="branding" className="text-xs sm:text-sm">Branding</TabsTrigger>
@@ -92,6 +94,10 @@ const ClinicDashboard = () => {
 
           <TabsContent value="doctors">
             <ClinicDoctors clinicId={clinic.id} />
+          </TabsContent>
+
+          <TabsContent value="payroll">
+            <ClinicPayroll clinicId={clinic.id} />
           </TabsContent>
 
           <TabsContent value="revenue">
