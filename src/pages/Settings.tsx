@@ -529,10 +529,25 @@ const Settings = () => {
         </div>
 
         <Tabs defaultValue="account" className="space-y-4 md:space-y-6">
-          <TabsList className="w-full grid grid-cols-3">
-            <TabsTrigger value="account" className="text-xs sm:text-sm">Account</TabsTrigger>
-            <TabsTrigger value="profile" className="text-xs sm:text-sm">Profile</TabsTrigger>
-            <TabsTrigger value="templates" className="text-xs sm:text-sm">Templates</TabsTrigger>
+          <TabsList className="w-full grid grid-cols-3 bg-blue-50 p-1">
+            <TabsTrigger 
+              value="account" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Account
+            </TabsTrigger>
+            <TabsTrigger 
+              value="profile" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Profile
+            </TabsTrigger>
+            <TabsTrigger 
+              value="templates" 
+              className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+            >
+              Templates
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="account" className="space-y-4 md:space-y-6">

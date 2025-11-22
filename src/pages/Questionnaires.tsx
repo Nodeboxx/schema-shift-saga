@@ -31,9 +31,19 @@ const Questionnaires = () => {
           </div>
 
           <Tabs defaultValue="templates">
-            <TabsList className="w-full grid grid-cols-2">
-              <TabsTrigger value="templates" className="text-xs sm:text-sm">My Templates</TabsTrigger>
-              <TabsTrigger value="responses" className="text-xs sm:text-sm">Patient Responses</TabsTrigger>
+            <TabsList className="w-full grid grid-cols-2 bg-blue-50 p-1">
+              <TabsTrigger 
+                value="templates" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
+                My Templates
+              </TabsTrigger>
+              <TabsTrigger 
+                value="responses" 
+                className="text-xs sm:text-sm data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900 data-[state=inactive]:text-muted-foreground"
+              >
+                Patient Responses
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="templates" className="mt-6">
