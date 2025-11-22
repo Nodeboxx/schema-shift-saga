@@ -206,7 +206,7 @@ const Checkout = () => {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Show Auth if not logged in */}
           {isAuthenticated === false && (
-            <SubscriptionAuth onAuthSuccess={checkAuth} />
+            <SubscriptionAuth onAuthSuccess={checkAuth} planId={plan} />
           )}
 
           {/* Plan Summary */}
