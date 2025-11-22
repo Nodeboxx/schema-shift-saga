@@ -26,6 +26,7 @@ const ClinicPrescriptionHeader = ({
   const [doctorNameBN, setDoctorNameBN] = useState<string>("");
   const [doctorDegreeBN, setDoctorDegreeBN] = useState<string>("");
   const [headerFontSize, setHeaderFontSize] = useState<string>("13");
+  const [degreeBnFontSize, setDegreeBnFontSize] = useState<string>("13");
 
   useEffect(() => {
     const loadClinicAndDoctor = async () => {
@@ -45,7 +46,7 @@ const ClinicPrescriptionHeader = ({
         if (session) {
           const { data: profileData, error: profileError } = await supabase
             .from("profiles")
-            .select("council_logo_url, registration_number, name_bn, degree_bn, header_font_size")
+            .select("council_logo_url, registration_number, name_bn, degree_bn, header_font_size, degree_bn_font_size")
             .eq("id", session.user.id)
             .maybeSingle();
 
@@ -60,6 +61,7 @@ const ClinicPrescriptionHeader = ({
             setDoctorNameBN(profileData.name_bn || "");
             setDoctorDegreeBN(profileData.degree_bn || "");
             setHeaderFontSize(profileData.header_font_size || "13");
+            setDegreeBnFontSize(profileData.degree_bn_font_size || "13");
           }
         }
       } catch (error) {
@@ -224,7 +226,7 @@ const ClinicPrescriptionHeader = ({
             dangerouslySetInnerHTML={{ __html: doctorDegreeBN }}
             style={{ 
               margin: 0,
-              fontSize: "13px",
+              fontSize: `${degreeBnFontSize}px`,
               fontWeight: 400,
               color: "#374151",
               lineHeight: 1.7

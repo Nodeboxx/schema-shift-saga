@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { prescriptionTemplates, getTemplateById } from "@/lib/prescriptionTemplates";
 import CustomTemplateBuilder from "@/components/settings/CustomTemplateBuilder";
 import LogoUploader from "@/components/settings/LogoUploader";
+import { RichHTMLEditor } from "@/components/settings/RichHTMLEditor";
 import {
   DndContext,
   closestCenter,
@@ -134,6 +135,10 @@ const Settings = () => {
     email: "",
     header_font_size: "13",
     footer_font_size: "13",
+    degree_en_font_size: "13",
+    degree_bn_font_size: "13",
+    footer_left_font_size: "13",
+    footer_right_font_size: "13",
   });
 
   const [accountSettings, setAccountSettings] = useState({
@@ -198,6 +203,10 @@ const Settings = () => {
         email: data.email || "",
         header_font_size: data.header_font_size || "13",
         footer_font_size: data.footer_font_size || "13",
+        degree_en_font_size: data.degree_en_font_size || "13",
+        degree_bn_font_size: data.degree_bn_font_size || "13",
+        footer_left_font_size: data.footer_left_font_size || "13",
+        footer_right_font_size: data.footer_right_font_size || "13",
       });
       setAvatarPreview(data.avatar_url || "");
     }
@@ -341,6 +350,10 @@ const Settings = () => {
           avatar_url: avatarUrl,
           header_font_size: profile.header_font_size,
           footer_font_size: profile.footer_font_size,
+          degree_en_font_size: profile.degree_en_font_size,
+          degree_bn_font_size: profile.degree_bn_font_size,
+          footer_left_font_size: profile.footer_left_font_size,
+          footer_right_font_size: profile.footer_right_font_size,
         })
         .eq("id", user.id);
 
@@ -703,34 +716,56 @@ const Settings = () => {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="degree_en">Degrees & Qualifications (English)</Label>
-                  <Textarea
-                    id="degree_en"
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Degrees & Qualifications (English)</Label>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="degree_en_font_size" className="text-xs text-muted-foreground">Font Size:</Label>
+                      <Input
+                        id="degree_en_font_size"
+                        type="number"
+                        min="8"
+                        max="24"
+                        value={profile.degree_en_font_size}
+                        onChange={(e) => setProfile({ ...profile, degree_en_font_size: e.target.value })}
+                        className="w-16 h-8"
+                      />
+                      <span className="text-xs text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <RichHTMLEditor
+                    label=""
                     value={profile.degree_en}
-                    onChange={(e) => setProfile({ ...profile, degree_en: e.target.value })}
-                    placeholder="MBBS, MD&#10;Cardiologist&#10;Hospital Name"
-                    rows={5}
-                    className="font-mono text-sm"
+                    onChange={(value) => setProfile({ ...profile, degree_en: value })}
+                    placeholder="MBBS, MD<br/>Cardiologist<br/>Hospital Name"
+                    minHeight="120px"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Press Enter for line breaks (will be saved automatically)
-                  </p>
                 </div>
 
-                <div>
-                  <Label htmlFor="degree_bn">Degrees & Qualifications (Bengali)</Label>
-                  <Textarea
-                    id="degree_bn"
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Degrees & Qualifications (Bengali)</Label>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="degree_bn_font_size" className="text-xs text-muted-foreground">Font Size:</Label>
+                      <Input
+                        id="degree_bn_font_size"
+                        type="number"
+                        min="8"
+                        max="24"
+                        value={profile.degree_bn_font_size}
+                        onChange={(e) => setProfile({ ...profile, degree_bn_font_size: e.target.value })}
+                        className="w-16 h-8"
+                      />
+                      <span className="text-xs text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <RichHTMLEditor
+                    label=""
                     value={profile.degree_bn}
-                    onChange={(e) => setProfile({ ...profile, degree_bn: e.target.value })}
-                    placeholder="এম.বি.বি.এস, এম.ডি&#10;হৃদরোগ বিশেষজ্ঞ&#10;হাসপাতালের নাম"
-                    rows={5}
-                    className="font-mono text-sm"
+                    onChange={(value) => setProfile({ ...profile, degree_bn: value })}
+                    placeholder="এম.বি.বি.এস, এম.ডি<br/>হৃদরোগ বিশেষজ্ঞ<br/>হাসপাতালের নাম"
+                    minHeight="120px"
                   />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Press Enter for line breaks (will be saved automatically)
-                  </p>
                 </div>
 
                 <div className="border-t pt-6">
@@ -756,25 +791,55 @@ const Settings = () => {
                   </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="footer_left">Footer Left</Label>
-                  <Textarea
-                    id="footer_left"
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Footer Left</Label>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="footer_left_font_size" className="text-xs text-muted-foreground">Font Size:</Label>
+                      <Input
+                        id="footer_left_font_size"
+                        type="number"
+                        min="8"
+                        max="20"
+                        value={profile.footer_left_font_size}
+                        onChange={(e) => setProfile({ ...profile, footer_left_font_size: e.target.value })}
+                        className="w-16 h-8"
+                      />
+                      <span className="text-xs text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <RichHTMLEditor
+                    label=""
                     value={profile.footer_left}
-                    onChange={(e) => setProfile({ ...profile, footer_left: e.target.value })}
+                    onChange={(value) => setProfile({ ...profile, footer_left: value })}
                     placeholder="Chamber info, contact details, etc."
-                    rows={3}
+                    minHeight="100px"
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="footer_right">Footer Right</Label>
-                  <Textarea
-                    id="footer_right"
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Footer Right</Label>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="footer_right_font_size" className="text-xs text-muted-foreground">Font Size:</Label>
+                      <Input
+                        id="footer_right_font_size"
+                        type="number"
+                        min="8"
+                        max="20"
+                        value={profile.footer_right_font_size}
+                        onChange={(e) => setProfile({ ...profile, footer_right_font_size: e.target.value })}
+                        className="w-16 h-8"
+                      />
+                      <span className="text-xs text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <RichHTMLEditor
+                    label=""
                     value={profile.footer_right}
-                    onChange={(e) => setProfile({ ...profile, footer_right: e.target.value })}
-                    placeholder="Phone: +880 123456789&#10;Email: doctor@example.com"
-                    rows={3}
+                    onChange={(value) => setProfile({ ...profile, footer_right: value })}
+                    placeholder="Phone: +880 123456789<br/>Email: doctor@example.com"
+                    minHeight="100px"
                   />
                 </div>
 

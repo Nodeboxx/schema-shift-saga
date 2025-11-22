@@ -20,6 +20,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
   const [councilLogoUrl, setCouncilLogoUrl] = useState<string>("");
   const [registrationNumber, setRegistrationNumber] = useState<string>("");
   const [headerFontSize, setHeaderFontSize] = useState<string>("13");
+  const [degreeEnFontSize, setDegreeEnFontSize] = useState<string>("13");
+  const [degreeBnFontSize, setDegreeBnFontSize] = useState<string>("13");
 
   const [clinicBranding, setClinicBranding] = useState<{
     logo_url?: string;
@@ -54,6 +56,8 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         setCouncilLogoUrl(data.council_logo_url || "");
         setRegistrationNumber(data.registration_number || "");
         setHeaderFontSize(data.header_font_size || "13");
+        setDegreeEnFontSize(data.degree_en_font_size || "13");
+        setDegreeBnFontSize(data.degree_bn_font_size || "13");
         
         // Load clinic branding if user is part of a clinic
         if (data.clinics) {
@@ -122,7 +126,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             suppressContentEditableWarning
             onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
-            style={{ margin: 0 }}
+            style={{ margin: 0, fontSize: `${degreeEnFontSize}px` }}
           />
         </div>
 
@@ -204,7 +208,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
             suppressContentEditableWarning
             onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
-            style={{ margin: 0 }}
+            style={{ margin: 0, fontSize: `${degreeBnFontSize}px` }}
           />
         </div>
       </div>

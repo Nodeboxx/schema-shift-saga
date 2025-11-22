@@ -5,6 +5,8 @@ const PrescriptionFooter = () => {
   const [footerLeft, setFooterLeft] = useState("");
   const [footerRight, setFooterRight] = useState("");
   const [footerFontSize, setFooterFontSize] = useState<string>("13");
+  const [footerLeftFontSize, setFooterLeftFontSize] = useState<string>("13");
+  const [footerRightFontSize, setFooterRightFontSize] = useState<string>("13");
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -13,7 +15,7 @@ const PrescriptionFooter = () => {
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("footer_left, footer_right, footer_font_size")
+        .select("footer_left, footer_right, footer_font_size, footer_left_font_size, footer_right_font_size")
         .eq("id", session.user.id)
         .single();
 
@@ -26,6 +28,8 @@ const PrescriptionFooter = () => {
         setFooterLeft(data.footer_left || "");
         setFooterRight(data.footer_right || "");
         setFooterFontSize(data.footer_font_size || "13");
+        setFooterLeftFontSize(data.footer_left_font_size || "13");
+        setFooterRightFontSize(data.footer_right_font_size || "13");
       }
     };
 
@@ -46,7 +50,7 @@ const PrescriptionFooter = () => {
       boxSizing: "border-box",
       marginTop: "auto",
     }}>
-      <div style={{ width: "45%", position: "relative", textAlign: "left" }}>
+      <div style={{ width: "45%", position: "relative", textAlign: "left", fontSize: `${footerLeftFontSize}px` }}>
         <div
           contentEditable
           dangerouslySetInnerHTML={{ __html: footerLeft }}
@@ -57,7 +61,7 @@ const PrescriptionFooter = () => {
       <div style={{ fontSize: "12px", fontWeight: 600, textAlign: "center", whiteSpace: "nowrap" }}>
         Page 1
       </div>
-      <div style={{ width: "45%", position: "relative", textAlign: "right" }}>
+      <div style={{ width: "45%", position: "relative", textAlign: "right", fontSize: `${footerRightFontSize}px` }}>
         <div
           contentEditable
           dangerouslySetInnerHTML={{ __html: footerRight }}

@@ -1569,14 +1569,18 @@ export type Database = {
           created_at: string | null
           custom_templates: Json | null
           degree_bn: string | null
+          degree_bn_font_size: string | null
           degree_en: string | null
+          degree_en_font_size: string | null
           designation: string | null
           display_order: number | null
           doctor_id_display: string | null
           email: string
           footer_font_size: string | null
           footer_left: string | null
+          footer_left_font_size: string | null
           footer_right: string | null
+          footer_right_font_size: string | null
           full_name: string | null
           header_font_size: string | null
           id: string
@@ -1618,14 +1622,18 @@ export type Database = {
           created_at?: string | null
           custom_templates?: Json | null
           degree_bn?: string | null
+          degree_bn_font_size?: string | null
           degree_en?: string | null
+          degree_en_font_size?: string | null
           designation?: string | null
           display_order?: number | null
           doctor_id_display?: string | null
           email: string
           footer_font_size?: string | null
           footer_left?: string | null
+          footer_left_font_size?: string | null
           footer_right?: string | null
+          footer_right_font_size?: string | null
           full_name?: string | null
           header_font_size?: string | null
           id: string
@@ -1667,14 +1675,18 @@ export type Database = {
           created_at?: string | null
           custom_templates?: Json | null
           degree_bn?: string | null
+          degree_bn_font_size?: string | null
           degree_en?: string | null
+          degree_en_font_size?: string | null
           designation?: string | null
           display_order?: number | null
           doctor_id_display?: string | null
           email?: string
           footer_font_size?: string | null
           footer_left?: string | null
+          footer_left_font_size?: string | null
           footer_right?: string | null
+          footer_right_font_size?: string | null
           full_name?: string | null
           header_font_size?: string | null
           id?: string
