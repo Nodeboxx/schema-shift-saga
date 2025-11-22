@@ -94,6 +94,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         <div
           contentEditable
           suppressContentEditableWarning
+          spellCheck={false}
           onBlur={(e) => handleEdit("bismillah", e.currentTarget.textContent || "")}
           style={{
             textAlign: "center",
@@ -111,6 +112,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           <h2
             contentEditable
             suppressContentEditableWarning
+            spellCheck={false}
             onBlur={(e) => handleEdit("docNameEN", e.currentTarget.textContent || "")}
             style={{
               fontSize: "24px",
@@ -124,6 +126,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           <div
             contentEditable
             suppressContentEditableWarning
+            spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeEN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeEN }}
             style={{ margin: 0, fontSize: `${degreeEnFontSize}px`, lineHeight: "1.5" }}
@@ -193,6 +196,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           <h2
             contentEditable
             suppressContentEditableWarning
+            spellCheck={false}
             onBlur={(e) => handleEdit("docNameBN", e.currentTarget.textContent || "")}
             style={{
               fontSize: "24px",
@@ -206,6 +210,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           <div
             contentEditable
             suppressContentEditableWarning
+            spellCheck={false}
             onBlur={(e) => handleEdit("docDegreeBN", e.currentTarget.innerHTML || "")}
             dangerouslySetInnerHTML={{ __html: doctorInfo.docDegreeBN }}
             style={{ margin: 0, fontSize: `${degreeBnFontSize}px`, lineHeight: "1.5" }}

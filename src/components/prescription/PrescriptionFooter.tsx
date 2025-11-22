@@ -53,6 +53,7 @@ const PrescriptionFooter = () => {
       <div style={{ width: "45%", position: "relative", textAlign: "left", fontSize: `${footerLeftFontSize}px`, lineHeight: "1.5" }}>
         <div
           contentEditable
+          spellCheck={false}
           dangerouslySetInnerHTML={{ __html: footerLeft }}
           onBlur={(e) => setFooterLeft(e.currentTarget.innerHTML)}
           style={{ minHeight: "20px", outline: "none", textAlign: "left", lineHeight: "1.5" }}
@@ -64,6 +65,7 @@ const PrescriptionFooter = () => {
       <div style={{ width: "45%", position: "relative", textAlign: "right", fontSize: `${footerRightFontSize}px`, lineHeight: "1.5" }}>
         <div
           contentEditable
+          spellCheck={false}
           dangerouslySetInnerHTML={{ __html: footerRight }}
           onBlur={(e) => setFooterRight(e.currentTarget.innerHTML)}
           style={{ textAlign: "right", minHeight: "20px", outline: "none", lineHeight: "1.5" }}
