@@ -23,7 +23,6 @@ export const VoiceTextarea = ({
 }: VoiceTextareaProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const componentId = useId();
-  const [language, setLanguage] = useState<'en-US' | 'bn-BD'>('en-US');
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const { isRecording, audioBlob, startRecording, stopRecording, clearAudio } = useAudioRecorder();
@@ -66,9 +65,9 @@ export const VoiceTextarea = ({
       console.log('[VoiceTextarea] ✅ Base64 conversion complete, length:', base64Audio.length);
 
       // Send to transcription edge function
-      console.log('[VoiceTextarea] 🚀 Sending to transcribe-audio edge function, language:', language);
+      console.log('[VoiceTextarea] 🚀 Sending to transcribe-audio edge function, language: en-US');
       const { data, error } = await supabase.functions.invoke('transcribe-audio', {
-        body: { audio: base64Audio, language }
+        body: { audio: base64Audio, language: 'en-US' }
       });
 
       console.log('[VoiceTextarea] 📥 Response received from edge function');
@@ -118,17 +117,16 @@ export const VoiceTextarea = ({
     }
   };
 
-  const handleVoiceToggle = async (lang: 'en-US' | 'bn-BD') => {
+  const handleVoiceToggle = async () => {
     if (isRecording) {
       console.log('[VoiceTextarea] 🛑 User clicked to stop recording, component:', componentId);
       stopRecording();
       releaseRecording(componentId);
     } else {
-      console.log('[VoiceTextarea] 🎤 User clicked to start recording, language:', lang, 'component:', componentId);
+      console.log('[VoiceTextarea] 🎤 User clicked to start recording, language: en-US, component:', componentId);
       
       try {
-        setLanguage(lang);
-        console.log('[VoiceTextarea] 🌐 Language set to:', lang);
+        console.log('[VoiceTextarea] 🌐 Language set to: en-US');
         
         // Register with global lock and provide stop callback
         requestRecording(componentId, () => {
