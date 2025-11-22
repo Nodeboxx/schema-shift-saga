@@ -99,18 +99,19 @@ const ClinicPrescriptionHeader = ({
         display: "flex", 
         justifyContent: "space-between", 
         alignItems: "flex-start", 
-        gap: "24px",
+        gap: "15px",
         maxWidth: "100%"
       }}>
         {/* Left Column - Clinic Logo & Branding */}
         <div style={{ 
-          flex: "2", 
+          flex: "1 1 auto", 
           fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           display: "flex", 
           gap: "12px", 
           alignItems: "flex-start",
-          minWidth: 0
+          minWidth: "0",
+          maxWidth: "42%"
         }}>
           {clinic?.logo_url && (
             <img 
@@ -160,9 +161,10 @@ const ClinicPrescriptionHeader = ({
           flexDirection: "column", 
           alignItems: "center",
           justifyContent: "center",
-          padding: "8px 20px",
+          padding: "8px 15px",
           gap: "12px",
-          minWidth: "100px"
+          minWidth: "95px",
+          maxWidth: "120px"
         }}>
           {councilLogoUrl && (
             <>
@@ -206,11 +208,12 @@ const ClinicPrescriptionHeader = ({
 
         {/* Right Column - Bengali Doctor Info (Controlled by Profile Settings) */}
         <div style={{ 
-          flex: "2", 
+          flex: "1 1 auto", 
           fontSize: `${headerFontSize}px`, 
           lineHeight: "1.6", 
           textAlign: "right",
-          minWidth: 0
+          minWidth: "0",
+          maxWidth: "42%"
         }}>
           <h2 style={{
             fontSize: "28px",

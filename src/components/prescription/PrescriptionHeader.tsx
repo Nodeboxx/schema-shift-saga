@@ -122,9 +122,9 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
       )}
       
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "15px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
         {/* Left Column - English */}
-        <div style={{ flex: "3", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: 0 }}>
+        <div style={{ flex: "1 1 auto", fontSize: `${headerFontSize}px`, lineHeight: "1.35", minWidth: "0", maxWidth: "45%" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
@@ -158,9 +158,10 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
           flexDirection: "column", 
           alignItems: "center",
           justifyContent: "flex-start",
-          padding: "0 12px",
+          padding: "0 8px",
           gap: "6px",
-          minWidth: "100px"
+          minWidth: "90px",
+          maxWidth: "110px"
         }}>
           {clinicBranding.logo_url ? (
             <img 
@@ -210,7 +211,7 @@ const PrescriptionHeader = ({ doctorInfo, setDoctorInfo, prescriptionId, uniqueH
         </div>
 
         {/* Right Column - Bengali */}
-        <div style={{ flex: "3", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: 0 }}>
+        <div style={{ flex: "1 1 auto", fontSize: `${headerFontSize}px`, lineHeight: "1.35", textAlign: "right", minWidth: "0", maxWidth: "45%" }}>
           <h2
             contentEditable
             suppressContentEditableWarning
